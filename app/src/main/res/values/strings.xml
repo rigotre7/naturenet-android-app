@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">NatureNet</string>
+    <string name="project_intro">You are invited to participate in NatureNet, a research project being conducted by the researchers listed at http://research.nature-net.org/people.html. In order for us to collect and study the way people are using technology like NatureNet, we must have your consent.</string>
+    <string name="consent_header">In order for us to collect and study the way people are using technology like NatureNet, we must have your consent.</string>
+    <string name="consent_display">I agree that any observations (photos) or comments I contribute to NatureNet may be publicly displayed on the web, mobile phone, or tabletop platforms that comprise NatureNet.</string>
+    <string name="consent_share">I agree to allow any comments, observations, and profile information that I choose to share with others via the online application to be visible to others who use the application at the same time or after me.</string>
+    <string name="consent_recording">I agree to be videotaped/audiotaped during my participation in this study.</string>
+    <string name="consent_survey">I agree to complete a short questionnaire during or after my participation in this study.</string>
+    <string name="annotate_required">(Required)</string>
+    <string name="annotate_optional">(Optional)</string>
+    <string name="hint_username">Username</string>
+    <string name="hint_name">Name</string>
+    <string name="hint_email">Email Address</string>
+    <string name="hint_password">4-digit PIN</string>
+    <string name="details_prompt">Please provide your information to create an account.</string>
+    <string-array name="user_affiliations">
+        <item>ACES</item>
+        <item>AWS</item>
+        <item>Reedy Creek</item>
+        <item>Other</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="naturenet_prefs">NatureNetPreferences</string>
+</resources>

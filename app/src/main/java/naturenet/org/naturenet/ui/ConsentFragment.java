@@ -1,4 +1,4 @@
-package naturenet.org.naturenet.fragment;
+package naturenet.org.naturenet.ui;
 
 import android.content.Context;
 import android.net.Uri;

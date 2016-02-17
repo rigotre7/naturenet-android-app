@@ -1,4 +1,4 @@
-package naturenet.org.naturenet.fragment;
+package naturenet.org.naturenet.ui;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,7 +10,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import naturenet.org.naturenet.R;
-import naturenet.org.naturenet.activity.LoginActivity;
 
 public class LoginFragment extends Fragment {
 

@@ -17,11 +17,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    buildTypes.each {
+        it.buildConfigField 'String', 'FIREBASE_ROOT_URL', FirebaseRootUrl
+    }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
+    compile 'com.firebase:firebase-client-android:2.5.0'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.squareup.retrofit2:retrofit:2.0.0-beta3'
     compile 'io.reactivex:rxandroid:1.1.0'
@@ -31,4 +35,6 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.0.1'
     compile 'com.android.support:support-v4:23.1.1'
     compile 'com.google.guava:guava:19.0'
+    compile 'org.slf4j:slf4j-android:1.7.16'
+    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.5'
 }

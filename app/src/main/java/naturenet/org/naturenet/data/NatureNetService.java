@@ -14,7 +14,16 @@ import naturenet.org.naturenet.R;
 
 public class NatureNetService extends IntentService {
 
+    public static final String REGISTER_USER_ERROR = "error";
+    public static final String REGISTER_USER_STATUS = "status";
+    public static final String EMAIL = "email";
+    public static final String USERNAME = "username";
+    public static final String PASSWORD = "password";
+    public static final String CONSENT = "consent";
+
     public static final String ACTION_LOGIN = "LOGIN";
+    public static final String ACTION_REGISTER_USER = "register_user";
+    public static final String ACTION_REGISTER_USER_RESULT = "register_user_result";
 
     private Handler mHandler;
     private SharedPreferences mPreferences;

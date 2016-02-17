@@ -23,4 +23,20 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="naturenet_prefs">NatureNetPreferences</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="password_reqs">Min. 8 characters</string>
+    <string name="gplus">Google+</string>
+    <string name="facebook">Facebook</string>
+    <string name="or_login_with">Or Log In With:</string>
+    <string name="terms_consent">By using NatureNet you agree to the terms of the consent form.</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="loading">Loading...</string>
+    <string name="could_not_register_user">Couldn\'t register user</string>
+    <string name="log_in">Sign In</string>
+    <string name="forgot">Forgot?</string>
+    <string name="registering">Registering...</string>
+    <string name="username_or_email">Username or Email</string>
 </resources>

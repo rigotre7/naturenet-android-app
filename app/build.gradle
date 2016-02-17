@@ -20,6 +20,10 @@ android {
     buildTypes.each {
         it.buildConfigField 'String', 'FIREBASE_ROOT_URL', FirebaseRootUrl
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_6
+        targetCompatibility JavaVersion.VERSION_1_6
+    }
 }
 
 dependencies {

@@ -5,8 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.Html;
@@ -24,29 +22,27 @@ import android.widget.TextView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import naturenet.org.naturenet.NatureNetApp;
 import naturenet.org.naturenet.R;
 import naturenet.org.naturenet.data.NatureNetService;
 
 public class LoginActivity extends Activity {
 
-    Logger mLogger = LoggerFactory.getLogger(LoginActivity.class);
-    private NatureNetApp mApp;
+    private Logger mLogger = LoggerFactory.getLogger(LoginActivity.class);
     private UiHelper mHelper;
 
     public static final String SIGNUP = "signup";
 
     private ImageView mEmailIcon;
-    private EditText mEmail;
+    private EditText mEditEmail;
     private ImageView mPasswordIcon;
-    private EditText mPassword;
+    private EditText mEditPassword;
     private ImageView mUsernameIcon;
     private EditText mUsername;
     private TextView mPasswordWarning;
     private ImageView mCheckbox;
     private boolean mUseCCLicense;
-    private Button mSignup;
-    private boolean mIsSignup;
+    private Button mBtnSignUp;
+    private boolean mIsSignUp;
 
     private UserRegisterReceiver mUserRegisterReceiver;
     private TextView mTerms;
@@ -54,6 +50,7 @@ public class LoginActivity extends Activity {
     private class UserRegisterReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            mLogger.debug("Received user registration broadcast");
             unregisterReceiver(mUserRegisterReceiver);
             mHelper.stopLoading();
 
@@ -63,9 +60,7 @@ public class LoginActivity extends Activity {
             if (!status) {
                 mHelper.alert(getString(R.string.could_not_register_user), error);
             } else {
-                // TODO Registration successful - login the user
-                //recreateSignInTaskIfNeeded();
-                //mSignInTask.signIn(NatureNetService.LoginType.PASSWORD, mUsername.getText().toString(), mPassword.getText().toString());
+                // TODO Registration successful - proceed
             }
         }
     }
@@ -73,15 +68,14 @@ public class LoginActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mLogger.trace("Creating LoginActivity");
 
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        mApp = (NatureNetApp) getApplicationContext();
         setContentView(R.layout.login_signup);
 
         mHelper = new UiHelper(this);
-        mIsSignup = getIntent().getBooleanExtra(SIGNUP, false);
+        mIsSignUp = getIntent().getBooleanExtra(SIGNUP, false);
 
         View backButton = findViewById(R.id.back);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -95,12 +89,12 @@ public class LoginActivity extends Activity {
         mEmailIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mEmail.requestFocus();
+                mEditEmail.requestFocus();
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
         });
-        mEmail = (EditText) findViewById(R.id.email);
-        mEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mEditEmail = (EditText) findViewById(R.id.email);
+        mEditEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean focused) {
                 if (focused) {
@@ -110,7 +104,7 @@ public class LoginActivity extends Activity {
                 }
             }
         });
-        mEmail.addTextChangedListener(new TextWatcher() {
+        mEditEmail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
@@ -129,11 +123,11 @@ public class LoginActivity extends Activity {
         mPasswordIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mPassword.requestFocus();
+                mEditPassword.requestFocus();
             }
         });
-        mPassword = (EditText) findViewById(R.id.password);
-        mPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mEditPassword = (EditText) findViewById(R.id.password);
+        mEditPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean focused) {
                 if (focused) {
@@ -182,7 +176,7 @@ public class LoginActivity extends Activity {
         mUsernameIcon.getDrawable().setAlpha(0x7f);
 
         mPasswordWarning = (TextView) findViewById(R.id.password_warning);
-        mPassword.addTextChangedListener(new TextWatcher() {
+        mEditPassword.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
@@ -193,7 +187,7 @@ public class LoginActivity extends Activity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (mPassword.getText().length() >= (mIsSignup ? 6 : 1)) {
+                if (mEditPassword.getText().length() >= (mIsSignUp ? 6 : 1)) {
                     mPasswordWarning.setVisibility(View.GONE);
                 } else {
                     mPasswordWarning.setVisibility(View.VISIBLE);
@@ -222,10 +216,10 @@ public class LoginActivity extends Activity {
             }
         });
 
-        mSignup = (Button) findViewById(R.id.sign_up);
-        mSignup.setEnabled(false);
+        mBtnSignUp = (Button) findViewById(R.id.sign_up);
+        mBtnSignUp.setEnabled(false);
 
-        if (!mIsSignup) {
+        if (!mIsSignUp) {
             TextView title = (TextView) findViewById(R.id.action_bar_title);
             title.setText(R.string.log_in);
             View emailContainer = findViewById(R.id.email_container);
@@ -241,7 +235,7 @@ public class LoginActivity extends Activity {
             parent.removeView(usernameContainer);
             parent.addView(usernameContainer, 0);
 
-            mSignup.setText(R.string.log_in);
+            mBtnSignUp.setText(R.string.log_in);
             mPasswordWarning.setText(R.string.forgot);
             mPasswordWarning.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -257,10 +251,10 @@ public class LoginActivity extends Activity {
             mTerms.setVisibility(View.VISIBLE);
         }
 
-        mSignup.setOnClickListener(new View.OnClickListener() {
+        mBtnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!mIsSignup) {
+                if (!mIsSignUp) {
                     // Login
                     //recreateSignInTaskIfNeeded();
                     //mSignInTask.signIn(NatureNetService.LoginType.PASSWORD, mUsername.getText().toString(), mPassword.getText().toString());
@@ -271,9 +265,9 @@ public class LoginActivity extends Activity {
                     registerReceiver(mUserRegisterReceiver, filter);
 
                     Intent serviceIntent = new Intent(NatureNetService.ACTION_REGISTER_USER, null, LoginActivity.this, NatureNetService.class);
-                    serviceIntent.putExtra(NatureNetService.EMAIL, mEmail.getText().toString());
+                    serviceIntent.putExtra(NatureNetService.EMAIL, mEditEmail.getText().toString());
                     serviceIntent.putExtra(NatureNetService.USERNAME, mUsername.getText().toString());
-                    serviceIntent.putExtra(NatureNetService.PASSWORD, mPassword.getText().toString());
+                    serviceIntent.putExtra(NatureNetService.PASSWORD, mEditPassword.getText().toString());
                     serviceIntent.putExtra(NatureNetService.CONSENT, (mUseCCLicense ? "CC-BY-NC" : "on"));
                     startService(serviceIntent);
 
@@ -285,10 +279,13 @@ public class LoginActivity extends Activity {
     }
 
     private void checkFields() {
-        if (((mEmail.getText().length() == 0) && (mIsSignup)) || (mPassword.getText().length() < (mIsSignup ? 6 : 1)) || (mUsername.getText().length() == 0)) {
-            mSignup.setEnabled(false);
+        int passwordMinLength = (mIsSignUp ? getResources().getInteger(R.integer.password_min_length) : 1);
+        if ( ((mEditEmail.getText().length() == 0) && (mIsSignUp))
+                || (mEditPassword.getText().length() < passwordMinLength)
+                || (mUsername.getText().length() == 0)) {
+            mBtnSignUp.setEnabled(false);
         } else {
-            mSignup.setEnabled(true);
+            mBtnSignUp.setEnabled(true);
         }
     }
 

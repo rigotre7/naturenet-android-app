@@ -8,6 +8,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:scaleType="fitXY"
+        android:src="@drawable/naturenet_splash_960px"
         />
 
     <RelativeLayout
@@ -29,7 +30,7 @@
             android:id="@+id/back"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:src="@drawable/login_signup_back_button"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
@@ -59,7 +60,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:src="@android:drawable/sym_action_email"
+                android:src="@drawable/ic_email_white_24dp"
                 android:id="@+id/email_icon"
                 android:focusable="true"
                 android:clickable="true"
@@ -97,7 +98,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:src="@android:drawable/ic_lock_lock"
+                android:src="@drawable/ic_lock_white_24dp"
                 android:id="@+id/password_icon"
                 android:focusable="true"
                 android:clickable="true"
@@ -150,7 +151,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:src="@android:drawable/ic_menu_info_details"
+                android:src="@drawable/ic_person_white_24dp"
                 android:id="@+id/username_icon"
                 android:focusable="true"
                 android:clickable="true"
@@ -187,7 +188,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/checkbox"
                 android:layout_gravity="center_vertical"
-                android:src="@android:drawable/checkbox_on_background"
+                android:src="@drawable/ic_check_box_white_24dp"
                 />
             <TextView
                 android:id="@+id/checkbox_description"
@@ -202,6 +203,7 @@
 
         <Button
             android:id="@+id/sign_up"
+            android:background="@drawable/circular_button"
             android:layout_width="fill_parent"
             android:layout_gravity="center_horizontal"
             android:text="@string/sign_up"
@@ -327,11 +329,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/facebook_login_button"
-        android:visibility="gone"
-        android:layout_width="0dp"
-        android:layout_height="0dp" />
+    <!--<com.facebook.login.widget.LoginButton-->
+        <!--android:id="@+id/facebook_login_button"-->
+        <!--android:visibility="gone"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="0dp" />-->
 
     <TextView
         android:id="@+id/terms"

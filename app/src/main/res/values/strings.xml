@@ -38,10 +38,12 @@
     <string name="log_in">Sign In</string>
     <string name="forgot">Forgot?</string>
     <string name="registering">Registering...</string>
-    <string name="username_or_email">Username or Email</string>
+    <string name="username_or_email">Email</string>
     <string name="sign_up_with">Sign Up with</string>
     <string name="login_with">Sign In with</string>
     <string name="already_have_account">Already signed up?</string>
     <string name="skip">Skip</string>
     <string name="not_connected">Oops! There seems to be a problem with your Internet connection.</string>
+    <string name="login_error">Invalid username or password.</string>
+    <string name="logging_in">Signing in...</string>
 </resources>

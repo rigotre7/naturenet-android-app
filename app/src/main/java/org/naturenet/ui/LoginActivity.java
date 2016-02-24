@@ -1,4 +1,4 @@
-package naturenet.org.naturenet.ui;
+package org.naturenet.ui;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -11,7 +11,6 @@ import android.text.Html;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -19,11 +18,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.common.collect.ImmutableMap;
+
+import org.naturenet.data.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import naturenet.org.naturenet.R;
-import naturenet.org.naturenet.data.NatureNetService;
+import org.naturenet.R;
+import org.naturenet.data.NatureNetService;
 
 public class LoginActivity extends Activity {
 
@@ -37,14 +39,16 @@ public class LoginActivity extends Activity {
     private ImageView mPasswordIcon;
     private EditText mEditPassword;
     private ImageView mUsernameIcon;
-    private EditText mUsername;
+    private EditText mEditUsername;
     private TextView mPasswordWarning;
     private ImageView mCheckbox;
-    private boolean mUseCCLicense;
+    private boolean mIsConsent;
     private Button mBtnSignUp;
     private boolean mIsSignUp;
+    private int mPasswordMinLength;
 
-    private UserRegisterReceiver mUserRegisterReceiver;
+    private UserRegisterReceiver mUserRegisterReceiver = new UserRegisterReceiver();
+    private UserLoginReceiver mUserLoginReceiver = new UserLoginReceiver();
     private TextView mTerms;
 
     private class UserRegisterReceiver extends BroadcastReceiver {
@@ -54,13 +58,34 @@ public class LoginActivity extends Activity {
             unregisterReceiver(mUserRegisterReceiver);
             mHelper.stopLoading();
 
-            boolean status = intent.getBooleanExtra(NatureNetService.REGISTER_USER_STATUS, false);
-            String error = intent.getStringExtra(NatureNetService.REGISTER_USER_ERROR);
+            boolean status = intent.getBooleanExtra(NatureNetService.USER_STATUS, false);
+            String error = intent.getStringExtra(NatureNetService.USER_ERROR);
 
             if (!status) {
                 mHelper.alert(getString(R.string.could_not_register_user), error);
             } else {
                 // TODO Registration successful - proceed
+                mHelper.alert("Signup Success");
+            }
+        }
+    }
+
+    private class UserLoginReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mLogger.debug("Received user login broadcast");
+            unregisterReceiver(mUserLoginReceiver);
+            mHelper.stopLoading();
+
+            boolean status = intent.getBooleanExtra(NatureNetService.USER_STATUS, false);
+            String error = intent.getStringExtra(NatureNetService.USER_ERROR);
+
+            if (!status) {
+                mHelper.alert(getString(R.string.login_error), error);
+            } else {
+                // TODO Registration successful - proceed
+                mHelper.alert("Login Success");
+                onSuccess();
             }
         }
     }
@@ -76,6 +101,7 @@ public class LoginActivity extends Activity {
 
         mHelper = new UiHelper(this);
         mIsSignUp = getIntent().getBooleanExtra(SIGNUP, false);
+        mPasswordMinLength = (mIsSignUp ? getResources().getInteger(R.integer.password_min_length) : 1);
 
         View backButton = findViewById(R.id.back);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -142,11 +168,11 @@ public class LoginActivity extends Activity {
         mUsernameIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mUsername.requestFocus();
+                mEditUsername.requestFocus();
             }
         });
-        mUsername = (EditText) findViewById(R.id.username);
-        mUsername.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mEditUsername = (EditText) findViewById(R.id.username);
+        mEditUsername.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean focused) {
                 if (focused) {
@@ -156,7 +182,7 @@ public class LoginActivity extends Activity {
                 }
             }
         });
-        mUsername.addTextChangedListener(new TextWatcher() {
+        mEditUsername.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
@@ -187,7 +213,7 @@ public class LoginActivity extends Activity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (mEditPassword.getText().length() >= (mIsSignUp ? 6 : 1)) {
+                if (mEditPassword.getText().length() >= mPasswordMinLength) {
                     mPasswordWarning.setVisibility(View.GONE);
                 } else {
                     mPasswordWarning.setVisibility(View.VISIBLE);
@@ -197,7 +223,7 @@ public class LoginActivity extends Activity {
             }
         });
 
-        mUseCCLicense = true;
+        mIsConsent = true;
 
         mTerms = (TextView) findViewById(R.id.terms);
         mTerms.setText(Html.fromHtml(mTerms.getText().toString()));
@@ -207,8 +233,8 @@ public class LoginActivity extends Activity {
         mCheckbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mUseCCLicense = !mUseCCLicense;
-                if (mUseCCLicense) {
+                mIsConsent = !mIsConsent;
+                if (mIsConsent) {
                     mCheckbox.setImageResource(R.drawable.ic_check_box_white_24dp);
                 } else {
                     mCheckbox.setImageResource(R.drawable.ic_check_box_outline_blank_white_24dp);
@@ -222,18 +248,16 @@ public class LoginActivity extends Activity {
         if (!mIsSignUp) {
             TextView title = (TextView) findViewById(R.id.action_bar_title);
             title.setText(R.string.log_in);
-            View emailContainer = findViewById(R.id.email_container);
-            emailContainer.setVisibility(View.GONE);
+            findViewById(R.id.username_container).setVisibility(View.GONE);
             View checkboxContainer = findViewById(R.id.checkbox_container);
             checkboxContainer.setVisibility(View.GONE);
-            mUsername.setHint(R.string.username_or_email);
 
             mTerms.setVisibility(View.GONE);
 
-            View usernameContainer = findViewById(R.id.username_container);
-            ViewGroup parent = (ViewGroup)usernameContainer.getParent();
-            parent.removeView(usernameContainer);
-            parent.addView(usernameContainer, 0);
+//            View usernameContainer = findViewById(R.id.username_container);
+//            ViewGroup parent = (ViewGroup)usernameContainer.getParent();
+//            parent.removeView(usernameContainer);
+//            parent.addView(usernameContainer, 0);
 
             mBtnSignUp.setText(R.string.log_in);
             mPasswordWarning.setText(R.string.forgot);
@@ -256,19 +280,34 @@ public class LoginActivity extends Activity {
             public void onClick(View view) {
                 if (!mIsSignUp) {
                     // Login
-                    //recreateSignInTaskIfNeeded();
-                    //mSignInTask.signIn(NatureNetService.LoginType.PASSWORD, mUsername.getText().toString(), mPassword.getText().toString());
+                    IntentFilter filter = new IntentFilter(NatureNetService.ACTION_LOGIN_RESULT);
+                    registerReceiver(mUserLoginReceiver, filter);
+
+                    Intent serviceIntent = new Intent(NatureNetService.ACTION_LOGIN, null, LoginActivity.this.getApplicationContext(), NatureNetService.class);
+                    serviceIntent.putExtra(NatureNetService.EMAIL, mEditEmail.getText().toString());
+                    serviceIntent.putExtra(NatureNetService.USER_PASSWORD, mEditPassword.getText().toString());
+                    startService(serviceIntent);
+
+                    mHelper.loading(getString(R.string.logging_in));
                 } else {
                     // Sign up
-                    mUserRegisterReceiver = new UserRegisterReceiver();
                     IntentFilter filter = new IntentFilter(NatureNetService.ACTION_REGISTER_USER_RESULT);
                     registerReceiver(mUserRegisterReceiver, filter);
 
-                    Intent serviceIntent = new Intent(NatureNetService.ACTION_REGISTER_USER, null, LoginActivity.this, NatureNetService.class);
-                    serviceIntent.putExtra(NatureNetService.EMAIL, mEditEmail.getText().toString());
-                    serviceIntent.putExtra(NatureNetService.USERNAME, mUsername.getText().toString());
-                    serviceIntent.putExtra(NatureNetService.PASSWORD, mEditPassword.getText().toString());
-                    serviceIntent.putExtra(NatureNetService.CONSENT, (mUseCCLicense ? "CC-BY-NC" : "on"));
+                    User newUser = new User();
+                    newUser.getPrivate().setEmail(mEditEmail.getText().toString());
+                    //TODO fix consent
+                    newUser.getPrivate().setConsent(ImmutableMap.of("consent", mIsConsent));
+                    newUser.getPublic().setDisplayName(mEditUsername.getText().toString());
+                    //TODO
+                    newUser.getPublic().setAvatar("");
+                    //TODO
+                    newUser.getPublic().setAffiliation("");
+
+                    Intent serviceIntent = new Intent(NatureNetService.ACTION_REGISTER_USER, null, LoginActivity.this.getApplicationContext(), NatureNetService.class);
+                    serviceIntent.putExtra(NatureNetService.USER_ACCOUNT, newUser);
+                    serviceIntent.putExtra(NatureNetService.EMAIL, newUser.getPrivate().getEmail());
+                    serviceIntent.putExtra(NatureNetService.USER_PASSWORD, mEditPassword.getText().toString());
                     startService(serviceIntent);
 
                     mHelper.loading(getString(R.string.registering));
@@ -276,13 +315,16 @@ public class LoginActivity extends Activity {
             }
         });
 
+        //TODO eh?
+        Intent logoutIntent = new Intent(NatureNetService.ACTION_LOGOUT, null, getApplicationContext(), NatureNetService.class);
+        startService(logoutIntent);
+
     }
 
     private void checkFields() {
-        int passwordMinLength = (mIsSignUp ? getResources().getInteger(R.integer.password_min_length) : 1);
-        if ( ((mEditEmail.getText().length() == 0) && (mIsSignUp))
-                || (mEditPassword.getText().length() < passwordMinLength)
-                || (mUsername.getText().length() == 0)) {
+        if ( (mEditEmail.getText().length() == 0)
+                || (mEditPassword.getText().length() < mPasswordMinLength)
+                || ((mEditUsername.getText().length() == 0) && mIsSignUp) ) {
             mBtnSignUp.setEnabled(false);
         } else {
             mBtnSignUp.setEnabled(true);
@@ -302,8 +344,7 @@ public class LoginActivity extends Activity {
         //mSignInTask.onActivityResult(requestCode, resultCode, data);
     }
 
-    //@Override
-    public void onLoginSuccessful() {
+    private void onSuccess() {
         //mSignInTask.pause();
         setResult(RESULT_OK);
         finish();
@@ -316,6 +357,9 @@ public class LoginActivity extends Activity {
         try {
             if (mUserRegisterReceiver != null) {
                 unregisterReceiver(mUserRegisterReceiver);
+            }
+            if (mUserLoginReceiver != null) {
+                unregisterReceiver(mUserLoginReceiver);
             }
         } catch (Exception exc) {
             exc.printStackTrace();

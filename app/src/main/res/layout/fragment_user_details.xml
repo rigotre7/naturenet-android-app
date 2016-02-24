@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.UserDetailsFragment">
+    tools:context="org.naturenet.ui.UserDetailsFragment">
 
     <LinearLayout
         android:orientation="vertical"

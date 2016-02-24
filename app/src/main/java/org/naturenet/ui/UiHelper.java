@@ -1,4 +1,4 @@
-package naturenet.org.naturenet.ui;
+package org.naturenet.ui;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -16,7 +16,7 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import naturenet.org.naturenet.R;
+import org.naturenet.R;
 
 public class UiHelper {
     private Context mContext;

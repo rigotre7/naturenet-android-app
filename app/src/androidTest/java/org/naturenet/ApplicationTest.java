@@ -1,4 +1,4 @@
-package naturenet.org.naturenet;
+package org.naturenet;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

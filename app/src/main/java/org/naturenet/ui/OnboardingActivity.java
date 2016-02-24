@@ -1,4 +1,4 @@
-package naturenet.org.naturenet.ui;
+package org.naturenet.ui;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,7 +12,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
 
-import naturenet.org.naturenet.R;
+import org.naturenet.R;
 
 public class OnboardingActivity extends Activity {
     private static final int REQUEST_CODE_SIGNUP = 0x10000;

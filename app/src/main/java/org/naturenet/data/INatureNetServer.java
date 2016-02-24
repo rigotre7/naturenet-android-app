@@ -1,4 +1,4 @@
-package naturenet.org.naturenet.data;
+package org.naturenet.data;
 
 public interface INatureNetServer {
 

@@ -1,4 +1,4 @@
-package naturenet.org.naturenet.ui;
+package org.naturenet.ui;
 
 import android.content.Context;
 import android.net.Uri;
@@ -7,30 +7,24 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
-import naturenet.org.naturenet.R;
+import org.naturenet.R;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ProjectIntroFragment.OnFragmentInteractionListener} interface
+ * {@link UserDetailsFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ProjectIntroFragment#newInstance} factory method to
+ * Use the {@link UserDetailsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProjectIntroFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+public class UserDetailsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public ProjectIntroFragment() {
+    public UserDetailsFragment() {
         // Required empty public constructor
     }
 
@@ -40,32 +34,23 @@ public class ProjectIntroFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ProjectIntroFragment.
+     * @return A new instance of fragment UserDetailsFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static ProjectIntroFragment newInstance(String param1, String param2) {
-        ProjectIntroFragment fragment = new ProjectIntroFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+    public static UserDetailsFragment newInstance(String param1, String param2) {
+        UserDetailsFragment fragment = new UserDetailsFragment();
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_project_intro, container, false);
+        return inflater.inflate(R.layout.fragment_user_details, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -84,6 +69,12 @@ public class ProjectIntroFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+
+        Spinner affiliations = (Spinner)getActivity().findViewById(R.id.spn_affiliation);
+        ArrayAdapter<CharSequence> adapter =
+                ArrayAdapter.createFromResource(context, R.array.user_affiliations, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        affiliations.setAdapter(adapter);
     }
 
     @Override

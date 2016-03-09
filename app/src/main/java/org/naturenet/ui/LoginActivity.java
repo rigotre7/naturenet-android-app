@@ -295,14 +295,14 @@ public class LoginActivity extends Activity {
                     registerReceiver(mUserRegisterReceiver, filter);
 
                     User newUser = new User();
-                    newUser.getPrivate().setEmail(mEditEmail.getText().toString());
+                    newUser.getPrivate().email = mEditEmail.getText().toString();
                     //TODO fix consent
-                    newUser.getPrivate().setConsent(ImmutableMap.of("consent", mIsConsent));
-                    newUser.getPublic().setDisplayName(mEditUsername.getText().toString());
+                    newUser.getPrivate().consent = ImmutableMap.of("consent", mIsConsent);
+                    newUser.getPublic().displayName = mEditUsername.getText().toString();
                     //TODO
-                    newUser.getPublic().setAvatar("");
+                    newUser.getPublic().avatar = "";
                     //TODO
-                    newUser.getPublic().setAffiliation("");
+                    newUser.getPublic().affiliation = "";
 
                     Intent serviceIntent = new Intent(NatureNetService.ACTION_REGISTER_USER, null, LoginActivity.this.getApplicationContext(), NatureNetService.class);
                     serviceIntent.putExtra(NatureNetService.USER_ACCOUNT, newUser);

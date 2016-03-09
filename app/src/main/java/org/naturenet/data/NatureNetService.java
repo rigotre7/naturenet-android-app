@@ -105,37 +105,48 @@ public class NatureNetService extends IntentService {
 
     private void registerUser(final Intent intent){
         final User user = intent.getParcelableExtra(USER_ACCOUNT);
+        final String email = user.getPrivate().getEmail();
         final String password = intent.getStringExtra(USER_PASSWORD);
 
         Firebase.ValueResultHandler<Map<String, Object>> handler = new Firebase.ValueResultHandler<Map<String, Object>>() {
             @Override
             public void onSuccess(Map<String, Object> result) {
                 final String uid = result.get("uid").toString();
+                user.getPublic().id = uid;
                 mLogger.info("Successfully created user account {}", uid);
 
-                Intent reply = new Intent(ACTION_REGISTER_USER_RESULT);
-                reply.putExtra(USER_STATUS, true);
-                sendBroadcast(reply);
-                user.getPublic().setId(uid);
-
-                mLogger.info("Creating user {}", user);
-                final Firebase userRef = mFirebase.child("users").child(uid);
-                userRef.runTransaction(new Transaction.Handler() {
+                mLogger.debug("Authenticating new user");
+                mFirebase.authWithPassword(email, password, new Firebase.AuthResultHandler() {
                     @Override
-                    public Transaction.Result doTransaction(MutableData mutableData) {
-                        mutableData.setValue(user);
-                        userRef.child("public").child("created_at").setValue(ServerValue.TIMESTAMP);
-                        userRef.child("public").child("updated_at").setValue(ServerValue.TIMESTAMP);
-                        return Transaction.success(mutableData);
+                    public void onAuthenticated(AuthData authData) {
+                        mLogger.info("Creating user record {}", user);
+                        final Firebase userRef = mFirebase.child("users").child(uid);
+                        userRef.runTransaction(new Transaction.Handler() {
+                            @Override
+                            public Transaction.Result doTransaction(MutableData mutableData) {
+                                mutableData.setValue(user);
+                                userRef.child("public").child("created_at").setValue(ServerValue.TIMESTAMP);
+                                userRef.child("public").child("updated_at").setValue(ServerValue.TIMESTAMP);
+                                return Transaction.success(mutableData);
+                            }
+
+                            @Override
+                            public void onComplete(FirebaseError firebaseError, boolean completed, DataSnapshot dataSnapshot) {
+                                if (completed) {
+                                    mLogger.debug("User record created");
+                                    Intent reply = new Intent(ACTION_REGISTER_USER_RESULT);
+                                    reply.putExtra(USER_STATUS, true);
+                                    sendBroadcast(reply);
+                                } else {
+                                    onUserRegistrationError(firebaseError);
+                                }
+                            }
+                        });
                     }
 
                     @Override
-                    public void onComplete(FirebaseError firebaseError, boolean b, DataSnapshot dataSnapshot) {
-                        if(firebaseError != null) {
-                            onUserRegistrationError(firebaseError);
-                            return;
-                        }
-                        signInWithPassword(intent);
+                    public void onAuthenticationError(FirebaseError firebaseError) {
+                        onUserRegistrationError(firebaseError);
                     }
                 });
             }
@@ -146,7 +157,6 @@ public class NatureNetService extends IntentService {
             }
         };
 
-        final String email = user.getPrivate().getEmail();
         if(email != null && password != null) {
             mLogger.info("Registering new user");
             mFirebase.createUser(email, password, handler);

@@ -8,8 +8,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:scaleType="fitXY"
-        android:src="@drawable/naturenet_splash_960px"
-        />
+        android:background="@color/colorBackgroundDark"/>
 
     <RelativeLayout
         android:id="@+id/top_action_bar"

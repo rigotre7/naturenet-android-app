@@ -80,7 +80,7 @@
         android:layout_above="@+id/login_with_email"
         android:layout_marginBottom="20dp"
         android:layout_centerHorizontal="true"
-        />
+        android:visibility="gone"/>
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -100,7 +100,7 @@
             android:focusable="true"
             android:clickable="true"
             android:id="@+id/login_with_facebook"
-            >
+            android:visibility="invisible">
 
             <RelativeLayout
                 android:layout_width="45dp"
@@ -152,7 +152,7 @@
             android:focusable="true"
             android:clickable="true"
             android:id="@+id/login_with_gplus"
-            >
+            android:visibility="invisible">
             <RelativeLayout
                 android:layout_width="45dp"
                 android:layout_height="wrap_content">

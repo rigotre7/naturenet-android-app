@@ -3,16 +3,16 @@ package org.naturenet.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.UUID;
+import com.firebase.client.ServerValue;
 
 public class ProfileData implements Parcelable {
-    private String avatar = null;
-    private String displayName = null;
-    private String affiliation = null;
-    private String id = null;
-    private boolean isTestUser = false;
-    private long createdAt = 0L;
-    private long updatedAt = 0L;
+    public String avatar = null;
+    public String displayName = null;
+    public String affiliation = null;
+    public String id = null;
+    public boolean isTestUser = false;
+    public long createdAt = 0L;
+    public long updatedAt = 0L;
 
     public ProfileData() {}
 
@@ -84,34 +84,6 @@ public class ProfileData implements Parcelable {
         dest.writeLong(updatedAt);
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public void setAffiliation(String affiliation) {
-        this.affiliation = affiliation;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setIsTestUser(boolean isTestUser) {
-        this.isTestUser = isTestUser;
-    }
-
-    public void setCreatedAt(long createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public void setUpdatedAt(long updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     public String getAvatar() {
 
         return avatar;
@@ -142,15 +114,15 @@ public class ProfileData implements Parcelable {
         return id;
     }
 
-    public boolean isTest_user() {
+    public boolean getIs_Test_user() {
         return isTestUser;
     }
 
-    public long getCreated_at() {
-        return createdAt;
+    public Object getCreated_at() {
+        return (createdAt > 0L) ? createdAt : ServerValue.TIMESTAMP;
     }
 
-    public long getUpdated_at() {
-        return updatedAt;
+    public Object getUpdated_at() {
+        return (updatedAt > 0L) ? updatedAt : ServerValue.TIMESTAMP;
     }
 }

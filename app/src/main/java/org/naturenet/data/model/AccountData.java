@@ -8,7 +8,7 @@ import com.google.common.collect.Maps;
 import java.util.Map;
 
 public class AccountData implements Parcelable {
-    private Map<String, Boolean> consent = Maps.newHashMap();
+    public Map<String, Boolean> consent = Maps.newHashMap();
 
     @Override
     public boolean equals(Object o) {
@@ -37,7 +37,7 @@ public class AccountData implements Parcelable {
                 '}';
     }
 
-    private String email = null;
+    public String email = null;
 
     public AccountData() {}
 
@@ -67,14 +67,6 @@ public class AccountData implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(email);
         dest.writeMap(consent);
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setConsent(Map<String, Boolean> consent) {
-        this.consent = consent;
     }
 
     public Map<String, Boolean> getConsent() {

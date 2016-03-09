@@ -6,8 +6,8 @@
         <shape android:shape="rectangle">
             <corners android:radius="20dp" />
             <gradient
-                android:startColor="@color/inatapptheme_color_highlighted"
-                android:endColor="@color/inatapptheme_color_highlighted"
+                android:startColor="@color/colorAccentDark"
+                android:endColor="@color/colorAccentDark"
                 android:angle="270" />
             <padding
                 android:left="5dp"
@@ -21,8 +21,8 @@
         <shape android:shape="rectangle">
             <corners android:radius="20dp" />
             <gradient
-                android:startColor="@color/inatapptheme_color_highlighted"
-                android:endColor="@color/inatapptheme_color_highlighted"
+                android:startColor="@color/colorAccent"
+                android:endColor="@color/colorAccent"
                 android:angle="270" />
             <padding
                 android:left="5dp"
@@ -35,8 +35,8 @@
         <shape android:shape="rectangle">
             <corners android:radius="20dp" />
             <gradient
-                android:endColor="@color/inatapptheme_color_disabled"
-                android:startColor="@color/inatapptheme_color_disabled"
+                android:endColor="@color/colorDisabled"
+                android:startColor="@color/colorDisabled"
                 android:angle="270" />
             <padding
                 android:left="5dp"
@@ -50,8 +50,8 @@
         <shape android:shape="rectangle">
             <corners android:radius="20dp" />
             <gradient
-                android:endColor="@color/inatapptheme_color"
-                android:startColor="@color/inatapptheme_color"
+                android:endColor="@color/colorAccent"
+                android:startColor="@color/colorAccent"
                 android:angle="270" />
             <padding
                 android:left="5dp"

@@ -13,9 +13,8 @@
     tools:context="org.naturenet.ui.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <fragment
+    <FrameLayout
         android:id="@+id/main_content"
-        android:name="org.naturenet.ui.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

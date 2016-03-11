@@ -1,5 +1,6 @@
 package org.naturenet.ui;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -54,8 +55,18 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setCheckedItem(0);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.getMenu().performIdentifierAction(R.id.nav_explore, 0);
+        navigationView.setCheckedItem(R.id.nav_explore);
+
+        View header = navigationView.getHeaderView(0);
+        header.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent loginIntent = new Intent(MainActivity.this, OnboardingActivity.class);
+                startActivity(loginIntent);
+            }
+        });
     }
 
     @Override

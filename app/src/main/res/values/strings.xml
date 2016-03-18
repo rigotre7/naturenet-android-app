@@ -116,4 +116,6 @@
     <string name="projects">Projects</string>
     <string name="design_ideas">Design Ideas</string>
     <string name="communities">Communities</string>
+    <string name="timestamp_default">just now</string>
+    <string name="anon_user">Anonymous user</string>
 </resources>

@@ -4,25 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/observation_submitter_avatar"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/observation_submitter_name"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/observation_datetime"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/observation_description"/>
+    <include layout="@layout/user_submission_text" />
 
     <LinearLayout
         android:paddingStart="15dp"
@@ -31,10 +13,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
 
-        <!-- like button -->
+        <include layout="@layout/like_button" />
 
-        <!-- comment button -->
+        <include layout="@layout/comment_button" />
 
-        <!-- share button -->
+        <include layout="@layout/share_button" />
     </LinearLayout>
 </LinearLayout>

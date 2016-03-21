@@ -118,4 +118,7 @@
     <string name="communities">Communities</string>
     <string name="timestamp_default">just now</string>
     <string name="anon_user">Anonymous user</string>
+    <string name="comment">Comment</string>
+    <string name="like">Like</string>
+    <string name="share">Share</string>
 </resources>

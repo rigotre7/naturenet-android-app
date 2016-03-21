@@ -16,7 +16,7 @@
         android:duplicateParentState="true"
         android:layout_width="30dp"
         android:layout_height="wrap_content"
-        android:src="@drawable/comment_button_icon"
+        android:src="@android:drawable/sym_action_chat"
         android:layout_marginStart="3dp"
         android:layout_marginLeft="3dp"
         />
@@ -27,7 +27,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_marginLeft="5dp"
-        android:textColor="@drawable/semi_transparent_button_text"
         android:text="@string/comment"
         android:textStyle="bold"
         android:layout_marginEnd="4dp"

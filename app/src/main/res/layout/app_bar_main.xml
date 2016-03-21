@@ -27,11 +27,20 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_new_observation"
-        android:background="@color/colorPrimary"
+        app:backgroundTint="@color/colorPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@android:drawable/ic_menu_camera"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_new_idea"
+        app:backgroundTint="@color/colorPrimary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_menu_edit"/>
+        android:src="@android:drawable/ic_menu_info_details"/>
 
 </android.support.design.widget.CoordinatorLayout>

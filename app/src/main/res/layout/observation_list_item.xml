@@ -9,5 +9,5 @@
         android:layout_height="wrap_content"
         android:id="@+id/obs_preview_thumbnail"/>
 
-    <!-- include metadata layout -->
+    <include layout="@layout/observation_metadata" />
 </LinearLayout>

@@ -15,8 +15,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import org.naturenet.R;
+import org.naturenet.data.NatureNetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +45,17 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 //TODO: go to new observation screen
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Create a new observation", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+            }
+        });
+
+        fab = (FloatingActionButton) findViewById(R.id.fab_new_idea);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: go to new idea screen
+                Snackbar.make(view, "Create a new Design Idea", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
 
@@ -111,18 +122,22 @@ public class MainActivity extends AppCompatActivity
             mLogger.trace("Selected Explore");
             //TODO go to explore screen
             transaction.replace(R.id.main_content, MapFragment.newInstance());
+            transaction.addToBackStack(null);
         } else if (id == R.id.nav_projects) {
             mLogger.trace("Selected Projects");
             //TODO go to projects screen
             transaction.replace(R.id.main_content, ProjectsFragment.newInstance());
+            transaction.addToBackStack(null);
         } else if (id == R.id.nav_ideas) {
             mLogger.trace("Selected Design Ideas");
             //TODO go to design ideas screen
             transaction.replace(R.id.main_content, IdeasFragment.newInstance());
+            transaction.addToBackStack(null);
         } else if (id == R.id.nav_communities) {
             mLogger.trace("Selected Communities");
             //TODO go to communities screen
             transaction.replace(R.id.main_content, CommunitiesFragment.newInstance());
+            transaction.addToBackStack(null);
         } else if (id == R.id.nav_view) {
             mLogger.trace("Selected User");
             //TODO profile or login
@@ -140,5 +155,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
         mLogger.info("Received MapFragment interaction: {}", uri);
+    }
+
+    public void showGallery() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_content, ObservationGalleryFragment.newInstance());
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }

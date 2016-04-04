@@ -1,6 +1,7 @@
 package org.naturenet.data.model;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -9,6 +10,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
     setterVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Project {
+    @JsonIgnore
+    public static final String NODE_NAME = "activities";
+
     @JsonProperty("id")
     private String mProjectId;
     @JsonProperty("icon_url")

@@ -12,6 +12,8 @@
         android:layout_height="match_parent">
     </com.google.android.gms.maps.MapView>
 
+    <include layout="@layout/explore_button" />
+
     <View
         android:id="@+id/map_footer"
         android:layout_width="match_parent"

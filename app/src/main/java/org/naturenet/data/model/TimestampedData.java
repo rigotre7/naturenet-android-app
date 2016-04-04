@@ -30,7 +30,10 @@ public class TimestampedData implements Parcelable {
     @JsonProperty("updated_at")
     protected Map mUpdatedPlaceholder = ServerValue.TIMESTAMP;
 
+    protected TimestampedData() {}
+
     protected TimestampedData(Parcel in) {
+        //TODO
     }
 
     public static final Creator<TimestampedData> CREATOR = new Creator<TimestampedData>() {
@@ -65,5 +68,6 @@ public class TimestampedData implements Parcelable {
         if(isTimestamped) {
             dest.writeLong(mCreatedAt.longValue());
         }
+        //TODO
     }
 }

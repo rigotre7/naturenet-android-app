@@ -1,6 +1,6 @@
 package org.naturenet.data.model;
 
-import android.os.Parcelable;
+import android.os.Parcel;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -13,7 +13,7 @@ import java.util.Map;
         getterVisibility = JsonAutoDetect.Visibility.NONE,
         setterVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Idea {
+public class Idea extends TimestampedData {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("id")
@@ -32,4 +32,31 @@ public class Idea {
     private Map<String, Object> mLikes = null;
 
     public Idea() {}
+
+    public Idea(Parcel in) {
+        super(in);
+        //TODO
+    }
+
+    public static final Creator<Idea> CREATOR = new Creator<Idea>() {
+        @Override
+        public Idea createFromParcel(Parcel in) {
+            return new Idea(in);
+        }
+
+        @Override
+        public Idea[] newArray(int size) {
+            return new Idea[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        //TODO
+    }
 }

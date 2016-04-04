@@ -8,26 +8,37 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.Toast;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+import com.google.common.collect.Lists;
+
+import org.naturenet.BuildConfig;
 import org.naturenet.R;
+import org.naturenet.data.model.Project;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ProjectsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ProjectsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.List;
+
 public class ProjectsFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    private Logger mLogger = LoggerFactory.getLogger(ProjectsFragment.class);
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private ListView mProjectsListView = null;
+    private List<Project> mProjects = Lists.newArrayList();
+    private Firebase mFirebase = new Firebase(BuildConfig.FIREBASE_ROOT_URL);
 
     private OnFragmentInteractionListener mListener;
 
@@ -61,8 +72,10 @@ public class ProjectsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_projects, container, false);
+        View root = inflater.inflate(R.layout.fragment_projects, container, false);
+        mProjectsListView = (ListView) root.findViewById(R.id.projects_list);
+        readProjects();
+        return root;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -108,5 +121,25 @@ public class ProjectsFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private void readProjects() {
+        mLogger.info("Getting projects");
+        mFirebase.child(Project.NODE_NAME).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                mLogger.info("Got projects, count: {}", snapshot.getChildrenCount());
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    mProjects.add(child.getValue(Project.class));
+                }
+                mProjectsListView.setAdapter(new ProjectAdapter(getContext(), mProjects));
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                mLogger.error("Failed to read Projects: {}", firebaseError.getMessage());
+                Toast.makeText(ProjectsFragment.this.getContext(), "Could not get projects", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

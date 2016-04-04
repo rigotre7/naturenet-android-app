@@ -1,8 +1,5 @@
 package org.naturenet.data.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,35 +8,29 @@ import com.fasterxml.jackson.annotation.JsonProperty;
     getterVisibility = JsonAutoDetect.Visibility.NONE,
     setterVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PhotoCaptionContent implements Parcelable {
+public class PhotoCaptionContent {
+
+    @Override
+    public String toString() {
+        return "PhotoCaptionContent{" +
+                "mImageUrl='" + mImageUrl + '\'' +
+                ", mCaption='" + mCaption + '\'' +
+                '}';
+    }
+
     @JsonProperty("image")
-    private String mPhotoUrl;
-    @JsonProperty("description")
+    private String mImageUrl;
+    @JsonProperty("text")
     private String mCaption;
 
-    protected PhotoCaptionContent(Parcel in) {
-        mPhotoUrl = in.readString();
-        mCaption = in.readString();
+    protected PhotoCaptionContent() {}
+
+    public String getImageUrl() {
+        return mImageUrl;
     }
 
-    public static final Creator<PhotoCaptionContent> CREATOR = new Creator<PhotoCaptionContent>() {
-        @Override
-        public PhotoCaptionContent createFromParcel(Parcel in) {
-            return new PhotoCaptionContent(in);
-        }
-
-        @Override
-        public PhotoCaptionContent[] newArray(int size) {
-            return new PhotoCaptionContent[size];
-        }
-    };
-
-    public String getPhotoUrl() {
-        return mPhotoUrl;
-    }
-
-    public void setPhotoUrl(String mPhotoUrl) {
-        this.mPhotoUrl = mPhotoUrl;
+    public void setImageUrl(String mPhotoUrl) {
+        this.mImageUrl = mPhotoUrl;
     }
 
     public String getCaption() {
@@ -48,16 +39,5 @@ public class PhotoCaptionContent implements Parcelable {
 
     public void setCaption(String mCaption) {
         this.mCaption = mCaption;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mPhotoUrl);
-        dest.writeString(mCaption);
     }
 }

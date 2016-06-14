@@ -1,20 +1,300 @@
 <resources>
 
-    <!-- Base application theme. -->
+    <!-- Application Themes -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
-
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
-
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+    <!-- Application Themes -->
+
+    <!-- Splash Activity -->
+    <style name="splash_iV_logo">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:src">@drawable/splash_iv_logo</item>
+        <item name="android:scaleType">fitXY</item>
+    </style>
+    <!-- Splash Activity -->
+
+    <!-- Launch Fragment -->
+    <style name="launch_tV_what" parent="android:Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">@string/launch_tV_what_text</item>
+        <item name="android:textSize">@dimen/font_size_20</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+    </style>
+    <style name="launch_tV_whatPara" parent="android:Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">@string/launch_tV_whatPara_text</item>
+        <item name="android:textSize">@dimen/font_size_14</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:enabled">false</item>
+    </style>
+    <style name="launch_iV_whatLogo">
+        <item name="android:layout_width">96dp</item>
+        <item name="android:layout_height">96dp</item>
+        <item name="android:src">@drawable/what_is_naturenet_xxxhdpi</item>
+    </style>
+    <style name="launch_tV_bold" parent="android:Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/font_size_14</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="launch_tV_why" parent="android:Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">@string/launch_tV_why_text</item>
+        <item name="android:textSize">@dimen/font_size_20</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+    </style>
+    <style name="launch_iV_whyLogo">
+        <item name="android:layout_width">96dp</item>
+        <item name="android:layout_height">96dp</item>
+        <item name="android:src">@drawable/why_naturenet_xxxhdpi</item>
+    </style>
+    <style name="launch_tV_whyPara" parent="android:Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">@string/launch_tV_whyPara_text</item>
+        <item name="android:textSize">@dimen/font_size_14</item>
+    </style>
+    <style name="launch_iB_join" parent="android:Widget.ImageButton">
+        <item name="android:layout_width">333dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:src">@drawable/join_button_xxxhdpi</item>
+        <item name="android:scaleType">centerCrop</item>
+        <item name="android:background">@color/colorImageButton</item>
+    </style>
+    <!-- Launch Fragment -->
+
+    <!-- Consent Activity -->
+    <style name="consent_iB_back_appBar">
+        <item name="android:layout_width">20dp</item>
+        <item name="android:layout_height">20dp</item>
+        <item name="android:layout_alignParentStart">true</item>
+        <item name="android:layout_margin">15dp</item>
+        <item name="android:src">@drawable/consent_ib_back_appbar</item>
+    </style>
+    <!-- Consent Activity -->
+
+    <!-- Consent Fragment -->
+    <style name="consent_tV_create" parent="android:Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:text">@string/consent_tV_create_text</item>
+        <item name="android:textColor">@color/colorTheme</item>
+        <item name="android:textSize">@dimen/font_size_16</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+    </style>
+    <style name="consent_tV_para1" parent="android:Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">@string/consent_tV_para1_text</item>
+        <item name="android:textSize">@dimen/font_size_11</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+    </style>
+    <style name="consent_tV_para2" parent="android:Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">@string/consent_tV_para2_text</item>
+        <item name="android:textSize">@dimen/font_size_11</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+    </style>
+    <style name="consent_tV_para3" parent="android:Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">@string/consent_tV_para3_text</item>
+        <item name="android:textSize">@dimen/font_size_11</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="consent_cB" parent="android:Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:button">@drawable/consent_customised_checkbox</item>
+        <item name="android:textSize">@dimen/font_size_11</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+    </style>
+    <style name="consent_b_next" parent="android:Widget.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">25dp</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:minWidth">200dp</item>
+        <item name="android:text">@string/consent_b_next_text</item>
+        <item name="android:textColor">@color/colorTheme</item>
+        <item name="android:textSize">@dimen/font_size_11</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:background">@color/colorButton</item>
+        <item name="android:clickable">true</item>
+    </style>
+    <!-- Consent Fragment -->
+
+    <!-- Sign-Up Fragment -->
+    <style name="sign_up_tV_back" parent="android:Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentStart">true</item>
+        <item name="android:text">@string/sign_up_tV_back_text</item>
+        <item name="android:textSize">@dimen/font_size_16</item>
+        <item name="android:textColor">@color/colorTheme</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="sign_up_tV_create" parent="android:Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:text">@string/sign_up_tV_create_text</item>
+        <item name="android:textSize">@dimen/font_size_16</item>
+        <item name="android:textColor">@color/colorTheme</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="sign_up_iV_user">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerInParent">true</item>
+        <item name="android:src">@drawable/sign_up_iv_user</item>
+        <item name="android:adjustViewBounds">true</item>
+    </style>
+    <style name="sign_up_eT_userDetails" parent="android:Widget.EditText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:minWidth">250dp</item>
+        <item name="android:textSize">@dimen/font_size_12</item>
+        <item name="android:textColor">@color/colorTheme</item>
+        <item name="android:textColorHint">@color/colorTheme</item>
+        <item name="android:backgroundTint">@color/colorTheme</item>
+        <item name="android:padding">10dp</item>
+    </style>
+    <style name="sign_up_b_join" parent="android:Widget.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">25dp</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:minWidth">250dp</item>
+        <item name="android:text">@string/sign_up_b_join_text</item>
+        <item name="android:textColor">@color/colorTheme</item>
+        <item name="android:textSize">@dimen/font_size_12</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:background">@color/colorButton</item>
+        <item name="android:padding">5dp</item>
+    </style>
+    <!-- Sign-Up Fragment -->
+
+    <!--<style name="" parent="android:Widget.">-->
+        <!--<item name="android:"></item>-->
+    <!--</style>-->
+
+    <!-- Login Activity -->
+    <style name="login_iV_logo">
+        <item name="android:layout_width">240dp</item>
+        <item name="android:layout_height">80dp</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:src">@drawable/login_iv_logo</item>
+        <item name="android:scaleType">centerCrop</item>
+        <!--<item name="android:adjustViewBounds">true</item>-->
+    </style>
+    <style name="login_eT_userDetails" parent="android:Widget.EditText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:minWidth">250dp</item>
+        <item name="android:textSize">@dimen/font_size_12</item>
+        <item name="android:textColor">@color/colorTheme</item>
+        <item name="android:textColorHint">@color/colorTheme</item>
+        <item name="android:backgroundTint">@color/colorTheme</item>
+        <item name="android:padding">10dp</item>
+    </style>
+    <style name="login_b_signIn" parent="android:Widget.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">25dp</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:minWidth">200dp</item>
+        <item name="android:text">@string/login_b_signIn_text</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">@dimen/font_size_12</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:background">@color/colorTheme</item>
+        <item name="android:padding">5dp</item>
+    </style>
+    <style name="login_tV_forgot" parent="android:Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:text">@string/login_tV_forgot_text</item>
+        <item name="android:textSize">@dimen/font_size_12</item>
+        <item name="android:clickable">true</item>
+    </style>
+    <style name="login_tV_join" parent="android:Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:text">@string/login_tV_join_text</item>
+        <item name="android:textSize">@dimen/font_size_12</item>
+        <item name="android:textColor">@color/colorTheme</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:clickable">true</item>
+    </style>
+    <!-- Login Activity -->
+
+    <!-- Explore Fragment -->
+    <style name="explore_fB_observation">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentLeft">true</item>
+        <!--<item name="android:layout_gravity">bottom|left</item>-->
+        <item name="android:layout_margin">@dimen/fab_margin</item>
+        <item name="android:src">@drawable/main_fb_observation</item>
+        <item name="android:background">@drawable/circle</item>
+        <item name="android:backgroundTint">@color/colorTheme</item>
+    </style>
+    <style name="explore_fB_designIdea">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <!--<item name="android:layout_gravity">bottom|right</item>-->
+        <item name="android:layout_margin">@dimen/fab_margin</item>
+        <item name="android:src">@drawable/main_fb_designidea</item>
+        <item name="android:background">@drawable/circle</item>
+        <item name="android:backgroundTint">@color/colorTheme</item>
+    </style>
+    <!-- Explore Fragment -->
+
+    <!-- Projects Fragment -->
+    <style name="projects_fB_observation">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">bottom|start</item>
+        <item name="android:layout_margin">@dimen/fab_margin</item>
+        <item name="android:src">@drawable/main_fb_observation</item>
+        <item name="android:background">@drawable/circle</item>
+        <item name="android:backgroundTint">@color/colorTheme</item>
+    </style>
+    <style name="projects_fB_designIdea">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">bottom|end</item>
+        <item name="android:layout_margin">@dimen/fab_margin</item>
+        <item name="android:src">@drawable/main_fb_designidea</item>
+        <item name="android:background">@drawable/circle</item>
+        <item name="android:backgroundTint">@color/colorTheme</item>
+    </style>
+    <!-- Explore Fragment -->
 
 </resources>

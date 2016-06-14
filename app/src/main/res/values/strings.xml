@@ -1,5 +1,111 @@
 <resources>
+
+    <!-- Application -->
     <string name="app_name">NatureNet</string>
+    <!-- Application -->
+
+    <!-- Launch Fragment -->
+    <string name="launch_title">NatureNet</string>
+    <string name="launch_tV_what_text">What is NatureNet?</string>
+    <string name="launch_tV_whatPara_text">A community of citizen environmentalists whose members keep making it better.</string>
+    <string name="launch_tV_learn_text">LEARN about nature in your community</string>
+    <string name="launch_tV_share_text">SHARE your observations and ideas</string>
+    <string name="launch_tV_shape_text">SHAPE nature projects in your local community</string>
+    <string name="launch_tV_design_text">DESIGN this nature technology with your community</string>
+    <string name="launch_tV_why_text">Why join NatureNet?</string>
+    <string name="launch_tV_whyPara_text">Do you want to participate in a biodiversity-preserving project in your area? Or do you have an idea for a new project and want to get a community behind you? Join NatureNet today, and don’t just be a voice in the crowd: be part of a crowd with a voice!</string>
+    <!-- Launch Fragment -->
+
+    <!-- Consent Fragment -->
+    <string name="consent_title">Join NatureNet</string>
+    <string name="consent_tV_create_text">Create New Account</string>
+    <string name="consent_tV_para1_text">NatureNet is a community of citizen environmentalists whose members keep making it better. Active sites include the Anacostia Watershed in Washington, D.C. and Maryland, Reedy Creek Nature Center in Charlotte, North Carolina, Aspen Center for Environmental Studies in Aspen, Colorado, and your backyard!</string>
+    <string name="consent_tV_para2_text">This project is supported by the National Science Foundation under Grant No. IIS-1221513 and Grant No. 1423212 to the University of North Carolina at Charlotte, Grant No. 1423207 to the University of Maryland, and Grant No. 1423338 to the University of Colorado.</string>
+    <string name="consent_tV_para3_text">You are invited to participate in NatureNet, a research project being conducted by the researchers listed at http://research.nature-net.org/people.html. In order for us to collect and study the way people are using technology like NatureNet, we must have your consent.</string>
+    <string name="consent_cB_required1_text">(Required) I agree that any observations (photos) or comments I contribute to NatureNet may be publicly displayed on the web, mobile phone, or tabletop platforms that comprise NatureNet.</string>
+    <string name="consent_cB_required2_text">(Required) I agree to allow any comments, observations, and profile information that I choose to share with others via the online application to be visible to others who use the application at the same time or after me.</string>
+    <string name="consent_cB_optional1_text">(Optional) I agree to be videotaped/audiotaped during my participation in this study.</string>
+    <string name="consent_cB_optional2_text">(Optional) I agree to complete a short questionnaire during or after my participation in this study.</string>
+    <string name="consent_b_next_text">Next</string>
+    <!-- Consent Fragment -->
+
+    <!-- Alert Dialog -->
+    <string name="alert_tV_message_text">Please check the required fields to join</string>
+    <string name="alert_b_guest_text">Explore as a guest</string>
+    <string name="alert_b_cancel_text">Cancel</string>
+    <!-- Alert Dialog -->
+
+    <!-- Sign-Up Fragment -->
+    <string name="sign_up_title">Join NatureNet</string>
+    <string name="sign_up_tV_create_text">Create New Account</string>
+    <string name="sign_up_tV_back_text">&#60;&#60; Back</string>
+    <string name="sign_up_eT_userName_hint">User Name</string>
+    <string name="sign_up_eT_password_hint">Password</string>
+    <string name="sign_up_eT_name_hint">Name</string>
+    <string name="sign_up_eT_email_hint">Email Address</string>
+    <string name="sign_up_eT_affiliation_hint">Affiliation</string>
+    <string-array name="sign_up_list_affiliations">
+        <item>ACES</item>
+        <item>AWS</item>
+        <item>Reedy Creek</item>
+        <item>Elsewhere</item>
+    </string-array>
+    <string name="sign_up_b_join_text">Join</string>
+    <!-- Sign-Up Fragment -->
+
+    <!-- Navigation Panel -->
+    <string name="navigation_tV_guest_text">Guest</string>
+    <string name="navigation_b_signIn_text">Sign In</string>
+    <string name="navigation_b_join_text">Join NatureNet</string>
+    <string name="navigation_tV_explore_text">Explore</string>
+    <string name="navigation_tV_projects_text">Projects</string>
+    <string name="navigation_tV_design_ideas_text">Design Ideas</string>
+    <string name="navigation_tV_communities_text">Communities</string>
+    <string name="navigation_tV_logout_text">Logout</string>
+    <!-- Navigation Panel -->
+
+    <!-- Login Activity -->
+    <string name="login_title">Sign In</string>
+    <string name="login_eT_email_hint">Email</string>
+    <string name="login_eT_password_hint">Password</string>
+    <string name="login_b_signIn_text">Sign In</string>
+    <string name="login_tV_forgot_text">Forgot your password?</string>
+    <string name="login_tV_join_text">Join NatureNet</string>
+    <!-- Login Activity -->
+
+    <!-- Explore Fragment -->
+    <string name="explore_title">NatureNet</string>
+    <string name="explore_b_explore_text">Explore</string>
+    <string name="explore_menu_standardView">Standard View</string>
+    <string name="explore_menu_satelliteView">Satellite View</string>
+    <!-- Explore Fragment -->
+
+    <!-- Projects Fragment -->
+    <string name="projects_title">PROJECTS</string>
+    <!--<string name="projects_red_mountain">Red Mountain</string>-->
+    <!--<string name="projects_free_observation">Free Observation</string>-->
+    <!--<string name="projects_native_or_not">Native or Not?</string>-->
+    <!--<string name="projects_tracks">Tracks</string>-->
+    <!--<string name="projects_ask_a_naturalist">Ask a Naturalist</string>-->
+    <!--<string name="projects_snow_study">Snow Study</string>-->
+    <!--<string name="projects_signs_of_spring">Signs of Spring</string>-->
+    <!-- Projects Fragment -->
+
+    <!-- Design Ideas Fragment -->
+    <string name="designIdeas_designIdeas_title">DESIGN IDEAS</string>
+    <string name="designIdeas_designIdeas_tab">Design Ideas</string>
+    <string name="designIdeas_designIdeas_para_text">Your design ideas can be a new way of using NatureNet in your community, and new mobile technology for learning about sustainability or changes in the environment, or a new feature for the app.</string>
+    <string name="designIdeas_designChallenges_title">DESIGN CHALLENGES</string>
+    <string name="designIdeas_designChallenges_tab">Design Challenges</string>
+    <string name="designIdeas_designChallenges_para_text">A design challenge is a question - for example: Hoe can the NatureNet app collect temperature data?</string>
+    <string name="designIdeas_recentContributions">Recent Contributions</string>
+    <string name="designIdeas_noRecentContributions">No Recent Contributions</string>
+    <!-- Design Ideas Fragment -->
+
+    <!-- Communities Fragment -->
+    <string name="communities_title">COMMUNITIES</string>
+    <!-- Communities Fragment -->
+
     <string name="project_intro">You are invited to participate in NatureNet, a research project being conducted by the researchers listed at http://research.nature-net.org/people.html. In order for us to collect and study the way people are using technology like NatureNet, we must have your consent.</string>
     <string name="consent_header">In order for us to collect and study the way people are using technology like NatureNet, we must have your consent.</string>
     <string name="consent_display">I agree that any observations (photos) or comments I contribute to NatureNet may be publicly displayed on the web, mobile phone, or tabletop platforms that comprise NatureNet.</string>
@@ -8,20 +114,13 @@
     <string name="consent_survey">I agree to complete a short questionnaire during or after my participation in this study.</string>
     <string name="annotate_required">(Required)</string>
     <string name="annotate_optional">(Optional)</string>
-    <string name="hint_username">Username</string>
-    <string name="hint_name">Name</string>
-    <string name="hint_email">Email Address</string>
-    <string name="hint_password">4-digit PIN</string>
     <string name="details_prompt">Please provide your information to create an account.</string>
     <string-array name="user_affiliations">
         <item>ACES</item>
         <item>AWS</item>
         <item>Reedy Creek</item>
-        <item>Other</item>
+        <item>Elsewhere</item>
     </string-array>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="naturenet_prefs">NatureNetPreferences</string>
     <string name="sign_up">Join</string>
     <string name="email">Email</string>
@@ -121,4 +220,7 @@
     <string name="comment">Comment</string>
     <string name="like">Like</string>
     <string name="share">Share</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

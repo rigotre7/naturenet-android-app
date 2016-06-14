@@ -1,0 +1,74 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.naturenet.ui.SignUpFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/sign_up_tV_back"
+            style="@style/sign_up_tV_back" />
+
+        <TextView
+            android:layout_marginBottom="20dp"
+            android:id="@+id/sign_up_tV_create"
+            style="@style/sign_up_tV_create" />
+
+        <ImageView
+            android:layout_below="@+id/sign_up_tV_create"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/sign_up_iV_user"
+            style="@style/sign_up_iV_user"/>
+
+        <EditText
+            android:layout_below="@+id/sign_up_iV_user"
+            android:layout_marginBottom="5dp"
+            android:id="@+id/sign_up_eT_userName"
+            android:inputType="textPersonName"
+            android:hint="@string/sign_up_eT_userName_hint"
+            style="@style/sign_up_eT_userDetails" />
+
+        <EditText
+            android:layout_below="@+id/sign_up_eT_userName"
+            android:layout_marginBottom="5dp"
+            android:id="@+id/sign_up_eT_password"
+            android:inputType="textPassword"
+            android:hint="@string/sign_up_eT_password_hint"
+            style="@style/sign_up_eT_userDetails" />
+
+        <EditText
+            android:layout_below="@+id/sign_up_eT_password"
+            android:layout_marginBottom="5dp"
+            android:id="@+id/sign_up_eT_name"
+            android:inputType="textPersonName"
+            android:hint="@string/sign_up_eT_name_hint"
+            style="@style/sign_up_eT_userDetails" />
+
+        <EditText
+            android:layout_below="@+id/sign_up_eT_name"
+            android:layout_marginBottom="5dp"
+            android:id="@+id/sign_up_eT_email"
+            android:inputType="textEmailAddress"
+            android:hint="@string/sign_up_eT_email_hint"
+            style="@style/sign_up_eT_userDetails" />
+
+        <Spinner
+            android:layout_below="@+id/sign_up_eT_email"
+            android:layout_marginBottom="10dp"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/sign_up_s_affiliation" />
+
+        <Button
+            android:layout_below="@+id/sign_up_s_affiliation"
+            android:id="@+id/sign_up_b_join"
+            style="@style/sign_up_b_join" />
+
+    </RelativeLayout>
+
+</FrameLayout>

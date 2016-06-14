@@ -1,0 +1,71 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    tools:context="org.naturenet.ui.ConsentFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_marginBottom="10dp"
+            android:id="@+id/consent_tV_create"
+            style="@style/consent_tV_create" />
+
+        <LinearLayout
+            android:layout_marginBottom="15dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/consent_tV_create"
+            android:id="@+id/linearlayout"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_marginBottom="5dp"
+                android:id="@+id/consent_tV_para1"
+                style="@style/consent_tV_para1" />
+
+            <TextView
+                android:layout_marginBottom="5dp"
+                android:id="@+id/consent_tV_para2"
+                style="@style/consent_tV_para2" />
+
+            <TextView
+                android:layout_marginBottom="5dp"
+                android:id="@+id/consent_tV_para3"
+                style="@style/consent_tV_para3" />
+
+            <CheckBox
+                android:layout_marginBottom="2dp"
+                android:id="@+id/consent_cB_upload"
+                android:text="@string/consent_cB_required1_text"
+                style="@style/consent_cB" />
+
+            <CheckBox
+                android:layout_marginBottom="2dp"
+                android:id="@+id/consent_cB_share"
+                android:text="@string/consent_cB_required2_text"
+                style="@style/consent_cB" />
+
+            <CheckBox
+                android:layout_marginBottom="2dp"
+                android:id="@+id/consent_cB_recording"
+                android:text="@string/consent_cB_optional1_text"
+                style="@style/consent_cB" />
+
+            <CheckBox
+                android:id="@+id/consent_cB_survey"
+                android:text="@string/consent_cB_optional2_text"
+                style="@style/consent_cB" />
+        </LinearLayout>
+
+        <Button
+            android:layout_below="@+id/linearlayout"
+            android:id="@+id/consent_b_next"
+            style="@style/consent_b_next" />
+
+    </RelativeLayout>
+
+</FrameLayout>

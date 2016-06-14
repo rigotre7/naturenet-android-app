@@ -16,10 +16,9 @@
         android:duplicateParentState="true"
         android:layout_width="30dp"
         android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_menu_add"
         android:layout_marginStart="3dp"
-        android:layout_marginLeft="3dp"
-        />
+        android:layout_marginLeft="3dp" />
+    <!--android:src="@android:drawable/ic_menu_add"-->
 
     <TextView
         android:duplicateParentState="true"

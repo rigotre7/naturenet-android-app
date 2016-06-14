@@ -1,0 +1,138 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp"
+    tools:context="org.naturenet.LaunchFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="5dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical|left">
+
+                    <TextView
+                        android:id="@+id/launch_tV_what"
+                        style="@style/launch_tV_what" />
+
+                    <TextView
+                        android:id="@+id/launch_tV_whatPara"
+                        style="@style/launch_tV_whatPara"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="2.5"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical|left">
+
+                    <ImageView
+                        android:id="@+id/launch_iV_whatLogo"
+                        style="@style/launch_iV_whatLogo" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/launch_tV_learn"
+                    android:text="@string/launch_tV_learn_text"
+                    style="@style/launch_tV_bold" />
+
+                <TextView
+                    android:id="@+id/launch_tV_share"
+                    android:text="@string/launch_tV_share_text"
+                    style="@style/launch_tV_bold" />
+
+                <TextView
+                    android:id="@+id/launch_tV_shape"
+                    android:text="@string/launch_tV_shape_text"
+                    style="@style/launch_tV_bold" />
+
+                <TextView
+                    android:id="@+id/launch_tV_design"
+                    android:text="@string/launch_tV_design_text"
+                    style="@style/launch_tV_bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical|left">
+
+                    <TextView
+                        android:id="@+id/launch_tV_why"
+                        style="@style/launch_tV_why" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="2.5"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical|left">
+
+                    <ImageView
+                        android:id="@+id/launch_iV_whyLogo"
+                        style="@style/launch_iV_whyLogo" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/launch_tV_whyPara"
+                    style="@style/launch_tV_whyPara"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/launch_iB_join"
+                    style="@style/launch_iB_join" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>

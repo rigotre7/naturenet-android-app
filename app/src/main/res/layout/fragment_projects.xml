@@ -9,4 +9,13 @@
         android:layout_height="wrap_content"
         android:id="@+id/projects_list"
         android:layout_gravity="center"/>
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/projects_fB_observation"-->
+        <!--style="@style/projects_fB_observation"/>-->
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/projects_fB_designIdea"-->
+        <!--style="@style/projects_fB_designIdea"/>-->
+
 </FrameLayout>

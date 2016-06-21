@@ -15,59 +15,26 @@ import java.util.Map;
     getterVisibility = JsonAutoDetect.Visibility.NONE,
     setterVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TimestampedData implements Parcelable {
+public class TimestampedData {
     @JsonProperty("created_at")
-    protected Long mCreatedAt = null;
-
+    protected Object mCreatedAt = ServerValue.TIMESTAMP;
     @JsonProperty("updated_at")
-    protected Long mUpdatedAt = null;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonProperty("created_at")
-    protected Map mCreatedPlaceholder = ServerValue.TIMESTAMP;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonProperty("updated_at")
-    protected Map mUpdatedPlaceholder = ServerValue.TIMESTAMP;
+    protected Object mUpdatedAt = ServerValue.TIMESTAMP;
 
     protected TimestampedData() {}
 
-    protected TimestampedData(Parcel in) {
-        //TODO
+    public void setCreatedAtMillis(Long time) {
+        mCreatedAt = time;
     }
-
-    public static final Creator<TimestampedData> CREATOR = new Creator<TimestampedData>() {
-        @Override
-        public TimestampedData createFromParcel(Parcel in) {
-            return new TimestampedData(in);
-        }
-
-        @Override
-        public TimestampedData[] newArray(int size) {
-            return new TimestampedData[size];
-        }
-    };
+    
+    public void setUpdatedAtMillis(Long time) {
+        mUpdatedAt = time;
+    }
 
     public Long getCreatedAtMillis() {
         return ( mCreatedAt instanceof Long ) ? (Long) mCreatedAt : null;
     }
-
     public Long getUpdatedAtMillis() {
         return ( mUpdatedAt instanceof Long ) ? (Long) mUpdatedAt : null;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        boolean isTimestamped = mCreatedAt instanceof Long;
-        dest.writeByte(isTimestamped ? (byte) 0 : (byte) 1);
-        if(isTimestamped) {
-            dest.writeLong(mCreatedAt.longValue());
-        }
-        //TODO
     }
 }

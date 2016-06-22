@@ -12,7 +12,11 @@
         android:layout_height="match_parent"/>
 
     <android.support.design.widget.VisibilityAwareImageButton
-        android:id="@+id/consent_iB_back_appBar"
-        style="@style/consent_iB_back_appBar"/>
+        android:id="@+id/consent_ib"
+        android:layout_width="@dimen/consent_ib_width"
+        android:layout_height="@dimen/consent_ib_height"
+        android:layout_alignParentStart="true"
+        android:layout_margin="@dimen/consent_margin"
+        style="@style/consent_ib"/>
 
 </RelativeLayout>

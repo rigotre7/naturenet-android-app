@@ -6,7 +6,8 @@
     tools:context="org.naturenet.ui.SplashActivity">
 
     <ImageView
-        android:id="@+id/splash_iV_logo"
-        style="@style/splash_iV_logo" />
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        style="@style/splash_iv" />
 
 </LinearLayout>

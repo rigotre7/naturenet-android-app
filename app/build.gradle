@@ -4,18 +4,18 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support:support-annotations:23.2.1'
-    compile 'com.android.support:appcompat-v7:23.2.1'
-    compile 'com.android.support:support-v4:23.2.1'
-    compile 'com.android.support:design:23.2.1'
-//    compile 'com.android.support:appcompat-v7:24.0.0-alpha2'
+    //    compile 'com.android.support:appcompat-v7:24.0.0-alpha2'
 //    compile 'com.android.support:support-v4:24.0.0-alpha2'
 //    compile 'com.android.support:design:24.0.0-alpha2'
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
+    compile 'com.android.support:appcompat-v7:23.2.1'
+    compile 'com.android.support:support-v4:23.2.1'
+    compile 'com.android.support:design:23.2.1'
     compile 'com.firebase:firebase-client-android:2.5.2'
     compile 'com.google.guava:guava:19.0'
     compile 'org.slf4j:slf4j-android:1.7.16'
-    compile 'com.google.android.gms:play-services-maps:8.4.0'
+    compile 'com.google.android.gms:play-services-maps:9.0.2'
     compile 'com.squareup.picasso:picasso:2.5.2'
 }
 

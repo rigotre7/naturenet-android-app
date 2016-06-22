@@ -15,7 +15,6 @@ import java.util.Map;
         setterVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Observation {
-
     @Override
     public String toString() {
         return "Observation{" +
@@ -26,11 +25,9 @@ public class Observation {
                 ", mData=" + mData +
                 '}';
     }
-
     public static final String NODE_NAME = "observations";
     private static final int LATITUDE = 0;
     private static final int LONGITUDE = 1;
-
     public Observation() {}
 
     /**

@@ -18,7 +18,7 @@ public class LaunchFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         final MainActivity main = ((MainActivity)  this.getActivity());
-        main.findViewById(R.id.launch_iB_join).setOnClickListener(new View.OnClickListener() {
+        main.findViewById(R.id.launch_ib_join).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 main.goToConsentActivity();

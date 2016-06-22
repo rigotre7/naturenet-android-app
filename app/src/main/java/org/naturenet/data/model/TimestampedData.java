@@ -1,73 +1,44 @@
 package org.naturenet.data.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.firebase.client.ServerValue;
 
 import java.util.Map;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY,
-    getterVisibility = JsonAutoDetect.Visibility.NONE,
-    setterVisibility = JsonAutoDetect.Visibility.NONE)
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TimestampedData implements Parcelable {
+public class TimestampedData {
     @JsonProperty("created_at")
     protected Long mCreatedAt = null;
-
     @JsonProperty("updated_at")
     protected Long mUpdatedAt = null;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonProperty("created_at")
-    protected Map mCreatedPlaceholder = ServerValue.TIMESTAMP;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonProperty("updated_at")
-    protected Map mUpdatedPlaceholder = ServerValue.TIMESTAMP;
-
-    protected TimestampedData() {}
-
-    protected TimestampedData(Parcel in) {
-        //TODO
+    public TimestampedData() {
+        setmCreatedAt(getTimestampLong());
+        setmUpdatedAt(getTimestampLong());
     }
+    public Long getTimestampLong() {
+        Map<String, String> timestamp = ServerValue.TIMESTAMP;
+        Long timestampLong = null;
+        // Code for getting a Long type value into 'timestampLong' from the Map object 'timestamp'
 
-    public static final Creator<TimestampedData> CREATOR = new Creator<TimestampedData>() {
-        @Override
-        public TimestampedData createFromParcel(Parcel in) {
-            return new TimestampedData(in);
-        }
+        if (timestampLong == null) timestampLong = 10000000l; // Default value to test
 
-        @Override
-        public TimestampedData[] newArray(int size) {
-            return new TimestampedData[size];
-        }
-    };
-
-    public Long getCreatedAtMillis() {
-        return ( mCreatedAt instanceof Long ) ? (Long) mCreatedAt : null;
+        return timestampLong;
     }
-
-    public Long getUpdatedAtMillis() {
-        return ( mUpdatedAt instanceof Long ) ? (Long) mUpdatedAt : null;
+    public Long getmCreatedAt() {
+        return mCreatedAt;
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
+    public void setmCreatedAt(Long mCreatedAt) {
+        this.mCreatedAt = mCreatedAt;
     }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        boolean isTimestamped = mCreatedAt instanceof Long;
-        dest.writeByte(isTimestamped ? (byte) 0 : (byte) 1);
-        if(isTimestamped) {
-            dest.writeLong(mCreatedAt.longValue());
-        }
-        //TODO
+    public Long getmUpdatedAt() {
+        return mUpdatedAt;
+    }
+    public void setmUpdatedAt(Long mUpdatedAt) {
+        this.mUpdatedAt = mUpdatedAt;
     }
 }

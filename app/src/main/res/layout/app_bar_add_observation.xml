@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="org.naturenet.ui.MainActivity">
+    tools:context="org.naturenet.ui.AddObservationActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -22,15 +22,32 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
             <TextView
-                android:id="@+id/app_bar_main_tv"
+                android:id="@+id/toolbar_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|left"
+                android:layout_marginLeft="@dimen/add_observation_margin_left"
+                style="@style/add_observation_toolbar_back" />
+
+            <TextView
+                android:id="@+id/toolbar_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                style="@style/app_bar_main_tv" />
+                style="@style/add_observation_toolbar_title" />
+
+            <TextView
+                android:id="@+id/toolbar_send"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|right"
+                android:layout_marginRight="@dimen/add_observation_margin_right"
+                style="@style/add_observation_toolbar_send" />
+
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main"/>
+    <include layout="@layout/content_add_observation"/>
 
 </android.support.design.widget.CoordinatorLayout>

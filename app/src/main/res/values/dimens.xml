@@ -1,12 +1,155 @@
 <resources>
+
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="nav_header_vertical_spacing">16dp</dimen>
-    <dimen name="nav_header_height">200dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
+
+    <!-- Font Size -->
     <dimen name="font_size_11">11dp</dimen>
     <dimen name="font_size_12">12dp</dimen>
     <dimen name="font_size_14">14dp</dimen>
     <dimen name="font_size_16">16dp</dimen>
     <dimen name="font_size_20">20dp</dimen>
+    <!-- Font Size -->
+
+    <!-- Splash Activity -->
+    <!-- Splash Activity -->
+
+    <!-- Consent Activity -->
+    <dimen name="consent_ib_width">20dp</dimen>
+    <dimen name="consent_ib_height">20dp</dimen>
+    <dimen name="consent_margin">15dp</dimen>
+    <!-- Consent Activity -->
+
+    <!-- Consent Fragment -->
+    <dimen name="consent_rl_margin">16dp</dimen>
+    <dimen name="consent_title_margin_bottom">20dp</dimen>
+    <dimen name="consent_margin_bottom">10dp</dimen>
+    <dimen name="consent_cb_padding_left">10dp</dimen>
+    <dimen name="consent_cb_margin_bottom">4dp</dimen>
+    <dimen name="next_b_height">25dp</dimen>
+    <dimen name="next_min_width">200dp</dimen>
+    <!-- Consent Fragment -->
+
+    <!-- Sign-Up Fragment -->
+    <dimen name="sign_up_rl_margin">16dp</dimen>
+    <dimen name="sign_up_title_margin_bottom">30dp</dimen>
+    <dimen name="sign_up_margin_bottom">10dp</dimen>
+    <dimen name="sign_up_user_details_min_width">250dp</dimen>
+    <dimen name="sign_up_user_details_padding">10dp</dimen>
+    <dimen name="join_b_width">250dp</dimen>
+    <dimen name="join_b_height">25dp</dimen>
+    <dimen name="join_b_padding">5dp</dimen>
+    <!-- Sign-Up Fragment -->
+
+    <!-- Login Activity -->
+    <!-- Login Activity -->
+
+    <!-- Login Fragment -->
+    <dimen name="login_iv_width">240dp</dimen>
+    <dimen name="login_iv_height">80dp</dimen>
+    <dimen name="login_iv_margin_top">100dp</dimen>
+    <dimen name="login_margin_bottom">25dp</dimen>
+    <dimen name="login_user_details_margin_bottom">10dp</dimen>
+    <dimen name="login_user_details_min_width">250dp</dimen>
+    <dimen name="login_user_details_padding">10dp</dimen>
+    <dimen name="login_b_width">250dp</dimen>
+    <dimen name="login_b_height">25dp</dimen>
+    <dimen name="login_b_padding">5dp</dimen>
+    <!-- Login Fragment -->
+
+    <!-- Forgot Fragment -->
+    <!-- Forgot Fragment -->
+
+    <!-- Add Observation Activity -->
+    <dimen name="add_observation_ib_width">20dp</dimen>
+    <dimen name="add_observation_ib_height">20dp</dimen>
+    <dimen name="add_observation_margin">15dp</dimen>
+    <!-- Add Observation Activity -->
+
+    <!-- Add Observation Fragment -->
+    <dimen name="add_observation_margin_top">5dp</dimen>
+    <dimen name="add_observation_margin_left">10dp</dimen>
+    <dimen name="add_observation_margin_right">10dp</dimen>
+    <dimen name="add_observation_margin_bottom">5dp</dimen>
+    <dimen name="add_observation_iv_margin_bottom">10dp</dimen>
+    <dimen name="add_observation_tv_height">30dp</dimen>
+    <dimen name="add_observation_et_height">100dp</dimen>
+    <dimen name="add_observation_b_height">50dp</dimen>
+    <!-- Add Observation Fragment -->
+
+    <!-- Project Activity -->
+    <dimen name="project_margin">10dp</dimen>
+    <dimen name="project_margin_top">5dp</dimen>
+    <dimen name="project_margin_left">10dp</dimen>
+    <dimen name="project_margin_right">10dp</dimen>
+    <dimen name="project_rl_margin_top">10dp</dimen>
+    <dimen name="project_rl_margin_left">5dp</dimen>
+    <dimen name="project_rl_margin_right">5dp</dimen>
+    <dimen name="project_iv_status_width">20dp</dimen>
+    <dimen name="project_iv_status_height">20dp</dimen>
+    <dimen name="project_iv_icon_width">40dp</dimen>
+    <dimen name="project_iv_icon_height">40dp</dimen>
+    <!-- Project Activity -->
+
+    <!-- Main Activity -->
+    <!-- Main Activity -->
+
+    <!-- Navigation Panel -->
+    <dimen name="nav_header_vertical_spacing">16dp</dimen>
+    <dimen name="nav_header_height">200dp</dimen>
+    <dimen name="nav_margin_bottom">5dp</dimen>
+    <dimen name="nav_b_width">120dp</dimen>
+    <dimen name="nav_b_height">25dp</dimen>
+    <!-- Navigation Panel -->
+
+    <!-- Launch Fragment -->
+    <dimen name="launch_rl_margin">5dp</dimen>
+    <dimen name="launch_rl_padding">10dp</dimen>
+    <dimen name="launch_margin_bottom">16dp</dimen>
+    <dimen name="launch_what_margin_bottom">4dp</dimen>
+    <dimen name="launch_why_margin_bottom">10dp</dimen>
+    <dimen name="launch_para_margin_bottom">25dp</dimen>
+    <dimen name="image_min_height">96dp</dimen>
+    <dimen name="join_ib_width">333dp</dimen>
+    <dimen name="join_ib_height">50dp</dimen>
+    <!-- Launch Fragment -->
+
+    <!-- Floating Buttons -->
+    <dimen name="floating_buttons_margin">6dp</dimen>
+    <dimen name="floating_buttons_width">48dp</dimen>
+    <dimen name="floating_buttons_height">48dp</dimen>
+    <!-- Floating Buttons -->
+
+    <!-- Add Observation Dialog -->
+    <dimen name="dialog_add_observation_ll_padding">20dp</dimen>
+    <dimen name="dialog_add_observation_margin_bottom">10dp</dimen>
+    <dimen name="dialog_add_observation_b_margin_bottom">10dp</dimen>
+    <dimen name="dialog_add_observation_b_width">100dp</dimen>
+    <dimen name="dialog_add_observation_b_height">30dp</dimen>
+    <dimen name="dialog_add_observation_gv_vertical_spacing">4dp</dimen>
+    <dimen name="dialog_add_observation_gv_horizontal_spacing">4dp</dimen>
+    <!-- Add Observation Dialog -->
+
+    <!-- Add Design Idea Dialog -->
+    <dimen name="dialog_add_design_idea_ll_padding">20dp</dimen>
+    <dimen name="dialog_add_design_idea_margin_bottom">10dp</dimen>
+    <dimen name="dialog_add_design_idea_iv_width">25dp</dimen>
+    <dimen name="dialog_add_design_idea_iv_height">25dp</dimen>
+    <dimen name="dialog_add_design_idea_tv_padding_left">8dp</dimen>
+    <dimen name="dialog_add_design_idea_b_width">160dp</dimen>
+    <dimen name="dialog_add_design_idea_b_height">25dp</dimen>
+    <!-- Add Design Idea Dialog -->
+
+    <!-- Explore Fragment -->
+    <!-- Explore Fragment -->
+
+    <!-- Projects Fragment -->
+    <!-- Projects Fragment -->
+
+    <!-- Design Ideas Fragment -->
+    <!-- Design Ideas Fragment -->
+
+    <!-- Communities Fragment -->
+    <!-- Communities Fragment -->
+
 </resources>

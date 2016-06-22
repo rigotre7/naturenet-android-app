@@ -1,13 +1,12 @@
 package org.naturenet.ui;
 
-import android.content.Context;
-import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -26,119 +25,51 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 public class ProjectsFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
+    MainActivity main;
     private Logger mLogger = LoggerFactory.getLogger(ProjectsFragment.class);
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private ListView mProjectsListView = null;
     private List<Project> mProjects = Lists.newArrayList();
     private Firebase mFirebase = new Firebase(BuildConfig.FIREBASE_ROOT_URL);
-
-    private OnFragmentInteractionListener mListener;
-
-    public ProjectsFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment ProjectsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+    public ProjectsFragment() {}
     public static ProjectsFragment newInstance() {
         ProjectsFragment fragment = new ProjectsFragment();
-//        Bundle args = new Bundle();
-//        fragment.setArguments(args);
         return fragment;
     }
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_projects, container, false);
+        main = ((MainActivity) getActivity());
         mProjectsListView = (ListView) root.findViewById(R.id.projects_list);
         readProjects();
         return root;
     }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.projects);
+        mProjectsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                main.goToProjectActivity(mProjects.get(position));
+            }
+        });
     }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
     private void readProjects() {
         mLogger.info("Getting projects");
         mFirebase.child(Project.NODE_NAME).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 mLogger.info("Got projects, count: {}", snapshot.getChildrenCount());
-                for (DataSnapshot child : snapshot.getChildren()) {
+                for(DataSnapshot child : snapshot.getChildren())
                     mProjects.add(child.getValue(Project.class));
-                }
-                mProjectsListView.setAdapter(new ProjectAdapter(getContext(), mProjects));
+                if (mProjects.size() != 0)
+                    mProjectsListView.setAdapter(new ProjectAdapter(main, mProjects));
             }
-
             @Override
             public void onCancelled(FirebaseError firebaseError) {
                 mLogger.error("Failed to read Projects: {}", firebaseError.getMessage());
-                Toast.makeText(ProjectsFragment.this.getContext(), "Could not get projects", Toast.LENGTH_SHORT).show();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    Toast.makeText(ProjectsFragment.this.getContext(), "Could not get projects", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

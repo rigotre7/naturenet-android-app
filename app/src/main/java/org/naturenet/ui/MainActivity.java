@@ -2,47 +2,61 @@ package org.naturenet.ui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.NavUtils;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 import com.google.android.gms.maps.MapFragment;
 
 import org.naturenet.BuildConfig;
 import org.naturenet.R;
+import org.naturenet.data.model.Project;
 import org.naturenet.data.model.Users;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-//    static String FIREBASE_ENDPOINT = BuildConfig.FIREBASE_ROOT_URL;
-    static String FIREBASE_ENDPOINT = "https://naturenet-staging.firebaseio.com/";
-//    static String FIREBASE_ENDPOINT = "https://naturenet.firebaseio.com/";
+    static String FIREBASE_ENDPOINT = BuildConfig.FIREBASE_ROOT_URL;
     static String FRAGMENT_TAG_LAUNCH = "launch_fragment";
     static String FRAGMENT_TAG_EXPLORE = "explore_fragment";
     static String FRAGMENT_TAG_PROJECTS = "projects_fragment";
     static String FRAGMENT_TAG_DESIGNIDEAS = "designideas_fragment";
     static String FRAGMENT_TAG_COMMUNITIES = "communities_fragment";
-    TextView toolbar_title;
+    static String KEY_CONSENT = "key_consent";
+    static String KEY_SIGNIN = "key_signin";
+    static String KEY_JOIN = "key_join";
+    static String GUEST = "guest";
+    static String JOIN = "join";
+    static String EMPTY = "";
     DrawerLayout drawer;
     String key_consent, key_join;
+    String[] signed_user;
     Button sign_in, join;
-    TextView display_name, affiliation;
+    TextView toolbar_title, display_name, affiliation;
     MenuItem logout;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(EMPTY);
         setSupportActionBar(toolbar);
-        toolbar_title = (TextView) findViewById(R.id.main_tB);
+        toolbar_title = (TextView) findViewById(R.id.app_bar_main_tv);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -53,12 +67,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         logout.setVisible(false);
         this.invalidateOptionsMenu();
         View header = navigationView.getHeaderView(0);
-        sign_in = (Button) header.findViewById(R.id.navigation_b_sign_in);
-        join = (Button) header.findViewById(R.id.navigation_b_join);
-        display_name = (TextView) header.findViewById(R.id.navigation_tv_display_name);
-        affiliation = (TextView) header.findViewById(R.id.navigation_tv_affiliation);
-        display_name.setText("");
-        affiliation.setText("");
+        sign_in = (Button) header.findViewById(R.id.nav_b_sign_in);
+        join = (Button) header.findViewById(R.id.nav_b_join);
+        display_name = (TextView) header.findViewById(R.id.nav_tv_display_name);
+        affiliation = (TextView) header.findViewById(R.id.nav_tv_affiliation);
+        display_name.setText(EMPTY);
+        affiliation.setText(EMPTY);
         sign_in.setVisibility(View.VISIBLE);
         join.setVisibility(View.VISIBLE);
         display_name.setVisibility(View.GONE);
@@ -79,6 +93,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     @Override
     public void onBackPressed() {
+//        if(getFragmentManager().findFragmentByTag(FRAGMENT_TAG_LAUNCH).isVisible()) {
+//
+//        } else if(getFragmentManager().findFragmentByTag(FRAGMENT_TAG_EXPLORE).isVisible()) {
+//
+//        } else if(getFragmentManager().findFragmentByTag(FRAGMENT_TAG_PROJECTS).isVisible()) {
+//
+//        } else if(getFragmentManager().findFragmentByTag(FRAGMENT_TAG_DESIGNIDEAS).isVisible()) {
+//
+//        } else if(getFragmentManager().findFragmentByTag(FRAGMENT_TAG_COMMUNITIES).isVisible()) {
+//
+//        } else
+//            super.onBackPressed();
         if(getFragmentManager().getBackStackEntryCount() > 0)
             getFragmentManager().popBackStack();
         else
@@ -95,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_projects:
                 goToProjectsFragment();
                 break;
-            case R.id.nav_ideas:
+            case R.id.nav_design_ideas:
                 goToDesignIdeasFragment();
                 break;
             case R.id.nav_communities:
@@ -113,12 +139,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void goToLoginActivity() {
         startActivityForResult(new Intent(this, LoginActivity.class), 2);
     }
-//    public void showGallery() {
+    public void showGallery() {
 //        transaction = getSupportFragmentManager().beginTransaction();
 //        transaction.replace(R.id.main_content, ObservationGalleryFragment.newInstance());
 //        transaction.addToBackStack(null);
 //        transaction.commit();
-//    }
+    }
     public void goToLaunchFragment() {
         toolbar_title.setText(R.string.launch_title);
         getFragmentManager().
@@ -135,9 +161,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toolbar_title.setText(R.string.explore_title);
         getFragmentManager().
                 beginTransaction().
-                replace(R.id.fragment_container, new MapFragment(), FRAGMENT_TAG_EXPLORE).
+                replace(R.id.fragment_container, new ExploreFragment(), FRAGMENT_TAG_EXPLORE).
                 addToBackStack(null).
                 commit();
+    }
+    public void goToAddObservationActivity(String img) {
+        Intent i = new Intent(this, AddObservationActivity.class);
+        i.putExtra("image", img);
+        startActivityForResult(i, 3);
+        overridePendingTransition(R.anim.slide_up, R.anim.stay);
     }
     public void goToProjectsFragment() {
         toolbar_title.setText(R.string.projects_title);
@@ -147,8 +179,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 addToBackStack(null).
                 commit();
     }
+    public void goToProjectActivity(Project p) {
+        Intent i = new Intent(this, ProjectActivity.class);
+        i.putExtra("project", p);
+        startActivity(i);
+        overridePendingTransition(R.anim.slide_up, R.anim.stay);
+    }
     public void goToDesignIdeasFragment() {
-        toolbar_title.setText(R.string.designIdeas_designIdeas_title);
+        toolbar_title.setText(R.string.design_ideas_title_design_ideas);
         getFragmentManager().
                 beginTransaction().
                 replace(R.id.fragment_container, new IdeasFragment(), FRAGMENT_TAG_DESIGNIDEAS).
@@ -168,36 +206,50 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch(requestCode) {
             case(1): {
                 if(resultCode == Activity.RESULT_OK) {
-                    key_consent = data.getStringExtra("key_consent");
-                    if(key_consent.equals("guest")) drawer.openDrawer(GravityCompat.START);
+                    key_consent = data.getStringExtra(KEY_CONSENT);
+                    if(key_consent.equals(GUEST)) drawer.openDrawer(GravityCompat.START);
                 }
                 break;
             }
             case(2): {
                 if(resultCode == Activity.RESULT_OK) {
-                    key_join = data.getStringExtra("key_join");
-                    if(key_join.equals("join")) goToConsentActivity();
+                    key_join = data.getStringExtra(KEY_JOIN);
+                    if(key_join.equals(JOIN)) goToConsentActivity();
                     else {
-                        Users user = (Users) data.getExtras().getSerializable("key_signin");
+                        signed_user = data.getStringArrayExtra(KEY_SIGNIN);
                         logout.setVisible(true);
                         this.supportInvalidateOptionsMenu();
-                        display_name.setText(user.getDisplay_name());
-                        affiliation.setText(user.getAffiliation());
+                        display_name.setText(signed_user[1]);
+                        affiliation.setText(signed_user[2]);
                         sign_in.setVisibility(View.GONE);
                         join.setVisibility(View.GONE);
                         display_name.setVisibility(View.VISIBLE);
                         affiliation.setVisibility(View.VISIBLE);
+                        goToExploreFragment();
+                        drawer.openDrawer(GravityCompat.START);
                     }
+                }
+                break;
+            }
+            case(3): {
+                if(resultCode == Activity.RESULT_OK) {
+
                 }
                 break;
             }
         }
     }
     public void logout() {
+        if (signed_user==null) {
+            signed_user = new String[3];
+        }
+        signed_user[0] = EMPTY;
+        signed_user[1] = EMPTY;
+        signed_user[2] = EMPTY;
         logout.setVisible(false);
         this.invalidateOptionsMenu();
-        display_name.setText("");
-        affiliation.setText("");
+        display_name.setText(EMPTY);
+        affiliation.setText(EMPTY);
         sign_in.setVisibility(View.VISIBLE);
         join.setVisibility(View.VISIBLE);
         display_name.setVisibility(View.GONE);

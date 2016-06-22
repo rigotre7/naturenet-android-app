@@ -1,98 +1,70 @@
 package org.naturenet.data.model;
 
-import java.io.Serializable;
-import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Users implements Serializable {
-    private String email, password, uid, full_name, display_name, affiliation, avatar;
-    Map<String, String> created_at, updated_at;
+import java.io.Serializable;
+
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        setterVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Users extends TimestampedData implements Serializable {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("id")
+    private String mId = null;
+    @JsonProperty("display_name")
+    private String mDisplayName = null;
+    @JsonProperty("affiliation")
+    private String mAffiliation = null;
+    @JsonProperty("avatar")
+    private String mAvatar = null;
+    @JsonProperty("bio")
+    private String mBio = null;
+    @JsonProperty("latest_contribution")
+    private Long mLatestContribution = null;
     public Users() {}
-    public Users(String email, String password, String uid, String full_name, String display_name, String affiliation, String avatar) {
-        setEmail(email);
-        setPassword(password);
-        setUid(uid);
-        setFull_name(full_name);
-        setDisplay_name(display_name);
-        setAffiliation(affiliation);
-        setAvatar(avatar);
+    public Users(String mId, String mDisplayName, String mAffiliation) {
+        this.mId = mId;
+        this.mDisplayName = mDisplayName;
+        this.mAffiliation = mAffiliation;
     }
-    public Users(String email, String password, String uid, String full_name, String display_name, String affiliation, Map<String, String> timestamp) {
-        setEmail(email);
-        setPassword(password);
-        setUid(uid);
-        setFull_name(full_name);
-        setDisplay_name(display_name);
-        setAffiliation(affiliation);
-        setCreated_at(timestamp);
-        setUpdated_at(timestamp);
-        setAvatar("Default");
+    public String getmId() {
+        return mId;
     }
-    @Override
-    public String toString() {
-        return "Users{" +
-                "email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", uid='" + uid + '\'' +
-                ", full_name='" + full_name + '\'' +
-                ", display_name='" + display_name + '\'' +
-                ", affiliation='" + affiliation + '\'' +
-                ", avatar='" + avatar + '\'' +
-                ", created_at=" + created_at +
-                ", updated_at=" + updated_at +
-                '}';
+    public void setmId(String mId) {
+        this.mId = mId;
     }
-    public String getEmail() {
-        return email;
+    public String getmDisplayName() {
+        return mDisplayName;
     }
-    public String getPassword() {
-        return password;
+    public void setmDisplayName(String mDisplayName) {
+        this.mDisplayName = mDisplayName;
     }
-    public String getUid() {
-        return uid;
+    public String getmAffiliation() {
+        return mAffiliation;
     }
-    public String getFull_name() {
-        return full_name;
+    public void setmAffiliation(String mAffiliation) {
+        this.mAffiliation = mAffiliation;
     }
-    public String getDisplay_name() {
-        return display_name;
+    public String getmAvatar() {
+        return mAvatar;
     }
-    public String getAffiliation() {
-        return affiliation;
+    public void setmAvatar(String mAvatar) {
+        this.mAvatar = mAvatar;
     }
-    public String getAvatar() {
-        return avatar;
+    public String getmBio() {
+        return mBio;
     }
-    public Map<String, String> getCreated_at() {
-        return created_at;
+    public void setmBio(String mBio) {
+        this.mBio = mBio;
     }
-    public Map<String, String> getUpdated_at() {
-        return updated_at;
+    public Long getmLatestContribution() {
+        return mLatestContribution;
     }
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    public void setPassword(String password) {
-        this.password = password;
-    }
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-    public void setFull_name(String full_name) {
-        this.full_name = full_name;
-    }
-    public void setDisplay_name(String display_name) {
-        this.display_name = display_name;
-    }
-    public void setAffiliation(String affiliation) {
-        this.affiliation = affiliation;
-    }
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-    public void setCreated_at(Map<String, String> created_at) {
-        this.created_at = created_at;
-    }
-    public void setUpdated_at(Map<String, String> updated_at) {
-        this.updated_at = updated_at;
+    public void setmLatestContribution(Long mLatestContribution) {
+        this.mLatestContribution = mLatestContribution;
     }
 }

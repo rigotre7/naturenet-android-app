@@ -18,7 +18,7 @@
         android:layout_toRightOf="@+id/observation_submitter_avatar"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/observation_submitter_name"
-        android:text="@string/anon_user"/>
+        android:text="Anonymous Uuser"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -26,6 +26,6 @@
         android:layout_toRightOf="@+id/observation_submitter_avatar"
         android:layout_below="@+id/observation_submitter_name"
         android:id="@+id/observation_datetime"
-        android:text="@string/timestamp_default"/>
+        android:text="Just Now"/>
 
 </RelativeLayout>

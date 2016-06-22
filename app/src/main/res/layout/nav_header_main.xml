@@ -10,57 +10,48 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
+        android:id="@+id/nav_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginBottom="2dp"
-        android:id="@+id/navigation_iv_avatar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/navigation_iv_user"
         android:layout_centerInParent="true"
-        android:adjustViewBounds="true" />
+        android:layout_marginBottom="@dimen/nav_margin_bottom"
+        style="@style/nav_iv" />
 
     <Button
-        android:layout_below="@+id/navigation_iv_avatar"
+        android:id="@+id/nav_b_sign_in"
+        android:layout_below="@+id/nav_iv"
+        android:layout_width="@dimen/nav_b_width"
+        android:layout_height="@dimen/nav_b_height"
         android:layout_centerInParent="true"
-        android:layout_marginBottom="5dp"
-        android:layout_width="120dp"
-        android:layout_height="25dp"
-        android:text="Sign In"
-        android:textColor="@color/colorTheme"
-        android:textSize="@dimen/font_size_11"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:background="@android:color/white"
-        android:id="@+id/navigation_b_sign_in" />
+        android:layout_marginBottom="@dimen/nav_margin_bottom"
+        style="@style/nav_b_sign_in" />
 
     <TextView
-        android:layout_below="@+id/navigation_iv_avatar"
-        android:layout_centerInParent="true"
-        android:layout_marginBottom="5dp"
+        android:id="@+id/nav_tv_display_name"
+        android:layout_below="@+id/nav_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/navigation_tV_guest_text"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:id="@+id/navigation_tv_display_name" />
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="@dimen/nav_margin_bottom"
+        style="@style/nav_tv_display_name" />
 
     <Button
-        android:layout_below="@+id/navigation_b_sign_in"
+        android:id="@+id/nav_b_join"
+        android:layout_below="@+id/nav_b_sign_in"
+        android:layout_width="@dimen/nav_b_width"
+        android:layout_height="@dimen/nav_b_height"
         android:layout_centerInParent="true"
-        android:layout_marginBottom="2dp"
-        android:layout_width="120dp"
-        android:layout_height="25dp"
-        android:text="Join NatureNet"
-        android:textColor="@color/colorTheme"
-        android:textSize="@dimen/font_size_11"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:background="@color/colorButton"
-        android:id="@+id/navigation_b_join" />
+        android:layout_marginBottom="@dimen/nav_margin_bottom"
+        style="@style/nav_b_join" />
 
     <TextView
-        android:layout_below="@+id/navigation_tv_display_name"
-        android:layout_centerInParent="true"
+        android:id="@+id/nav_tv_affiliation"
+        android:layout_below="@+id/nav_tv_display_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/navigation_tv_affiliation"
-        android:text="@string/navigation_tV_guest_text" />
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="@dimen/nav_margin_bottom"
+        style="@style/nav_tv_affiliation" />
 
 </RelativeLayout>

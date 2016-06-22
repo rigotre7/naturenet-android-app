@@ -2,68 +2,92 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
     tools:context="org.naturenet.ui.ConsentFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/consent_rl_margin">
 
         <TextView
-            android:layout_marginBottom="10dp"
-            android:id="@+id/consent_tV_create"
-            style="@style/consent_tV_create" />
-
-        <LinearLayout
-            android:layout_marginBottom="15dp"
-            android:layout_width="fill_parent"
+            android:id="@+id/consent_tv_create"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/consent_tV_create"
-            android:id="@+id/linearlayout"
-            android:orientation="vertical">
+            android:layout_marginBottom="@dimen/consent_title_margin_bottom"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            style="@style/consent_tv_create" />
 
-            <TextView
-                android:layout_marginBottom="5dp"
-                android:id="@+id/consent_tV_para1"
-                style="@style/consent_tV_para1" />
+        <TextView
+            android:id="@+id/consent_tv_para1"
+            android:layout_below="@+id/consent_tv_create"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/consent_margin_bottom"
+            style="@style/consent_tv_para1" />
 
-            <TextView
-                android:layout_marginBottom="5dp"
-                android:id="@+id/consent_tV_para2"
-                style="@style/consent_tV_para2" />
+        <TextView
+            android:id="@+id/consent_tv_para2"
+            android:layout_below="@+id/consent_tv_para1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/consent_title_margin_bottom"
+            style="@style/consent_tv_para2" />
 
-            <TextView
-                android:layout_marginBottom="5dp"
-                android:id="@+id/consent_tV_para3"
-                style="@style/consent_tV_para3" />
+        <TextView
+            android:id="@+id/consent_tv_para3"
+            android:layout_below="@+id/consent_tv_para2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/consent_margin_bottom"
+            style="@style/consent_tv_para3" />
 
-            <CheckBox
-                android:layout_marginBottom="2dp"
-                android:id="@+id/consent_cB_upload"
-                android:text="@string/consent_cB_required1_text"
-                style="@style/consent_cB" />
+        <CheckBox
+            android:id="@+id/consent_cb_upload"
+            android:layout_below="@+id/consent_tv_para3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/consent_cb_margin_bottom"
+            android:paddingLeft="@dimen/consent_cb_padding_left"
+            android:text="@string/consent_cb_upload"
+            style="@style/consent_cb" />
 
-            <CheckBox
-                android:layout_marginBottom="2dp"
-                android:id="@+id/consent_cB_share"
-                android:text="@string/consent_cB_required2_text"
-                style="@style/consent_cB" />
+        <CheckBox
+            android:id="@+id/consent_cb_share"
+            android:layout_below="@+id/consent_cb_upload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/consent_cb_margin_bottom"
+            android:paddingLeft="@dimen/consent_cb_padding_left"
+            android:text="@string/consent_cb_share"
+            style="@style/consent_cb" />
 
-            <CheckBox
-                android:layout_marginBottom="2dp"
-                android:id="@+id/consent_cB_recording"
-                android:text="@string/consent_cB_optional1_text"
-                style="@style/consent_cB" />
+        <CheckBox
+            android:id="@+id/consent_cb_recording"
+            android:layout_below="@+id/consent_cb_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/consent_cb_margin_bottom"
+            android:paddingLeft="@dimen/consent_cb_padding_left"
+            android:text="@string/consent_cb_recording"
+            style="@style/consent_cb" />
 
-            <CheckBox
-                android:id="@+id/consent_cB_survey"
-                android:text="@string/consent_cB_optional2_text"
-                style="@style/consent_cB" />
-        </LinearLayout>
+        <CheckBox
+            android:id="@+id/consent_cb_survey"
+            android:layout_below="@+id/consent_cb_recording"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/consent_title_margin_bottom"
+            android:paddingLeft="@dimen/consent_cb_padding_left"
+            android:text="@string/consent_cb_survey"
+            style="@style/consent_cb" />
 
         <Button
-            android:layout_below="@+id/linearlayout"
             android:id="@+id/consent_b_next"
+            android:layout_below="@+id/consent_cb_survey"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/next_b_height"
+            android:layout_centerHorizontal="true"
             style="@style/consent_b_next" />
 
     </RelativeLayout>

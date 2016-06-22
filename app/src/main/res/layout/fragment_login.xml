@@ -4,49 +4,72 @@
     android:layout_height="match_parent"
     tools:context="org.naturenet.ui.LoginFragment">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
         <ImageView
+            android:id="@+id/login_iv"
+            android:layout_width="@dimen/login_iv_width"
+            android:layout_height="@dimen/login_iv_height"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="100dp"
-            android:layout_marginBottom="15dp"
-            android:id="@+id/login_iV_logo"
-            style="@style/login_iV_logo"/>
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/login_iv_margin_top"
+            android:layout_marginBottom="@dimen/login_margin_bottom"
+            style="@style/login_iv"/>
 
         <EditText
-            android:layout_below="@+id/login_iV_logo"
-            android:layout_marginBottom="5dp"
-            android:id="@+id/login_eT_email"
+            android:id="@+id/login_et_email_address"
+            android:layout_below="@+id/login_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/login_user_details_margin_bottom"
+            android:layout_centerHorizontal="true"
             android:inputType="textEmailAddress"
-            android:hint="@string/login_eT_email_hint"
-            style="@style/login_eT_userDetails" />
+            android:hint="@string/login_et_email_address"
+            android:padding="@dimen/login_user_details_padding"
+            android:minWidth="@dimen/login_user_details_min_width"
+            style="@style/login_et_user_details" />
 
         <EditText
-            android:layout_below="@+id/login_eT_email"
-            android:layout_marginBottom="20dp"
-            android:id="@+id/login_eT_password"
+            android:id="@+id/login_et_password"
+            android:layout_below="@+id/login_et_email_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/login_margin_bottom"
+            android:layout_centerHorizontal="true"
             android:inputType="textPassword"
-            android:hint="@string/login_eT_password_hint"
-            style="@style/login_eT_userDetails" />
+            android:hint="@string/login_et_password"
+            android:padding="@dimen/login_user_details_padding"
+            android:minWidth="@dimen/login_user_details_min_width"
+            style="@style/login_et_user_details" />
 
         <Button
-            android:layout_below="@+id/login_eT_password"
-            android:layout_marginBottom="15dp"
-            android:id="@+id/login_b_signIn"
-            style="@style/login_b_signIn"/>
+            android:id="@+id/login_b_sign_in"
+            android:layout_below="@+id/login_et_password"
+            android:layout_width="@dimen/login_b_width"
+            android:layout_height="@dimen/login_b_height"
+            android:layout_marginBottom="@dimen/login_margin_bottom"
+            android:layout_centerHorizontal="true"
+            android:padding="@dimen/login_b_padding"
+            style="@style/login_b_sign_in"/>
 
         <TextView
-            android:layout_below="@id/login_b_signIn"
-            android:layout_marginBottom="15dp"
-            android:id="@+id/login_tV_forgot"
-            style="@style/login_tV_forgot" />
+            android:id="@+id/login_tv_forgot"
+            android:layout_below="@+id/login_b_sign_in"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/login_user_details_margin_bottom"
+            android:layout_centerHorizontal="true"
+            style="@style/login_tv_forgot" />
 
         <TextView
-            android:layout_below="@id/login_tV_forgot"
-            android:id="@+id/login_tV_join"
-            style="@style/login_tV_join" />
+            android:id="@+id/login_tv_join"
+            android:layout_below="@+id/login_tv_forgot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            style="@style/login_tv_join" />
 
     </RelativeLayout>
 

@@ -2,6 +2,7 @@ package org.naturenet.ui;
 
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,10 @@ import org.naturenet.data.model.Users;
 import java.util.Map;
 
 public class LoginFragment extends Fragment {
+    static String USERS = "users";
+    static String ID = "id";
+    static String DISPLAY_NAME = "display_name";
+    static String AFFILIATION = "affiliation";
     public LoginFragment() {}
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -29,43 +34,43 @@ public class LoginFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         final LoginActivity log = ((LoginActivity) this.getActivity());
-        log.findViewById(R.id.login_b_signIn).setOnClickListener(new View.OnClickListener() {
+        log.findViewById(R.id.login_b_sign_in).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Firebase.setAndroidContext(log);
                 final Firebase fbRef = new Firebase(MainActivity.FIREBASE_ENDPOINT);
-                String email = ((EditText) log.findViewById(R.id.login_eT_email)).getText().toString();
-                String password = ((EditText) log.findViewById(R.id.login_eT_password)).getText().toString();
+                String email = ((EditText) log.findViewById(R.id.login_et_email_address)).getText().toString();
+                String password = ((EditText) log.findViewById(R.id.login_et_password)).getText().toString();
                 fbRef.authWithPassword(email, password, new Firebase.AuthResultHandler() {
                     @Override
                     public void onAuthenticated(final AuthData authData) {
-                        fbRef.child("users").child(authData.getUid()).addValueEventListener(new ValueEventListener() {
+                        fbRef.child(USERS).child(authData.getUid()).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot snapshot) {
                                 Map<String, String> map = snapshot.getValue(Map.class);
-                                Users loggedUser = new Users(map.get("email"), map.get("password"), map.get("uid"), map.get("full_name"), map.get("display_name"), map.get("affiliation"), map.get("avatar"));
+                                Users loggedUser = new Users(map.get(ID), map.get(DISPLAY_NAME), map.get(AFFILIATION));
                                 log.continueAsSignedUser(loggedUser);
                             }
                             @Override
                             public void onCancelled(FirebaseError firebaseError) {
-                                System.out.println("The read failed: " + firebaseError.getMessage());
+                                System.out.println(getResources().getString(R.string.login_error_message_firebase_read) + firebaseError.getMessage());
                             }
                         });
                     }
                     @Override
                     public void onAuthenticationError(FirebaseError firebaseError) {
-                        Toast.makeText(log, "Login Unsuccessful: " + firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(log, getResources().getString(R.string.login_error_message_firebase_login) + firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
         });
-        log.findViewById(R.id.login_tV_join).setOnClickListener(new View.OnClickListener() {
+        log.findViewById(R.id.login_tv_join).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 log.goToConsentActivity();
             }
         });
-        log.findViewById(R.id.login_tV_forgot).setOnClickListener(new View.OnClickListener() {
+        log.findViewById(R.id.login_tv_forgot).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 log.goToForgotFragment();

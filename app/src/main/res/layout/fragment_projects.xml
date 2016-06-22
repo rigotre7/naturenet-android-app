@@ -5,17 +5,14 @@
              tools:context="org.naturenet.ui.ProjectsFragment">
 
     <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/projects_list"
-        android:layout_gravity="center"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-    <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:id="@+id/projects_fB_observation"-->
-        <!--style="@style/projects_fB_observation"/>-->
-
-    <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:id="@+id/projects_fB_designIdea"-->
-        <!--style="@style/projects_fB_designIdea"/>-->
+    <include
+        layout="@layout/floating_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" />
 
 </FrameLayout>

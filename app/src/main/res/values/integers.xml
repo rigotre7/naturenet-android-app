@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="password_min_length">8</integer>
+    <integer name="password_min_length">6</integer>
+    <integer name="side_nav_bar_angle">135</integer>
+    <integer name="dialog_add_observation_gv_column_count">4</integer>
 </resources>

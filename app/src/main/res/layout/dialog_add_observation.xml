@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/ll_dialog_add_observation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        android:padding="@dimen/dialog_add_observation_ll_padding">
+
+        <TextView
+            android:id="@+id/dialog_add_observation_tv_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginBottom="@dimen/dialog_add_observation_b_margin_bottom"
+            style="@style/dialog_add_observation_tv_cancel" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/dialog_add_observation_margin_bottom"
+            style="@style/dialog_add_observation_tv_choose" />
+
+        <Button
+            android:id="@+id/dialog_add_observation_b_camera"
+            android:layout_width="@dimen/dialog_add_observation_b_width"
+            android:layout_height="@dimen/dialog_add_observation_b_height"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/dialog_add_observation_margin_bottom"
+            style="@style/dialog_add_observation_b_camera" />
+
+        <Button
+            android:id="@+id/dialog_add_observation_b_gallery"
+            android:layout_width="@dimen/dialog_add_observation_b_width"
+            android:layout_height="@dimen/dialog_add_observation_b_height"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/dialog_add_observation_b_margin_bottom"
+            style="@style/dialog_add_observation_b_gallery" />
+
+        <TextView
+            android:id="@+id/dialog_add_observation_tv_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            style="@style/dialog_add_observation_tv_select" />
+
+        <GridView
+            android:id="@+id/dialog_add_observation_gv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dialog_add_observation_b_margin_bottom"
+            android:numColumns="@integer/dialog_add_observation_gv_column_count"
+            android:verticalSpacing="@dimen/dialog_add_observation_gv_vertical_spacing"
+            android:horizontalSpacing="@dimen/dialog_add_observation_gv_horizontal_spacing"
+            android:stretchMode="columnWidth"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+</merge>

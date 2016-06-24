@@ -19,6 +19,7 @@ import java.util.List;
 
 public class AddObservationActivity extends AppCompatActivity {
     static String FRAGMENT_TAG_ADD_OBSERVATION = "add_observation_fragment";
+    static String OBSERVATION = "observation";
     static String EMPTY = "";
     String imgDecodableString;
     TextView toolbar_title;
@@ -31,7 +32,7 @@ public class AddObservationActivity extends AppCompatActivity {
         toolbar.setTitle(EMPTY);
         setSupportActionBar(toolbar);
         toolbar_title = (TextView) findViewById(R.id.toolbar_title);
-        imgDecodableString = getIntent().getExtras().getString("image");
+        imgDecodableString = getIntent().getExtras().getString(OBSERVATION);
         goToAddObservationFragment();
     }
     public void goToAddObservationFragment() {

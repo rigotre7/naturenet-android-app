@@ -4,19 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="org.naturenet.ui.ConsentActivity">
+    tools:context="org.naturenet.ui.JoinActivity">
 
     <include
-        layout="@layout/app_bar_consent"
+        layout="@layout/app_bar_join"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
     <android.support.design.widget.VisibilityAwareImageButton
-        android:id="@+id/consent_ib"
-        android:layout_width="@dimen/consent_ib_width"
-        android:layout_height="@dimen/consent_ib_height"
+        android:id="@+id/join_back"
+        android:layout_width="@dimen/join_back_width"
+        android:layout_height="@dimen/join_back_height"
         android:layout_alignParentStart="true"
-        android:layout_margin="@dimen/consent_margin"
-        style="@style/consent_ib"/>
+        android:layout_margin="@dimen/join_margin"
+        style="@style/join_back"/>
 
 </RelativeLayout>

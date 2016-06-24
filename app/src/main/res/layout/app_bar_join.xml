@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="org.naturenet.ui.ConsentActivity">
+    tools:context="org.naturenet.ui.JoinActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -25,12 +25,12 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:gravity="center"
-                style="@style/app_bar_consent_tv" />
+                style="@style/app_bar_join_tv" />
 
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_consent"/>
+    <include layout="@layout/content_join"/>
 
 </android.support.design.widget.CoordinatorLayout>

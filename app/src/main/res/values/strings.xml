@@ -7,55 +7,28 @@
     <!-- Splash Activity -->
     <!-- Splash Activity -->
 
-    <!-- Consent Activity -->
+    <!-- Join Activity -->
     <!-- Layout -->
-    <string name="consent_title">Join NatureNet</string>
-    <!-- Layout -->
-    <!-- Consent Activity -->
-
-    <!-- Consent Fragment -->
-    <!-- Layout -->
-    <string name="consent_tv_create">Create New Account</string>
-    <string name="consent_tv_para1">NatureNet is a community of citizen environmentalists whose members keep making it better. Active sites include the Anacostia Watershed in Washington, D.C. and Maryland, Reedy Creek Nature Center in Charlotte, North Carolina, Aspen Center for Environmental Studies in Aspen, Colorado, and your backyard!</string>
-    <string name="consent_tv_para2">This project is supported by the National Science Foundation under Grant No. IIS-1221513 and Grant No. 1423212 to the University of North Carolina at Charlotte, Grant No. 1423207 to the University of Maryland, and Grant No. 1423338 to the University of Colorado.</string>
-    <string name="consent_tv_para3">You are invited to participate in NatureNet, a research project being conducted by the researchers listed at http://research.nature-net.org/people.html. In order for us to collect and study the way people are using technology like NatureNet, we must have your consent.</string>
-    <string name="consent_cb_upload">(Required) I agree that any observations (photos) or comments I contribute to NatureNet may be publicly displayed on the web, mobile phone, or tabletop platforms that comprise NatureNet.</string>
-    <string name="consent_cb_share">(Required) I agree to allow any comments, observations, and profile information that I choose to share with others via the online application to be visible to others who use the application at the same time or after me.</string>
-    <string name="consent_cb_recording">(Optional) I agree to be videotaped/audiotaped during my participation in this study.</string>
-    <string name="consent_cb_survey">(Optional) I agree to complete a short questionnaire during or after my participation in this study.</string>
-    <string name="consent_b_next">Next</string>
+    <string name="join_title">Join NatureNet</string>
+    <string name="join_tv_back">&#60;&#60; Back</string>
+    <string name="join_tv_create">Create New Account</string>
+    <string name="join_et_user_name">User Name</string>
+    <string name="join_et_password">Password</string>
+    <string name="join_et_name">Name</string>
+    <string name="join_et_email_address">Email Address</string>
+    <string name="join_et_affiliation">Affiliation</string>
+    <string name="join_b_join">Join</string>
     <!-- Layout -->
     <!-- Java -->
-    <!-- Alert Dialog -->
-    <string name="alert_title">Consent Form</string>
-    <string name="alert_tv_message">Please check the required fields or Continue as a guest</string>
-    <string name="alert_b_guest">Continue As Guest</string>
-    <string name="alert_b_dismiss">Dismiss</string>
-    <!-- Alert Dialog -->
+    <string name="join_default_avatar">http://res.cloudinary.com/university-of-colorado/image/upload/v1466634736/ettsgswdao0rjhjyvovx.jpg</string>
+    <string name="join_success_message">Account Created Successfully</string>
+    <string name="join_error_message_firebase_read">@string/error_message_firebase_read</string>
+    <string name="join_error_message_firebase_create">@string/error_message_firebase_create</string>
+    <string name="join_error_message_empty">Enter all the details</string>
+    <string name="join_error_message_email_address">Invalid Email Address</string>
+    <string name="join_error_message_password">Password should be atleast 6 characters long</string>
     <!-- Java -->
-    <!-- Consent Fragment -->
-
-    <!-- Sign-Up Fragment -->
-    <!-- Layout -->
-    <string name="sign_up_title">Join NatureNet</string>
-    <string name="sign_up_tv_back">&#60;&#60; Back</string>
-    <string name="sign_up_tv_create">Create New Account</string>
-    <string name="sign_up_et_user_name">User Name</string>
-    <string name="sign_up_et_password">Password</string>
-    <string name="sign_up_et_name">Name</string>
-    <string name="sign_up_et_email_address">Email Address</string>
-    <string name="sign_up_et_affiliation">Affiliation</string>
-    <string name="sign_up_b_join">Join</string>
-    <!-- Layout -->
-    <!-- Java -->
-    <string name="sign_up_success_message">Account Created Successfully</string>
-    <string name="sign_up_error_message_firebase_read">@string/error_message_firebase_read</string>
-    <string name="sign_up_error_message_firebase_create">@string/error_message_firebase_create</string>
-    <string name="sign_up_error_message_empty">Enter all the details</string>
-    <string name="sign_up_error_message_email_address">Invalid Email Address</string>
-    <string name="sign_up_error_message_password">Password should be atleast 6 characters long</string>
-    <!-- Java -->
-    <!-- Sign-Up Fragment -->
+    <!-- Join Activity -->
 
     <!-- Login Activity -->
     <!-- Login Activity -->

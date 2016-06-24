@@ -54,12 +54,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         try { MapsInitializer.initialize(getActivity().getApplicationContext()); }
         catch (Exception e) { mLogger.error("Failed to initialize map view: {}", e); }
         mMapView.getMapAsync(this);
-        root.findViewById(R.id.explore_b_explore).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity)getActivity()).showGallery();
-            }
-        });
+//        root.findViewById(R.id.explore_b_explore).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                ((MainActivity)getActivity()).showGallery();
+//            }
+//        });
         return root;
     }
     @Override
@@ -82,22 +82,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         readObservations();
     }
     private void readObservations() {
-        mLogger.info("Getting observations");
-        mFirebase.child(Observation.NODE_NAME).orderByChild("updated_at").limitToFirst(10).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                for(DataSnapshot child : snapshot.getChildren()) {
-                    Observation obs = child.getValue(Observation.class);
-                    mVisibleObservations.add(obs);
-                    MarkerOptions mark = new MarkerOptions().position(obs.getLocation()).icon(BitmapDescriptorFactory.defaultMarker());
-                    mMap.addMarker(mark);
-                }
-            }
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                mLogger.error("Failed to read Observations: {}", firebaseError);
-                Toast.makeText(getActivity(), "Could not get observations", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        mLogger.info("Getting observations");
+//        mFirebase.child(Observation.NODE_NAME).orderByChild("updated_at").limitToFirst(10).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot snapshot) {
+//                for(DataSnapshot child : snapshot.getChildren()) {
+//                    Observation obs = child.getValue(Observation.class);
+//                    mVisibleObservations.add(obs);
+//                    MarkerOptions mark = new MarkerOptions().position(obs.getLocation()).icon(BitmapDescriptorFactory.defaultMarker());
+//                    mMap.addMarker(mark);
+//                }
+//            }
+//            @Override
+//            public void onCancelled(FirebaseError firebaseError) {
+//                mLogger.error("Failed to read Observations: {}", firebaseError);
+//                Toast.makeText(getActivity(), "Could not get observations", Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 }

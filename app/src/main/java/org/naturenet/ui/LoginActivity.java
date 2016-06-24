@@ -10,21 +10,20 @@ import org.naturenet.R;
 public class LoginActivity extends AppCompatActivity {
     static String FRAGMENT_TAG_LOGIN = "login_fragment";
     static String FRAGMENT_TAG_FORGOT = "forgot_fragment";
-    static String KEY_SIGNIN = "key_signin";
-    static String KEY_JOIN = "key_join";
-    static String EMPTY = "";
+    static String LOGIN = "login";
+    static String GUEST = "guest";
     static String JOIN = "join";
+    static String SIGNED_USER = "signed_user";
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         goToLoginFragment();
     }
-    public void continueAsSignedUser(Users user) {
+    public void continueAsSignedUser(Users signed_user) {
         Intent resultIntent = new Intent(this, MainActivity.class);
-        String[] signed_user = {user.getmId(), user.getmDisplayName(), user.getmAffiliation()};
-        resultIntent.putExtra(KEY_SIGNIN, signed_user);
-        resultIntent.putExtra(KEY_JOIN, EMPTY);
+        resultIntent.putExtra(LOGIN, LOGIN);
+        resultIntent.putExtra(SIGNED_USER, signed_user);
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
     }
@@ -42,9 +41,9 @@ public class LoginActivity extends AppCompatActivity {
                 addToBackStack(null).
                 commit();
     }
-    public void goToConsentActivity() {
+    public void goToJoinActivity() {
         Intent resultIntent = new Intent(this, MainActivity.class);
-        resultIntent.putExtra(KEY_JOIN, JOIN);
+        resultIntent.putExtra(LOGIN, JOIN);
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
     }

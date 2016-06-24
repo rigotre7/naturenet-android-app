@@ -28,7 +28,7 @@ public class TiledObservationAdapter extends ArrayAdapter<Observation> implement
         Observation obs = getItem(position);
         root.setTag(obs);
         ImageView thumbnail = (ImageView) root.findViewById(R.id.obs_preview_thumbnail);
-        Picasso.with(getContext()).load(obs.getData().getImageUrl()).fit().into(thumbnail);
+//        Picasso.with(getContext()).load(obs.getData().getImageUrl()).fit().into(thumbnail);
         return root;
     }
     @Override

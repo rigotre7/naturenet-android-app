@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="org.naturenet.ui.JoinActivity"
+    tools:showIn="@layout/app_bar_join">
+
+    <TextView
+        android:id="@+id/join_tv_create"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/join_title_margin_bottom"
+        style="@style/join_tv_create" />
+
+    <ImageView
+        android:id="@+id/join_iv"
+        android:layout_below="@+id/join_tv_create"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/join_title_margin_bottom"
+        style="@style/join_iv"/>
+
+    <EditText
+        android:id="@+id/join_et_user_name"
+        android:layout_below="@+id/join_iv"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/join_margin_bottom"
+        android:padding="@dimen/join_user_details_padding"
+        android:minWidth="@dimen/join_user_details_min_width"
+        android:inputType="textPersonName"
+        android:hint="@string/join_et_user_name"
+        style="@style/join_et_user_details" />
+
+    <EditText
+        android:id="@+id/join_et_password"
+        android:layout_below="@+id/join_et_user_name"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/join_margin_bottom"
+        android:padding="@dimen/join_user_details_padding"
+        android:minWidth="@dimen/join_user_details_min_width"
+        android:inputType="textPassword"
+        android:hint="@string/join_et_password"
+        style="@style/join_et_user_details" />
+
+    <EditText
+        android:id="@+id/join_et_name"
+        android:layout_below="@+id/join_et_password"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/join_margin_bottom"
+        android:padding="@dimen/join_user_details_padding"
+        android:minWidth="@dimen/join_user_details_min_width"
+        android:inputType="textPersonName"
+        android:hint="@string/join_et_name"
+        style="@style/join_et_user_details" />
+
+    <EditText
+        android:id="@+id/join_et_email_address"
+        android:layout_below="@+id/join_et_name"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/join_margin_bottom"
+        android:padding="@dimen/join_user_details_padding"
+        android:minWidth="@dimen/join_user_details_min_width"
+        android:inputType="textEmailAddress"
+        android:hint="@string/join_et_email_address"
+        style="@style/join_et_user_details" />
+
+    <Spinner
+        android:id="@+id/join_s_affiliation"
+        android:layout_below="@+id/join_et_email_address"
+        android:layout_centerHorizontal="true"
+        android:layout_width="@dimen/join_user_details_min_width"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/join_title_margin_bottom" />
+
+    <Button
+        android:id="@+id/join_b_join"
+        android:layout_below="@+id/join_s_affiliation"
+        android:layout_centerHorizontal="true"
+        android:layout_width="@dimen/join_b_width"
+        android:layout_height="@dimen/join_b_height"
+        android:padding="@dimen/join_b_padding"
+        style="@style/join_b_join" />
+
+</RelativeLayout>

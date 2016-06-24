@@ -2,7 +2,6 @@ package org.naturenet.data.model;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
@@ -12,7 +11,6 @@ import java.io.Serializable;
         setterVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Users extends TimestampedData implements Serializable {
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("id")
     private String mId = null;
     @JsonProperty("display_name")
@@ -26,10 +24,11 @@ public class Users extends TimestampedData implements Serializable {
     @JsonProperty("latest_contribution")
     private Long mLatestContribution = null;
     public Users() {}
-    public Users(String mId, String mDisplayName, String mAffiliation) {
-        this.mId = mId;
-        this.mDisplayName = mDisplayName;
-        this.mAffiliation = mAffiliation;
+    public Users(String mId, String mDisplayName, String mAffiliation, String mAvatar) {
+        setmId(mId);
+        setmDisplayName(mDisplayName);
+        setmAffiliation(mAffiliation);
+        setmAvatar(mAvatar);
     }
     public String getmId() {
         return mId;

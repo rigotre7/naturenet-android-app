@@ -21,7 +21,7 @@ public class LaunchFragment extends Fragment {
         main.findViewById(R.id.launch_ib_join).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                main.goToConsentActivity();
+                main.goToJoinActivity();
             }
         });
     }

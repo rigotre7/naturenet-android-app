@@ -21,88 +21,40 @@
     </style>
     <!-- Splash Activity -->
 
-    <!-- Consent Activity -->
-    <style name="consent_ib">
-        <item name="android:src">@drawable/consent_ib_back_appbar</item>
+    <!-- Join Activity -->
+    <style name="join_back">
+        <item name="android:src">@drawable/join_back</item>
     </style>
-    <style name="app_bar_consent_tv" parent="android:Widget.TextView">
-        <item name="android:text">@string/consent_title</item>
+    <style name="app_bar_join_tv" parent="android:Widget.TextView">
+        <item name="android:text">@string/join_title</item>
         <item name="android:textSize">@dimen/font_size_16</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
     </style>
-    <!-- Consent Activity -->
-
-    <!-- Consent Fragment -->
-    <style name="consent_tv_create" parent="android:Widget.TextView">
-        <item name="android:text">@string/consent_tv_create</item>
-        <item name="android:textSize">@dimen/font_size_16</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/colorTheme</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-    </style>
-    <style name="consent_tv_para1" parent="android:Widget.TextView">
-        <item name="android:text">@string/consent_tv_para1</item>
-        <item name="android:textSize">@dimen/font_size_11</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-    </style>
-    <style name="consent_tv_para2" parent="android:Widget.TextView">
-        <item name="android:text">@string/consent_tv_para2</item>
-        <item name="android:textSize">@dimen/font_size_11</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-    </style>
-    <style name="consent_tv_para3" parent="android:Widget.TextView">
-        <item name="android:text">@string/consent_tv_para3</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textSize">@dimen/font_size_11</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-    </style>
-    <style name="consent_cb" parent="android:Widget.TextView">
-        <item name="android:button">@drawable/consent_customised_checkbox</item>
-        <item name="android:textSize">@dimen/font_size_11</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-    </style>
-    <style name="consent_b_next" parent="android:Widget.Button">
-        <item name="android:text">@string/consent_b_next</item>
-        <item name="android:textSize">@dimen/font_size_11</item>
-        <item name="android:textColor">@color/colorTheme</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
-        <item name="android:background">@color/colorButton</item>
-        <item name="android:clickable">true</item>
-    </style>
-    <!-- Consent Fragment -->
-
-    <!-- Sign-Up Fragment -->
-    <style name="sign_up_tv_back" parent="android:Widget.TextView">
-        <item name="android:text">@string/sign_up_tv_back</item>
-        <item name="android:textSize">@dimen/font_size_16</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/colorTheme</item>
-    </style>
-    <style name="sign_up_tv_create" parent="android:Widget.TextView">
-        <item name="android:text">@string/sign_up_tv_create</item>
+    <style name="join_tv_create" parent="android:Widget.TextView">
+        <item name="android:text">@string/join_tv_create</item>
         <item name="android:textSize">@dimen/font_size_16</item>
         <item name="android:textColor">@color/colorTheme</item>
         <item name="android:textStyle">bold</item>
     </style>
-    <style name="sign_up_iv">
-        <item name="android:src">@drawable/sign_up_iv</item>
+    <style name="join_iv">
+        <item name="android:src">@drawable/join_iv</item>
         <item name="android:adjustViewBounds">true</item>
     </style>
-    <style name="sign_up_et_user_details" parent="android:Widget.EditText">
+    <style name="join_et_user_details" parent="android:Widget.EditText">
         <item name="android:textSize">@dimen/font_size_12</item>
         <item name="android:textColor">@color/colorTheme</item>
         <item name="android:textColorHint">@color/colorTheme</item>
     </style>
-    <style name="sign_up_b_join" parent="android:Widget.Button">
-        <item name="android:text">@string/sign_up_b_join</item>
+    <style name="join_b_join" parent="android:Widget.Button">
+        <item name="android:text">@string/join_b_join</item>
         <item name="android:textSize">@dimen/font_size_12</item>
         <item name="android:textColor">@color/colorTheme</item>
         <item name="android:textAlignment">center</item>
         <item name="android:background">@color/colorButton</item>
     </style>
-    <!-- Sign-Up Fragment -->
+    <!-- Join Activity -->
 
     <!-- Login Activity -->
     <!-- Login Activity -->
@@ -143,7 +95,7 @@
 
     <!-- Add Observation Activity -->
     <style name="add_observation_ib">
-        <item name="android:src">@drawable/consent_ib_back_appbar</item>
+        <item name="android:src">@drawable/join_back</item>
     </style>
     <style name="add_observation_toolbar_title" parent="android:Widget.TextView">
         <item name="android:textSize">@dimen/font_size_16</item>

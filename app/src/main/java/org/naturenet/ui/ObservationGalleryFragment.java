@@ -48,19 +48,19 @@ public class ObservationGalleryFragment extends Fragment {
         return root;
     }
     private void readObservations() {
-        mLogger.info("Getting observations");
-        mFirebase.child(Observation.NODE_NAME).orderByChild("updated_at").limitToFirst(20).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                for (DataSnapshot child : snapshot.getChildren())
-                    mObservations.add(child.getValue(Observation.class));
-                mGridView.setAdapter(new TiledObservationAdapter(getContext(), mObservations));
-            }
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                mLogger.error("Failed to read Observations: {}", firebaseError);
-                Toast.makeText(ObservationGalleryFragment.this.getContext(), "Could not get observations", Toast.LENGTH_SHORT).show();
-            }
-        });
+//        mLogger.info("Getting observations");
+//        mFirebase.child(Observation.NODE_NAME).orderByChild("updated_at").limitToFirst(20).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot snapshot) {
+//                for (DataSnapshot child : snapshot.getChildren())
+//                    mObservations.add(child.getValue(Observation.class));
+//                mGridView.setAdapter(new TiledObservationAdapter(getContext(), mObservations));
+//            }
+//            @Override
+//            public void onCancelled(FirebaseError firebaseError) {
+//                mLogger.error("Failed to read Observations: {}", firebaseError);
+//                Toast.makeText(ObservationGalleryFragment.this.getContext(), "Could not get observations", Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 }

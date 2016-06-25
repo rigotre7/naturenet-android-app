@@ -1,19 +1,19 @@
 package org.naturenet.data.model;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.android.gms.maps.model.LatLng;
+//import com.fasterxml.jackson.annotation.JsonAutoDetect;
+//import com.fasterxml.jackson.annotation.JsonIgnore;
+//import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+//import com.fasterxml.jackson.annotation.JsonInclude;
+//import com.fasterxml.jackson.annotation.JsonProperty;
+//import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 import java.util.Map;
 
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY,
-        getterVisibility = JsonAutoDetect.Visibility.NONE,
-        setterVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonIgnoreProperties(ignoreUnknown = true)
+//@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY,
+//        getterVisibility = JsonAutoDetect.Visibility.NONE,
+//        setterVisibility = JsonAutoDetect.Visibility.NONE)
+//@JsonIgnoreProperties(ignoreUnknown = true)
 public class Observation {
 //    @Override
 //    public String toString() {

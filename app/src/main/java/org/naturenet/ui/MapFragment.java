@@ -5,22 +5,15 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.common.collect.Lists;
 
 import org.naturenet.BuildConfig;
@@ -35,7 +28,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private Logger mLogger = LoggerFactory.getLogger(MapFragment.class);
     private MapView mMapView;
     private GoogleMap mMap;
-    private Firebase mFirebase = new Firebase(BuildConfig.FIREBASE_ROOT_URL);
     private List<Observation> mVisibleObservations = Lists.newArrayList();
     public MapFragment() {}
     @Override

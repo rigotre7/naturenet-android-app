@@ -1,35 +1,44 @@
 package org.naturenet.data.model;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.firebase.database.ServerValue;
 
 import java.io.Serializable;
 
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY,
-        getterVisibility = JsonAutoDetect.Visibility.NONE,
-        setterVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class UsersPrivate extends TimestampedData implements Serializable {
-    @JsonProperty("id")
-    private String mId = null;
-    @JsonProperty("name")
-    private String mName = null;
+public class UsersPrivate implements Serializable {
+    private String id = null;
+    private String name = null;
+    private Object created_at = null;
+    private Object updated_at = null;
     public UsersPrivate() {}
     public UsersPrivate(String mId, String mName) {
-        setmId(mId);
-        setmName(mName);
+        setId(mId);
+        setName(mName);
+        Object timestamp = ServerValue.TIMESTAMP;
+        setCreated_at(timestamp);
+        setUpdated_at(timestamp);
     }
-    public String getmId() {
-        return mId;
+    public String getId() {
+        return id;
     }
-    public void setmId(String mId) {
-        this.mId = mId;
+    public void setId(String id) {
+        this.id = id;
     }
-    public String getmName() {
-        return mName;
+    public String getName() {
+        return name;
     }
-    public void setmName(String mName) {
-        this.mName = mName;
+    public void setName(String name) {
+        this.name = name;
+    }
+    public Object getCreated_at() {
+        return created_at;
+    }
+    public void setCreated_at(Object created_at) {
+        this.created_at = created_at;
+    }
+    public Object getUpdated_at() {
+        return updated_at;
+    }
+    public void setUpdated_at(Object updated_at) {
+        this.updated_at = updated_at;
     }
 }

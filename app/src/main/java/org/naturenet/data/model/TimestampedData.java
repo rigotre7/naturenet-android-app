@@ -1,38 +1,25 @@
 package org.naturenet.data.model;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.firebase.client.ServerValue;
+import com.google.firebase.database.ServerValue;
 
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY,
-        getterVisibility = JsonAutoDetect.Visibility.NONE,
-        setterVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class TimestampedData {
-    @JsonProperty("created_at")
-    protected Object mCreatedAt = null;
-    @JsonProperty("updated_at")
-    protected Object mUpdatedAt = null;
+    protected Long created_at = null;
+    protected Long updated_at = null;
     public TimestampedData() {
         Object timestamp = ServerValue.TIMESTAMP;
-        setmCreatedAt(timestamp);
-        setmUpdatedAt(timestamp);
+        setCreated_at((Long) timestamp);
+        setUpdated_at((Long) timestamp);
     }
-    public Object getTimestamp() {
-        Object timestamp = ServerValue.TIMESTAMP;
-        return timestamp;
+    public Object getCreated_at() {
+        return created_at;
     }
-    public Object getmCreatedAt() {
-        return mCreatedAt;
+    public void setCreated_at(Long created_at) {
+        this.created_at = created_at;
     }
-    public void setmCreatedAt(Object mCreatedAt) {
-        this.mCreatedAt = mCreatedAt;
+    public Object getUpdated_at() {
+        return updated_at;
     }
-    public Object getmUpdatedAt() {
-        return mUpdatedAt;
-    }
-    public void setmUpdatedAt(Object mUpdatedAt) {
-        this.mUpdatedAt = mUpdatedAt;
+    public void setUpdated_at(Long updated_at) {
+        this.updated_at = updated_at;
     }
 }

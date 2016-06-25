@@ -1,69 +1,84 @@
 package org.naturenet.data.model;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.firebase.database.ServerValue;
 
 import java.io.Serializable;
 
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY,
-        getterVisibility = JsonAutoDetect.Visibility.NONE,
-        setterVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Users extends TimestampedData implements Serializable {
-    @JsonProperty("id")
-    private String mId = null;
-    @JsonProperty("display_name")
-    private String mDisplayName = null;
-    @JsonProperty("affiliation")
-    private String mAffiliation = null;
-    @JsonProperty("avatar")
-    private String mAvatar = null;
-    @JsonProperty("bio")
-    private String mBio = null;
-    @JsonProperty("latest_contribution")
-    private Long mLatestContribution = null;
+public class Users implements Serializable {
+    private String id = null;
+    private String display_name = null;
+    private String affiliation = null;
+    private String avatar = null;
+    private String bio = null;
+    private Long latest_contribution = null;
+    private Object created_at = null;
+    private Object updated_at = null;
     public Users() {}
     public Users(String mId, String mDisplayName, String mAffiliation, String mAvatar) {
-        setmId(mId);
-        setmDisplayName(mDisplayName);
-        setmAffiliation(mAffiliation);
-        setmAvatar(mAvatar);
+        setId(mId);
+        setDisplay_name(mDisplayName);
+        setAffiliation(mAffiliation);
+        setAvatar(mAvatar);
+        Object timestamp = ServerValue.TIMESTAMP;
+        setCreated_at(timestamp);
+        setUpdated_at(timestamp);
     }
-    public String getmId() {
-        return mId;
+    public Users(String id, String displayName, String affiliation, String avatar, String bio, Long latestContribution, Object createdAt, Object updatedAt) {
+        setId(id);
+        setDisplay_name(displayName);
+        setAffiliation(affiliation);
+        setAvatar(avatar);
+        setBio(bio);
+        setLatest_contribution(latestContribution);
+        setCreated_at(createdAt);
+        setUpdated_at(updatedAt);
     }
-    public void setmId(String mId) {
-        this.mId = mId;
+    public String getId() {
+        return id;
     }
-    public String getmDisplayName() {
-        return mDisplayName;
+    public void setId(String id) {
+        this.id = id;
     }
-    public void setmDisplayName(String mDisplayName) {
-        this.mDisplayName = mDisplayName;
+    public String getDisplay_name() {
+        return display_name;
     }
-    public String getmAffiliation() {
-        return mAffiliation;
+    public void setDisplay_name(String display_name) {
+        this.display_name = display_name;
     }
-    public void setmAffiliation(String mAffiliation) {
-        this.mAffiliation = mAffiliation;
+    public String getAffiliation() {
+        return affiliation;
     }
-    public String getmAvatar() {
-        return mAvatar;
+    public void setAffiliation(String affiliation) {
+        this.affiliation = affiliation;
     }
-    public void setmAvatar(String mAvatar) {
-        this.mAvatar = mAvatar;
+    public String getAvatar() {
+        return avatar;
     }
-    public String getmBio() {
-        return mBio;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
-    public void setmBio(String mBio) {
-        this.mBio = mBio;
+    public String getBio() {
+        return bio;
     }
-    public Long getmLatestContribution() {
-        return mLatestContribution;
+    public void setBio(String bio) {
+        this.bio = bio;
     }
-    public void setmLatestContribution(Long mLatestContribution) {
-        this.mLatestContribution = mLatestContribution;
+    public Long getLatest_contribution() {
+        return latest_contribution;
+    }
+    public void setLatest_contribution(Long latest_contribution) {
+        this.latest_contribution = latest_contribution;
+    }
+    public Object getCreated_at() {
+        return created_at;
+    }
+    public void setCreated_at(Object created_at) {
+        this.created_at = created_at;
+    }
+    public Object getUpdated_at() {
+        return updated_at;
+    }
+    public void setUpdated_at(Object updated_at) {
+        this.updated_at = updated_at;
     }
 }

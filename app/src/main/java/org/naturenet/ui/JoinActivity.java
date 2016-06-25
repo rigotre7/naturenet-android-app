@@ -2,10 +2,10 @@ package org.naturenet.ui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -15,15 +15,17 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.firebase.client.AuthData;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.naturenet.R;
 import org.naturenet.data.model.Users;
 import org.naturenet.data.model.UsersPrivate;
-
-import java.util.Map;
 
 public class JoinActivity extends AppCompatActivity {
     static String JOIN = "join";
@@ -37,7 +39,7 @@ public class JoinActivity extends AppCompatActivity {
     static String USERS_PRIVATE = "users-private";
     String userName, password, name, emailAddress, affiliation, error;
     String[] affiliation_ids, affiliation_names;
-    Firebase fbRef;
+    DatabaseReference fbRef;
     Spinner sp_affiliation;
     ImageButton back;
     Toolbar toolbar;
@@ -79,54 +81,39 @@ public class JoinActivity extends AppCompatActivity {
                 name = ((EditText) findViewById(R.id.join_et_name)).getText().toString();
                 emailAddress = ((EditText) findViewById(R.id.join_et_email_address)).getText().toString();
                 if (is_any_field_empty() || is_email_address_invalid() || is_password_invalid()) {
-                    Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(JoinActivity.this, error, Toast.LENGTH_SHORT).show();
                 } else {
-                    Firebase.setAndroidContext(getApplicationContext());
-                    fbRef = new Firebase(MainActivity.FIREBASE_ENDPOINT);
-                    fbRef.createUser(emailAddress, password, new Firebase.ValueResultHandler<Map<String, Object>>() {
-                        @Override
-                        public void onSuccess(Map<String, Object> result) {
-                            fbRef.authWithPassword(emailAddress, password, new Firebase.AuthResultHandler() {
+                    fbRef = FirebaseDatabase.getInstance().getReference();
+                    final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                    mAuth.createUserWithEmailAndPassword(emailAddress, password)
+                            .continueWithTask(new Continuation<AuthResult, Task<Void>>() {
                                 @Override
-                                public void onAuthenticated(final AuthData authData) {
-                                    final String id = authData.getUid().toString();
-                                    String default_avatar = getResources().getString(R.string.join_default_avatar);
-                                    final Users user = new Users(id, userName, affiliation, default_avatar);
-                                    final UsersPrivate userPrivate = new UsersPrivate(id, name);
-                                    fbRef.child(USERS).child(id).setValue(user, new Firebase.CompletionListener() {
-                                        @Override
-                                        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                                            if (firebaseError == null) {
-                                                fbRef.child(USERS_PRIVATE).child(id).setValue(userPrivate, new Firebase.CompletionListener() {
+                                public Task<Void> then(@NonNull Task<AuthResult> taskCreate) throws Exception {
+                                    if (taskCreate.isSuccessful()) {
+                                        final String id = taskCreate.getResult().getUser().getUid();
+                                        mAuth.signInWithEmailAndPassword(emailAddress, password)
+                                                .addOnCompleteListener(JoinActivity.this, new OnCompleteListener<AuthResult>() {
                                                     @Override
-                                                    public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                                                        if (firebaseError == null) {
+                                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                                        if (task.isSuccessful()) {
+                                                            String default_avatar = getResources().getString(R.string.join_default_avatar);
+                                                            final Users user = new Users(id, userName, affiliation, default_avatar);
+                                                            final UsersPrivate userPrivate = new UsersPrivate(id, name);
+                                                            fbRef.child(USERS).child(id).setValue(user);
+                                                            fbRef.child(USERS_PRIVATE).child(id).setValue(userPrivate);
                                                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.join_success_message), Toast.LENGTH_SHORT).show();
                                                             continueAsSignedUser(user);
                                                         } else {
-                                                            Log.d("join", "Could not create record in users-private, " + firebaseError);
-                                                            Toast.makeText(getApplicationContext(), "Could not create record in users-private, " + firebaseError, Toast.LENGTH_SHORT).show();
+                                                            Toast.makeText(JoinActivity.this, getResources().getString(R.string.login_error_message_firebase_login) + task.getException(), Toast.LENGTH_SHORT).show();
                                                         }
                                                     }
                                                 });
-                                            } else {
-                                                Log.d("join", "Could not create record in users, " + firebaseError);
-                                                Toast.makeText(getApplicationContext(), "Could not create record in users, " + firebaseError, Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                    });
-                                }
-                                @Override
-                                public void onAuthenticationError(FirebaseError firebaseError) {
-                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.login_error_message_firebase_login) + firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(JoinActivity.this, getResources().getString(R.string.join_error_message_firebase_create) + taskCreate.getException(), Toast.LENGTH_SHORT).show();
+                                    }
+                                    return null;
                                 }
                             });
-                        }
-                        @Override
-                        public void onError(FirebaseError firebaseError) {
-                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.join_error_message_firebase_create) + firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
                 }
             }
         });

@@ -1,52 +1,45 @@
 package org.naturenet.data.model;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.firebase.database.Exclude;
 
 import java.util.List;
 
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY,
-    getterVisibility = JsonAutoDetect.Visibility.NONE,
-    setterVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProjectInstance {
-    @JsonProperty("activity")
-    private String mProjectId;
-    @JsonIgnore
+    private String activity;
+    @Exclude
     private Project mProject;
-    @JsonProperty("g")
-    private String mGeohash;
-    @JsonProperty("l")
-    private List<Double> mLocationCoords;
-    @JsonProperty("site")
-    private String mSiteName;
-
+    private String g;
+    private List<Double> l;
+    private String site;
     public ProjectInstance() {}
-
-    public void setProject(Project project) {
-        mProject = project;
+    public String getActivity() {
+        return activity;
     }
-
-    public String getProjectId() {
-        return mProjectId;
+    public void setActivity(String activity) {
+        this.activity = activity;
     }
-
-    public String getGeohash() {
-        return mGeohash;
-    }
-
-    public List<Double> getLocationCoords() {
-        return mLocationCoords;
-    }
-
-    public String getSiteName() {
-        return mSiteName;
-    }
-
-    public Project getProject() {
+    public Project getmProject() {
         return mProject;
-
+    }
+    public void setmProject(Project mProject) {
+        this.mProject = mProject;
+    }
+    public String getG() {
+        return g;
+    }
+    public void setG(String g) {
+        this.g = g;
+    }
+    public List<Double> getL() {
+        return l;
+    }
+    public void setL(List<Double> l) {
+        this.l = l;
+    }
+    public String getSite() {
+        return site;
+    }
+    public void setSite(String site) {
+        this.site = site;
     }
 }

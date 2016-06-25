@@ -29,7 +29,7 @@ public class ProjectActivity extends AppCompatActivity {
         name.setText(project.getName());
         status.setText(project.getStatus());
         description.setText(project.getDescription());
-        Picasso.with(this).load(project.getIconUrl()).fit().into(icon);
+        Picasso.with(this).load(project.getIcon_url()).fit().into(icon);
         if (project.getStatus().equals("Completed")) iv_status.setVisibility(View.VISIBLE);
         else iv_status.setVisibility(View.GONE);
     }

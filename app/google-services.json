@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "37913246342",
+    "firebase_url": "https://naturenet-testing.firebaseio.com",
+    "project_id": "naturenet-testing",
+    "storage_bucket": "naturenet-testing.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37913246342:android:b99c9cbdbe833f1b",
+        "android_client_info": {
+          "package_name": "org.naturenet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "37913246342-tf5cc6tsijghr0j2uk8rt03n8g92g68e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiOL6PUH2H7uev-GTcfriZwqf0qvZC6Fc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

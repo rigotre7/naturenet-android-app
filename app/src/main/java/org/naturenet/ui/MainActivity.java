@@ -15,12 +15,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import org.naturenet.BuildConfig;
 import org.naturenet.R;
 import org.naturenet.data.model.Project;
 import org.naturenet.data.model.Users;
@@ -30,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    static String FIREBASE_ENDPOINT = BuildConfig.FIREBASE_ROOT_URL;
     final static int REQUEST_CODE_JOIN = 1;
     final static int REQUEST_CODE_LOGIN = 2;
     final static int REQUEST_CODE_ADD_OBSERVATION = 3;
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     static String EMPTY = "";
     String[] affiliation_ids, affiliation_names;
     List<String> ids, names;
-    Firebase fbRef;
+    DatabaseReference fbRef;
     Users signed_user;
     DrawerLayout drawer;
     Toolbar toolbar;
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        Firebase fbRef = new Firebase(FIREBASE_ENDPOINT);
+        fbRef = FirebaseDatabase.getInstance().getReference();
         int id = item.getItemId();
         switch(id) {
             case R.id.nav_explore:
@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 drawer.closeDrawer(GravityCompat.START);
                 break;
             case R.id.nav_logout:
-                fbRef.unauth();
+                FirebaseAuth.getInstance().signOut();
                 logout();
                 break;
         }
@@ -210,13 +210,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void goToJoinActivity() {
         ids = new ArrayList<String>();
         names = new ArrayList<String>();
-        Firebase.setAndroidContext(this);
-        fbRef = new Firebase(MainActivity.FIREBASE_ENDPOINT);
+        fbRef = FirebaseDatabase.getInstance().getReference();
         fbRef.child(SITES).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                    Map<String, String> map = postSnapshot.getValue(Map.class);
+                    Map<String, String> map = (Map<String, String>) postSnapshot.getValue();
                     ids.add(map.get(ID));
                     names.add(map.get(NAME));
                 }
@@ -231,8 +230,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.join_error_message_firebase_read) + firebaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.join_error_message_firebase_read) + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -265,8 +264,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         signed_user = (Users) data.getSerializableExtra(NEW_USER);
                         logout.setVisible(true);
                         this.supportInvalidateOptionsMenu();
-                        display_name.setText(signed_user.getmDisplayName());
-                        affiliation.setText(signed_user.getmAffiliation());
+                        display_name.setText(signed_user.getDisplay_name());
+                        affiliation.setText(signed_user.getAffiliation());
                         sign_in.setVisibility(View.GONE);
                         join.setVisibility(View.GONE);
                         display_name.setVisibility(View.VISIBLE);
@@ -287,8 +286,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         signed_user = (Users) data.getSerializableExtra(SIGNED_USER);
                         logout.setVisible(true);
                         this.supportInvalidateOptionsMenu();
-                        display_name.setText(signed_user.getmDisplayName());
-                        affiliation.setText(signed_user.getmAffiliation());
+                        display_name.setText(signed_user.getDisplay_name());
+                        affiliation.setText(signed_user.getAffiliation());
                         sign_in.setVisibility(View.GONE);
                         join.setVisibility(View.GONE);
                         display_name.setVisibility(View.VISIBLE);

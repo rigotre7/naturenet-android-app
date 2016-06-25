@@ -7,12 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
-import android.widget.Toast;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.google.common.collect.Lists;
 
 import org.naturenet.BuildConfig;
@@ -27,7 +22,6 @@ public class ObservationGalleryFragment extends Fragment {
     private Logger mLogger = LoggerFactory.getLogger(ObservationGalleryFragment.class);
     private GridView mGridView;
     private List<Observation> mObservations = Lists.newArrayList();
-    private Firebase mFirebase = new Firebase(BuildConfig.FIREBASE_ROOT_URL);
     public ObservationGalleryFragment() {}
     public static ObservationGalleryFragment newInstance() {
         ObservationGalleryFragment fragment = new ObservationGalleryFragment();

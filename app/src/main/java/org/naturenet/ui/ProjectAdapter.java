@@ -29,7 +29,7 @@ public class ProjectAdapter extends ArrayAdapter<Project> implements View.OnClic
         Project project = getItem(position);
         view.setTag(project);
         ImageView thumbnail = (ImageView) view.findViewById(R.id.project_thumbnail);
-        Picasso.with(getContext()).load(project.getIconUrl()).fit().into(thumbnail);
+        Picasso.with(getContext()).load(project.getIcon_url()).fit().into(thumbnail);
         TextView name = (TextView) view.findViewById(R.id.project_name);
         name.setText(project.getName());
         return view;

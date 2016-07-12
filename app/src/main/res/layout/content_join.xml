@@ -15,6 +15,7 @@
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/join_title_margin_top"
         android:layout_marginBottom="@dimen/join_title_margin_bottom"
         style="@style/join_tv_create" />
 
@@ -79,17 +80,22 @@
         android:hint="@string/join_et_email_address"
         style="@style/join_et_user_details" />
 
-    <Spinner
-        android:id="@+id/join_s_affiliation"
+    <EditText
+        android:id="@+id/join_et_affiliation"
         android:layout_below="@+id/join_et_email_address"
         android:layout_centerHorizontal="true"
-        android:layout_width="@dimen/join_user_details_min_width"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/join_title_margin_bottom" />
+        android:layout_marginBottom="@dimen/join_title_margin_bottom"
+        android:padding="@dimen/join_user_details_padding"
+        android:minWidth="@dimen/join_user_details_min_width"
+        android:hint="@string/join_et_affiliation"
+        android:focusable="false"
+        style="@style/join_et_user_details" />
 
     <Button
         android:id="@+id/join_b_join"
-        android:layout_below="@+id/join_s_affiliation"
+        android:layout_below="@+id/join_et_affiliation"
         android:layout_centerHorizontal="true"
         android:layout_width="@dimen/join_b_width"
         android:layout_height="@dimen/join_b_height"

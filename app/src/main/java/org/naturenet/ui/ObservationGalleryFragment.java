@@ -1,60 +1,71 @@
 package org.naturenet.ui;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.google.common.collect.Lists;
 
-import org.naturenet.BuildConfig;
 import org.naturenet.R;
 import org.naturenet.data.model.Observation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class ObservationGalleryFragment extends Fragment {
-    private Logger mLogger = LoggerFactory.getLogger(ObservationGalleryFragment.class);
-    private GridView mGridView;
-    private List<Observation> mObservations = Lists.newArrayList();
+    ObservationActivity o;
+    GridView gridView;
+    ProgressDialog pd;
+    List<Observation> observations;
+    static String DISPLAYING_OBSERVATIONS = "Displaying Observations...";
     public ObservationGalleryFragment() {}
-    public static ObservationGalleryFragment newInstance() {
-        ObservationGalleryFragment fragment = new ObservationGalleryFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_observation_gallery, container, false);
-        mGridView = (GridView) root.findViewById(R.id.observation_gallery);
-        readObservations();
-        return root;
+        return inflater.inflate(R.layout.fragment_observation_gallery, container, false);
     }
-    private void readObservations() {
-//        mLogger.info("Getting observations");
-//        mFirebase.child(Observation.NODE_NAME).orderByChild("updated_at").limitToFirst(20).addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot snapshot) {
-//                for (DataSnapshot child : snapshot.getChildren())
-//                    mObservations.add(child.getValue(Observation.class));
-//                mGridView.setAdapter(new TiledObservationAdapter(getContext(), mObservations));
-//            }
-//            @Override
-//            public void onCancelled(FirebaseError firebaseError) {
-//                mLogger.error("Failed to read Observations: {}", firebaseError);
-//                Toast.makeText(ObservationGalleryFragment.this.getContext(), "Could not get observations", Toast.LENGTH_SHORT).show();
-//            }
-//        });
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        o = (ObservationActivity) getActivity();
+        gridView = (GridView) o.findViewById(R.id.observation_gallery);
+        pd = new ProgressDialog(o);
+        pd.setMessage(DISPLAYING_OBSERVATIONS);
+        pd.setCancelable(false);
+        pd.show();
+        observations = Lists.newArrayList();
+        for (int i=o.observations.size()-1; i>=0; i--)
+            observations.add(o.observations.get(i));
+        ObservationAdapter adapter = new ObservationAdapter(o, observations, o.observers);
+        adapter.notifyDataSetChanged();
+        gridView.setAdapter(adapter);
+        while(!gridView.getAdapter().areAllItemsEnabled()) {}
+        pd.dismiss();
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                o.selectedObservation = observations.get(position);
+                for (int i=0; i<o.observers.size(); i++) {
+                    if (o.observers.get(i).getObserverId().equals(o.selectedObservation.getObserver())) {
+                        o.selectedObserverInfo = o.observers.get(i);
+                        break;
+                    }
+                }
+                Log.d("selected", "Observation: " + o.selectedObservation.toString());
+                Log.d("selected", "Observer Id: " + o.selectedObserverInfo.getObserverId());
+                Log.d("selected", "Observer Avatar: " + o.selectedObserverInfo.getObserverAvatar());
+                Log.d("selected", "Observer Name: " + o.selectedObserverInfo.getObserverName());
+                Log.d("selected", "Observer Affiliation: " + o.selectedObserverInfo.getObserverAffiliation());
+                o.goToSelectedObservationFragment();
+            }
+        });
     }
 }

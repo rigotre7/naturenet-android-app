@@ -15,5 +15,21 @@
     Once you have your key (it starts with "AIza"), replace the "google_maps_key"
     string in this file.
     -->
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCzJVmQCUFnPYs0IbHDyhcA9ycWO4N_YpQ</string>
+
+    <!--Old Version-->
+    <!--<string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCzJVmQCUFnPYs0IbHDyhcA9ycWO4N_YpQ</string>-->
+    <!--Old Version-->
+
+    <!--NatureNet-Testing-->
+    <!--<string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyBPcqGw7HYxPtTjvISD3mjZMm_z5wkXQqE</string>-->
+    <!--NatureNet-Testing-->
+
+    <!--NatureNet-Staging-->
+    <!--<string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyBPcqGw7HYxPtTjvISD3mjZMm_z5wkXQqE</string>-->
+    <!--NatureNet-Staging-->
+
+    <!--NatureNet-Production-->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyA3WLA44Io9CnangNcBo_rK_ZMDjIuhu10</string>
+    <!--NatureNet-Production-->
+
 </resources>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="Choose an Affiliation"
+        android:textSize="@dimen/font_size_14"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:background="@color/colorTheme"
+        android:gravity="center"/>
+
+    <ListView
+        android:id="@+id/join_lv_affiliation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="@android:color/white"/>
+
+</LinearLayout>

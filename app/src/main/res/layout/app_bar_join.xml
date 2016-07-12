@@ -21,6 +21,18 @@
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
+            <android.support.design.widget.VisibilityAwareImageButton
+                android:id="@+id/join_back"
+                android:layout_width="@dimen/join_back_width"
+                android:layout_height="@dimen/join_back_height"
+                android:layout_alignParentStart="true"
+                android:layout_gravity="center_vertical"
+                android:layout_centerVertical="true"
+                android:layout_margin="@dimen/join_margin"
+                android:gravity="center"
+                android:clickable="true"
+                style="@style/join_back"/>
+
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"

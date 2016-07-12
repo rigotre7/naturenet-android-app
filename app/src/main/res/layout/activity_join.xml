@@ -11,12 +11,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <android.support.design.widget.VisibilityAwareImageButton
-        android:id="@+id/join_back"
-        android:layout_width="@dimen/join_back_width"
-        android:layout_height="@dimen/join_back_height"
-        android:layout_alignParentStart="true"
-        android:layout_margin="@dimen/join_margin"
-        style="@style/join_back"/>
-
 </RelativeLayout>

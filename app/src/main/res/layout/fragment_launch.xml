@@ -7,6 +7,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/colorImageButton"
         android:layout_margin="@dimen/launch_rl_margin"
         android:padding="@dimen/launch_rl_padding">
 
@@ -109,8 +110,8 @@
         <ImageButton
             android:id="@+id/launch_ib_join"
             android:layout_below="@+id/launch_tv_para"
-            android:layout_width="@dimen/join_ib_width"
-            android:layout_height="@dimen/join_ib_height"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             style="@style/launch_ib_join" />
 

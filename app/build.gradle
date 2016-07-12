@@ -1,15 +1,17 @@
 apply plugin: 'com.android.application'
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support:support-annotations:23.2.1'
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
+    testCompile 'org.testng:testng:6.9.6'
+    testCompile 'junit:junit:4.12'
+    compile files('libs/PhotoUtil.jar')
     compile 'com.android.support:appcompat-v7:23.2.1'
     compile 'com.android.support:support-v4:23.2.1'
     compile 'com.android.support:design:23.2.1'
-//    compile 'com.firebase:firebase-client-android:2.5.2'
     compile 'com.google.firebase:firebase-core:9.0.2'
     compile 'com.google.firebase:firebase-database:9.0.2'
     compile 'com.google.firebase:firebase-storage:9.0.2'
@@ -17,9 +19,11 @@ dependencies {
     compile 'com.google.guava:guava:16.0.1'
     compile 'org.slf4j:slf4j-android:1.7.16'
     compile 'com.google.android.gms:play-services-maps:9.0.2'
+    compile 'com.google.android.gms:play-services-plus:9.0.2'
+    compile 'pub.devrel:easypermissions:0.1.5'
+    compile 'com.cloudinary:cloudinary-core:1.2.2'
+    compile 'com.cloudinary:cloudinary-android:1.2.2'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    testCompile 'org.testng:testng:6.9.6'
-    testCompile 'junit:junit:4.12'
 }
 
 android {
@@ -52,5 +56,8 @@ android {
         exclude 'META-INF/LICENSE'
     }
 }
+
+
+
 
 apply plugin: 'com.google.gms.google-services'

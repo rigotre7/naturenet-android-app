@@ -1,8 +1,10 @@
 package org.naturenet.ui;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -12,7 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Spinner;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
@@ -35,36 +37,50 @@ public class JoinActivity extends AppCompatActivity {
     static String GUEST = "guest";
     static String LOGIN = "login";
     static String NEW_USER = "new_user";
+    static String EMAIL = "email";
+    static String PASSWORD = "password";
     static String USERS = "users";
     static String USERS_PRIVATE = "users-private";
+    static String JOINING = "Joining...";
     String userName, password, name, emailAddress, affiliation, error;
     String[] affiliation_ids, affiliation_names;
     DatabaseReference fbRef;
-    Spinner sp_affiliation;
+    EditText et_affiliation;
     ImageButton back;
     Toolbar toolbar;
     Button join;
-    ArrayAdapter<String> adapter;
+    ProgressDialog pd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_join);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         back = (ImageButton) findViewById(R.id.join_back);
-        sp_affiliation = (Spinner) findViewById(R.id.join_s_affiliation);
+        et_affiliation = (EditText) findViewById(R.id.join_et_affiliation);
         join = (Button) findViewById(R.id.join_b_join);
         setSupportActionBar(toolbar);
         affiliation_ids = getIntent().getStringArrayExtra(IDS);
         affiliation_names = getIntent().getStringArrayExtra(NAMES);
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, affiliation_names);
-        sp_affiliation.setAdapter(adapter);
-        sp_affiliation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        pd = new ProgressDialog(this);
+        et_affiliation.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                affiliation = affiliation_ids[position];
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onClick(View v) {
+                int pos = -1;
+                View view = getLayoutInflater().inflate(R.layout.affiliation_list, null);
+                ListView lv_affiliation = (ListView) view.findViewById(R.id.join_lv_affiliation);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(v.getContext(), android.R.layout.simple_spinner_dropdown_item, affiliation_names);
+                lv_affiliation.setAdapter(adapter);
+                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext()).setView(view);
+                final AlertDialog affiliationList = builder.create();
+                lv_affiliation.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        et_affiliation.setText(affiliation_names[position]);
+                        affiliation = affiliation_ids[position];
+                        affiliationList.dismiss();
+                    }
+                });
+                affiliationList.show();
             }
         });
         back.setOnClickListener(new View.OnClickListener() {
@@ -83,6 +99,9 @@ public class JoinActivity extends AppCompatActivity {
                 if (is_any_field_empty() || is_email_address_invalid() || is_password_invalid()) {
                     Toast.makeText(JoinActivity.this, error, Toast.LENGTH_SHORT).show();
                 } else {
+                    pd.setMessage(JOINING);
+                    pd.setCancelable(false);
+                    pd.show();
                     fbRef = FirebaseDatabase.getInstance().getReference();
                     final FirebaseAuth mAuth = FirebaseAuth.getInstance();
                     mAuth.createUserWithEmailAndPassword(emailAddress, password)
@@ -101,14 +120,17 @@ public class JoinActivity extends AppCompatActivity {
                                                             final UsersPrivate userPrivate = new UsersPrivate(id, name);
                                                             fbRef.child(USERS).child(id).setValue(user);
                                                             fbRef.child(USERS_PRIVATE).child(id).setValue(userPrivate);
+                                                            pd.dismiss();
                                                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.join_success_message), Toast.LENGTH_SHORT).show();
                                                             continueAsSignedUser(user);
                                                         } else {
+                                                            pd.dismiss();
                                                             Toast.makeText(JoinActivity.this, getResources().getString(R.string.login_error_message_firebase_login) + task.getException(), Toast.LENGTH_SHORT).show();
                                                         }
                                                     }
                                                 });
                                     } else {
+                                        pd.dismiss();
                                         Toast.makeText(JoinActivity.this, getResources().getString(R.string.join_error_message_firebase_create) + taskCreate.getException(), Toast.LENGTH_SHORT).show();
                                     }
                                     return null;
@@ -152,7 +174,7 @@ public class JoinActivity extends AppCompatActivity {
         affiliation_ids = null;
         affiliation_names = null;
         fbRef = null;
-        sp_affiliation = null;
+        et_affiliation = null;
         back = null;
         toolbar = null;
         join = null;
@@ -183,6 +205,8 @@ public class JoinActivity extends AppCompatActivity {
         Intent resultIntent = new Intent(this, MainActivity.class);
         resultIntent.putExtra(JOIN, LOGIN);
         resultIntent.putExtra(NEW_USER, createdUser);
+        resultIntent.putExtra(EMAIL, emailAddress);
+        resultIntent.putExtra(PASSWORD, password);
         setResult(Activity.RESULT_OK, resultIntent);
         clearResources();
         finish();

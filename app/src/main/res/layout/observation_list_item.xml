@@ -1,13 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="horizontal"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/observation_fl"
+    android:layout_width="150dp"
+    android:layout_height="150dp"
+    android:layout_margin="10dp"
+    android:background="@drawable/border_selected_image"
+    tools:context="org.naturenet.ui.ExploreFragment">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/obs_preview_thumbnail"/>
+        android:id="@+id/observation_icon"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="3dp"/>
 
-    <include layout="@layout/observation_metadata" />
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:background="#6f000000">
+
+        <ImageView
+            android:id="@+id/observer_avatar"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="center_vertical"
+            android:padding="5dp"
+            android:layout_marginLeft="5dp"
+            android:clickable="true"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/observer_avatar"
+            android:gravity="center_vertical"
+            android:padding="5dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/observer_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/font_size_9"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_marginBottom="5dp"/>
+
+            <TextView
+                android:id="@+id/observer_affiliation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textSize="@dimen/font_size_9"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

@@ -1,19 +1,27 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context=".ui.ObservationGalleryFragment">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.ObservationGalleryFragment">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
         android:fillViewport="true">
+
         <GridView
             android:id="@+id/observation_gallery"
-            android:numColumns="2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clickable="true" />
+            android:clickable="true"
+            android:padding="10dp"
+            android:numColumns="2"
+            android:verticalSpacing="5dp"
+            android:horizontalSpacing="5dp"
+            android:stretchMode="columnWidth"
+            android:gravity="center" />
+
     </ScrollView>
 
 </FrameLayout>

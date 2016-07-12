@@ -21,13 +21,13 @@
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-            <TextView
+            <android.support.design.widget.VisibilityAwareImageButton
                 android:id="@+id/toolbar_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|left"
-                android:layout_marginLeft="@dimen/add_observation_margin_left"
-                style="@style/add_observation_toolbar_back" />
+                android:layout_width="@dimen/add_observation_ib_width"
+                android:layout_height="@dimen/add_observation_ib_height"
+                android:layout_alignParentStart="true"
+                android:layout_margin="@dimen/add_observation_margin"
+                style="@style/add_observation_ib"/>
 
             <TextView
                 android:id="@+id/toolbar_title"

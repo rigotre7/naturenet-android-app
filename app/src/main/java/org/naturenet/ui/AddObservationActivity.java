@@ -1,5 +1,8 @@
 package org.naturenet.ui;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -14,7 +17,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import org.naturenet.R;
+import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Project;
+import org.naturenet.data.model.Users;
 
 import java.util.List;
 import java.util.Map;
@@ -22,9 +27,30 @@ import java.util.Map;
 public class AddObservationActivity extends AppCompatActivity {
     static String FRAGMENT_TAG_ADD_OBSERVATION = "add_observation_fragment";
     static String OBSERVATION = "observation";
+    static String OBSERVATION_PATH = "observation_path";
+    static String OBSERVATION_BITMAP = "observation_bitmap";
+    static String SIGNED_USER = "signed_user";
+    static String EMAIL = "email";
+    static String PASSWORD = "password";
+    static String ID = "id";
+    static String ICON_URL = "icon_url";
+    static String DESCRIPTION = "description";
+    static String NAME = "name";
+    static String STATUS = "status";
+    static String LATEST_CONTRIBUTION = "latest_contribution";
+    static String CREATED_AT = "created_at";
+    static String UPDATED_AT = "updated_at";
+    static String SITES = "sites";
+    static String LOADING = "Loading...";
+    static String DEFAULT_PROJECT_ID = "-ACES_a38";
     static String EMPTY = "";
     DatabaseReference fbRef;
-    String imgDecodableString;
+    ProgressDialog pd;
+    String observationPath, signed_user_email, signed_user_password;
+    Observation newObservation;
+    Project defaultProject;
+    byte[] observationBitmap;
+    Users signedUser;
     TextView toolbar_title;
     List<Project> mProjects = Lists.newArrayList();
     @Override
@@ -35,12 +61,22 @@ public class AddObservationActivity extends AppCompatActivity {
         toolbar.setTitle(EMPTY);
         setSupportActionBar(toolbar);
         toolbar_title = (TextView) findViewById(R.id.toolbar_title);
-        imgDecodableString = getIntent().getExtras().getString(OBSERVATION);
+        newObservation = (Observation) getIntent().getSerializableExtra(OBSERVATION);
+        observationPath = getIntent().getStringExtra(OBSERVATION_PATH);
+        observationBitmap = getIntent().getByteArrayExtra(OBSERVATION_BITMAP);
+        signedUser = (Users) getIntent().getSerializableExtra(SIGNED_USER);
+        signed_user_email = getIntent().getStringExtra(EMAIL);
+        signed_user_password = getIntent().getStringExtra(PASSWORD);
+        pd = new ProgressDialog(this);
+        defaultProject = null;
         goToAddObservationFragment();
     }
     public void goToAddObservationFragment() {
         toolbar_title.setText(R.string.add_observation_title);
         fbRef = FirebaseDatabase.getInstance().getReference();
+        pd.setMessage(LOADING);
+        pd.setCancelable(false);
+        pd.show();
         fbRef.child(Project.NODE_NAME).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -54,24 +90,34 @@ public class AddObservationActivity extends AppCompatActivity {
                     Long latest_contribution = null;
                     Object created_at = null;
                     Object updated_at = null;
-                    if (map.get("id") != null)
-                        id = map.get("id").toString();
-                    if (map.get("icon_url") != null)
-                        icon_url = map.get("icon_url").toString();
-                    if (map.get("description") != null)
-                        description = map.get("description").toString();
-                    if (map.get("name") != null)
-                        name = map.get("name").toString();
-                    if (map.get("status") != null)
-                        status = map.get("status").toString();
-                    if (map.get("latest_contribution") != null)
-                        latest_contribution = (Long) map.get("latest_contribution");
-                    if (map.get("created_at") != null)
-                        created_at = map.get("created_at");
-                    if (map.get("updated_at") != null)
-                        updated_at = map.get("updated_at");
+                    if (map.get(ID) != null)
+                        id = map.get(ID).toString();
+                    if (map.get(ICON_URL) != null)
+                        icon_url = map.get(ICON_URL).toString();
+                    if (map.get(DESCRIPTION) != null)
+                        description = map.get(DESCRIPTION).toString();
+                    if (map.get(NAME) != null)
+                        name = map.get(NAME).toString();
+                    if (map.get(STATUS) != null)
+                        status = map.get(STATUS).toString();
+                    if (map.get(LATEST_CONTRIBUTION) != null)
+                        latest_contribution = (Long) map.get(LATEST_CONTRIBUTION);
+                    if (map.get(CREATED_AT) != null)
+                        created_at = map.get(CREATED_AT);
+                    if (map.get(UPDATED_AT) != null)
+                        updated_at = map.get(UPDATED_AT);
                     Project project = new Project(id, icon_url, description, name, status, latest_contribution, created_at, updated_at);
-                    mProjects.add(project);
+                    if (project.getId().equals(DEFAULT_PROJECT_ID)) {
+                        defaultProject = project;
+                    }
+                    if (signedUser != null) {
+                        Map<String, Object> sites = (Map<String, Object>) map.get(SITES);
+                        if (sites.containsKey(signedUser.getAffiliation())) {
+                            mProjects.add(project);
+                        }
+                    } else {
+                        mProjects.add(project);
+                    }
                 }
                 if (mProjects.size() != 0) {
                     getFragmentManager().
@@ -80,11 +126,19 @@ public class AddObservationActivity extends AppCompatActivity {
                             addToBackStack(null).
                             commit();
                 }
+                pd.dismiss();
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                pd.dismiss();
                 Toast.makeText(AddObservationActivity.this, "Could not get projects: "+ databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    public void goBackToMainActivity() {
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        resultIntent.putExtra(OBSERVATION, newObservation);
+        setResult(Activity.RESULT_OK, resultIntent);
+        finish();
     }
 }

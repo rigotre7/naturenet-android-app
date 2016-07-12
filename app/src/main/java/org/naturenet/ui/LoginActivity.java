@@ -14,6 +14,9 @@ public class LoginActivity extends AppCompatActivity {
     static String GUEST = "guest";
     static String JOIN = "join";
     static String SIGNED_USER = "signed_user";
+    static String EMAIL = "email";
+    static String PASSWORD = "password";
+    String signed_user_email, signed_user_password;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,6 +27,8 @@ public class LoginActivity extends AppCompatActivity {
         Intent resultIntent = new Intent(this, MainActivity.class);
         resultIntent.putExtra(LOGIN, LOGIN);
         resultIntent.putExtra(SIGNED_USER, signed_user);
+        resultIntent.putExtra(EMAIL, signed_user_email);
+        resultIntent.putExtra(PASSWORD, signed_user_password);
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
     }

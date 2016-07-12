@@ -4,9 +4,13 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <!-- Font Size -->
+    <dimen name="font_size_9">9dp</dimen>
+    <dimen name="font_size_10">10dp</dimen>
     <dimen name="font_size_11">11dp</dimen>
     <dimen name="font_size_12">12dp</dimen>
+    <dimen name="font_size_13">13dp</dimen>
     <dimen name="font_size_14">14dp</dimen>
+    <dimen name="font_size_15">15dp</dimen>
     <dimen name="font_size_16">16dp</dimen>
     <dimen name="font_size_20">20dp</dimen>
     <!-- Font Size -->
@@ -17,14 +21,14 @@
     <!-- Join Activity -->
     <dimen name="join_back_width">20dp</dimen>
     <dimen name="join_back_height">20dp</dimen>
-    <dimen name="join_margin">15dp</dimen>
-    <dimen name="join_rl_margin">16dp</dimen>
-    <dimen name="join_title_margin_bottom">30dp</dimen>
-    <dimen name="join_margin_bottom">10dp</dimen>
+    <dimen name="join_margin">5dp</dimen>
+    <dimen name="join_title_margin_top">20dp</dimen>
+    <dimen name="join_title_margin_bottom">20dp</dimen>
+    <dimen name="join_margin_bottom">5dp</dimen>
     <dimen name="join_user_details_min_width">250dp</dimen>
     <dimen name="join_user_details_padding">10dp</dimen>
     <dimen name="join_b_width">250dp</dimen>
-    <dimen name="join_b_height">25dp</dimen>
+    <dimen name="join_b_height">30dp</dimen>
     <dimen name="join_b_padding">5dp</dimen>
     <!-- Join Activity -->
 
@@ -40,7 +44,7 @@
     <dimen name="login_user_details_min_width">250dp</dimen>
     <dimen name="login_user_details_padding">10dp</dimen>
     <dimen name="login_b_width">250dp</dimen>
-    <dimen name="login_b_height">25dp</dimen>
+    <dimen name="login_b_height">30dp</dimen>
     <dimen name="login_b_padding">5dp</dimen>
     <!-- Login Fragment -->
 
@@ -78,6 +82,11 @@
     <dimen name="project_iv_icon_height">40dp</dimen>
     <!-- Project Activity -->
 
+    <!-- Observation Activity -->
+    <dimen name="observation_back_width">20dp</dimen>
+    <dimen name="observation_back_height">20dp</dimen>
+    <!-- Observation Activity -->
+
     <!-- Main Activity -->
     <!-- Main Activity -->
 
@@ -86,7 +95,7 @@
     <dimen name="nav_header_height">200dp</dimen>
     <dimen name="nav_margin_bottom">5dp</dimen>
     <dimen name="nav_b_width">120dp</dimen>
-    <dimen name="nav_b_height">25dp</dimen>
+    <dimen name="nav_b_height">30dp</dimen>
     <!-- Navigation Panel -->
 
     <!-- Launch Fragment -->
@@ -113,8 +122,8 @@
     <dimen name="dialog_add_observation_b_margin_bottom">10dp</dimen>
     <dimen name="dialog_add_observation_b_width">100dp</dimen>
     <dimen name="dialog_add_observation_b_height">30dp</dimen>
-    <dimen name="dialog_add_observation_gv_vertical_spacing">4dp</dimen>
-    <dimen name="dialog_add_observation_gv_horizontal_spacing">4dp</dimen>
+    <dimen name="dialog_add_observation_gv_vertical_spacing">0dp</dimen>
+    <dimen name="dialog_add_observation_gv_horizontal_spacing">0dp</dimen>
     <!-- Add Observation Dialog -->
 
     <!-- Add Design Idea Dialog -->
@@ -124,7 +133,7 @@
     <dimen name="dialog_add_design_idea_iv_height">25dp</dimen>
     <dimen name="dialog_add_design_idea_tv_padding_left">8dp</dimen>
     <dimen name="dialog_add_design_idea_b_width">160dp</dimen>
-    <dimen name="dialog_add_design_idea_b_height">25dp</dimen>
+    <dimen name="dialog_add_design_idea_b_height">30dp</dimen>
     <!-- Add Design Idea Dialog -->
 
     <!-- Explore Fragment -->

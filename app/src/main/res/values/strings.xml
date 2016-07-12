@@ -43,6 +43,8 @@
     <string name="login_tv_join">Join NatureNet</string>
     <!-- Layout -->
     <!-- Java -->
+    <string name="login_error_message_empty_email">Email can not be empty!</string>
+    <string name="login_error_message_empty_password">Password can not be empty!</string>
     <string name="login_error_message_firebase_read">@string/error_message_firebase_read</string>
     <string name="login_error_message_firebase_login">@string/error_message_firebase_login</string>
     <!-- Java -->
@@ -64,9 +66,14 @@
     <!-- Add Observation Fragment -->
 
     <!-- Project Activity -->
+    <string name="project_back">&#60;&#60; PROJECTS</string>
     <string name="project_tv_no_recent_contributions">No Recent Contributions</string>
     <string name="project_tv_recent_contributions">Recent Contributions</string>
     <!-- Project Activity -->
+
+    <!-- Observation Activity -->
+    <string name="explore_tv_back">&#60;&#60; EXPLORE</string>
+    <!-- Observation Activity -->
 
     <!-- Main Activity -->
     <!-- Main Activity -->
@@ -115,6 +122,7 @@
     <string name="dialog_add_observation_tv_select">Select</string>
     <string name="dialog_add_observation_b_camera">Camera</string>
     <string name="dialog_add_observation_b_gallery">Gallery</string>
+    <string name="dialog_add_observation_success">Your observation has been added successfully.</string>
     <!-- Add Observation Dialog -->
 
     <!-- Add Design Idea Dialog -->

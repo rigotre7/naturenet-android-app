@@ -23,7 +23,7 @@
 
     <!-- Join Activity -->
     <style name="join_back">
-        <item name="android:src">@drawable/join_back</item>
+        <item name="android:src">@drawable/back_button</item>
     </style>
     <style name="app_bar_join_tv" parent="android:Widget.TextView">
         <item name="android:text">@string/join_title</item>
@@ -39,18 +39,19 @@
         <item name="android:textStyle">bold</item>
     </style>
     <style name="join_iv">
-        <item name="android:src">@drawable/join_iv</item>
+        <item name="android:src">@drawable/default_avatar</item>
         <item name="android:adjustViewBounds">true</item>
     </style>
     <style name="join_et_user_details" parent="android:Widget.EditText">
-        <item name="android:textSize">@dimen/font_size_12</item>
+        <item name="android:textSize">@dimen/font_size_14</item>
         <item name="android:textColor">@color/colorTheme</item>
         <item name="android:textColorHint">@color/colorTheme</item>
     </style>
     <style name="join_b_join" parent="android:Widget.Button">
         <item name="android:text">@string/join_b_join</item>
-        <item name="android:textSize">@dimen/font_size_12</item>
+        <item name="android:textSize">@dimen/font_size_14</item>
         <item name="android:textColor">@color/colorTheme</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:textAlignment">center</item>
         <item name="android:background">@color/colorButton</item>
     </style>
@@ -62,17 +63,18 @@
     <!-- Login Fragment -->
     <style name="login_iv">
         <item name="android:src">@drawable/login_iv</item>
-        <item name="android:scaleType">centerCrop</item>
+        <item name="android:scaleType">fitCenter</item>
     </style>
     <style name="login_et_user_details" parent="android:Widget.EditText">
-        <item name="android:textSize">@dimen/font_size_12</item>
+        <item name="android:textSize">@dimen/font_size_14</item>
         <item name="android:textColor">@color/colorTheme</item>
         <item name="android:textColorHint">@color/colorTheme</item>
     </style>
     <style name="login_b_sign_in" parent="android:Widget.Button">
         <item name="android:text">@string/login_b_sign_in</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">@dimen/font_size_12</item>
+        <item name="android:textSize">@dimen/font_size_14</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:textAlignment">center</item>
         <item name="android:background">@color/colorTheme</item>
     </style>
@@ -83,7 +85,7 @@
     </style>
     <style name="login_tv_join" parent="android:Widget.TextView">
         <item name="android:text">@string/login_tv_join</item>
-        <item name="android:textSize">@dimen/font_size_12</item>
+        <item name="android:textSize">@dimen/font_size_14</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/colorTheme</item>
         <item name="android:clickable">true</item>
@@ -95,7 +97,7 @@
 
     <!-- Add Observation Activity -->
     <style name="add_observation_ib">
-        <item name="android:src">@drawable/join_back</item>
+        <item name="android:src">@drawable/back_button</item>
     </style>
     <style name="add_observation_toolbar_title" parent="android:Widget.TextView">
         <item name="android:textSize">@dimen/font_size_16</item>
@@ -106,16 +108,9 @@
     <!-- Add Observation Activity -->
 
     <!-- Add Observation Fragment -->
-    <style name="add_observation_toolbar_back" parent="android:Widget.TextView">
-        <item name="android:text">@string/add_observation_tv_back</item>
-        <item name="android:textSize">@dimen/font_size_16</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
-    </style>
     <style name="add_observation_toolbar_send" parent="android:Widget.TextView">
         <item name="android:text">@string/add_observation_tv_send</item>
-        <item name="android:textSize">@dimen/font_size_16</item>
+        <item name="android:textSize">@dimen/font_size_14</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
@@ -131,9 +126,9 @@
         <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
     </style>
     <style name="add_observation_et_description" parent="android:Widget.EditText">
-        <item name="android:textSize">@dimen/font_size_12</item>
+        <item name="android:textSize">@dimen/font_size_14</item>
         <item name="android:inputType">textMultiLine</item>
-        <item name="android:background">@drawable/rectangular_box</item>
+        <item name="android:background">@drawable/border_description</item>
     </style>
     <style name="add_observation_tv_project_label" parent="android:Widget.TextView">
         <item name="android:text">@string/add_observation_tv_project_label</item>
@@ -150,13 +145,27 @@
     <style name="add_observation_b_project" parent="android:Widget.Button">
         <item name="android:text">@string/add_observation_b_project</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">@dimen/font_size_14</item>
+        <item name="android:textSize">@dimen/font_size_16</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
         <item name="android:background">@color/colorTheme</item>
     </style>
     <!-- Add Observation Fragment -->
 
     <!-- Project Activity -->
+    <style name="project_back" parent="android:Widget.TextView">
+        <item name="android:text">@string/project_back</item>
+        <item name="android:textSize">@dimen/font_size_14</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+    </style>
+    <style name="app_bar_project_tv" parent="android:Widget.TextView">
+        <item name="android:textSize">@dimen/font_size_16</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+    </style>
     <style name="project_tv_name" parent="android:Widget.TextView">
         <item name="android:textSize">@dimen/font_size_16</item>
         <item name="android:textStyle">bold</item>
@@ -191,6 +200,25 @@
     </style>
     <!-- Project Activity -->
 
+    <!-- Observation Activity -->
+    <style name="explore_b_back">
+        <item name="android:src">@drawable/back_button</item>
+    </style>
+    <style name="explore_tv_back" parent="android:Widget.TextView">
+        <item name="android:text">@string/explore_tv_back</item>
+        <item name="android:textSize">@dimen/font_size_14</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+    </style>
+    <style name="app_bar_explore_tv" parent="android:Widget.TextView">
+        <item name="android:textSize">@dimen/font_size_16</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+    </style>
+    <!-- Observation Activity -->
+
     <!-- Main Activity -->
     <style name="app_bar_main_tv" parent="android:Widget.TextView">
         <item name="android:textSize">@dimen/font_size_16</item>
@@ -202,24 +230,27 @@
 
     <!-- Navigation Panel -->
     <style name="nav_iv">
-        <item name="android:src">@drawable/nav_iv</item>
+        <!--<item name="android:src">@drawable/default_avatar</item>-->
         <item name="android:adjustViewBounds">true</item>
     </style>
     <style name="nav_b_sign_in" parent="android:Widget.Button">
         <item name="android:text">@string/nav_b_sign_in</item>
         <item name="android:textColor">@color/colorTheme</item>
-        <item name="android:textSize">@dimen/font_size_11</item>
+        <item name="android:textSize">@dimen/font_size_12</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
         <item name="android:background">@android:color/white</item>
     </style>
     <style name="nav_tv_display_name" parent="android:Widget.TextView">
         <item name="android:text">@string/nav_tv_guest</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
     </style>
     <style name="nav_b_join" parent="android:Widget.Button">
         <item name="android:text">@string/nav_b_join</item>
         <item name="android:textColor">@color/colorTheme</item>
-        <item name="android:textSize">@dimen/font_size_11</item>
+        <item name="android:textSize">@dimen/font_size_12</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
         <item name="android:background">@color/colorButton</item>
     </style>
@@ -242,7 +273,7 @@
         <item name="android:enabled">false</item>
     </style>
     <style name="launch_iv_what">
-        <item name="android:src">@drawable/what_is_naturenet_xxxhdpi</item>
+        <item name="android:src">@drawable/launch_iv_whatlogo</item>
     </style>
     <style name="launch_tv_learn" parent="android:Widget.TextView">
         <item name="android:text">@string/launch_tv_learn</item>
@@ -274,16 +305,15 @@
         <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
     </style>
     <style name="launch_iv_why">
-        <item name="android:src">@drawable/why_naturenet_xxxhdpi</item>
+        <item name="android:src">@drawable/launch_iv_whylogo</item>
     </style>
     <style name="launch_tv_para" parent="android:Widget.TextView">
         <item name="android:text">@string/launch_tv_para</item>
         <item name="android:textSize">@dimen/font_size_14</item>
     </style>
     <style name="launch_ib_join" parent="android:Widget.ImageButton">
-        <item name="android:src">@drawable/join_button_xxxhdpi</item>
-        <item name="android:scaleType">centerCrop</item>
-        <item name="android:clickable">true</item>
+        <item name="android:src">@drawable/launch_ib_join</item>
+        <item name="android:scaleType">centerInside</item>
         <item name="android:background">@color/colorImageButton</item>
     </style>
     <!-- Launch Fragment -->

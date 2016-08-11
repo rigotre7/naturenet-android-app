@@ -68,6 +68,7 @@
         style="@style/project_tv_description"/>
 
     <RelativeLayout
+        android:id="@+id/contributions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/project_margin"
@@ -88,5 +89,26 @@
             style="@style/project_tv_recent_contributions"/>
 
     </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/contributions"
+        android:layout_gravity="center_horizontal"
+        android:fillViewport="true">
+
+        <GridView
+            android:id="@+id/observation_gallery"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:padding="10dp"
+            android:numColumns="2"
+            android:verticalSpacing="5dp"
+            android:horizontalSpacing="5dp"
+            android:stretchMode="columnWidth"
+            android:gravity="center" />
+
+    </ScrollView>
 
 </RelativeLayout>

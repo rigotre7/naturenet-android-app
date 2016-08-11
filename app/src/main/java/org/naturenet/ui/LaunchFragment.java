@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import org.naturenet.R;
 
@@ -25,7 +26,11 @@ public class LaunchFragment extends Fragment {
         join_ib.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                main.goToJoinActivity();
+                if (main.haveNetworkConnection()) {
+                    main.goToJoinActivity();
+                } else {
+                    Toast.makeText(main, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

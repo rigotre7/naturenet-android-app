@@ -21,7 +21,7 @@
     <!--Old Version-->
 
     <!--NatureNet-Testing-->
-    <!--<string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyBPcqGw7HYxPtTjvISD3mjZMm_z5wkXQqE</string>-->
+    <!--<string name="google_maps_key" templateMergeStrategy="preserve" translatable="false"></string>-->
     <!--NatureNet-Testing-->
 
     <!--NatureNet-Staging-->

@@ -23,6 +23,9 @@ import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class ObservationFragment extends Fragment {
     ObservationActivity o;
     ImageView observer_avatar, observation_image, like;
@@ -63,8 +66,9 @@ public class ObservationFragment extends Fragment {
         }
         if (o.comments != null) {
             Log.d("comments", "Comments are available");
-            for (int i=0; i<o.comments.size(); i++)
+            for (int i=0; i<o.comments.size(); i++) {
                 Log.d("comments", "Comment" + i+1 + " : "+ o.comments.get(i).toString());
+            }
         } else {
             Log.d("comments", "Comments are not available");
         }
@@ -85,7 +89,9 @@ public class ObservationFragment extends Fragment {
         else
             observeration_text.setText("No Description");
         if (o.selectedObservation.getUpdated_at() != null) {
-            observeration_timestamp.setText("Timestamp");
+            SimpleDateFormat sfd = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+            Date date = new Date((Long) o.selectedObservation.getUpdated_at());
+            observeration_timestamp.setText(sfd.format(date).toString());
         } else {
             observeration_timestamp.setText("No Timestamp");
         }

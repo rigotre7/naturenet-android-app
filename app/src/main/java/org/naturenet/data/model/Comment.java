@@ -9,7 +9,7 @@ public class Comment implements Serializable {
     private String comment;
     private String commenter;
     private String parent;
-    private String status;
+    private String context;
     private Object created_at = null;
     private Object updated_at = null;
     public Comment() {}
@@ -46,11 +46,11 @@ public class Comment implements Serializable {
     public void setParent(String parent) {
         this.parent = parent;
     }
-    public String getStatus() {
-        return status;
+    public String getContext() {
+        return context;
     }
-    public void setStatus(String status) {
-        this.status = status;
+    public void setContext(String context) {
+        this.context = context;
     }
     public Object getCreated_at() {
         return created_at;

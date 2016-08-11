@@ -36,6 +36,7 @@ public class LoginFragment extends Fragment {
     static String CREATED_AT = "created_at";
     static String UPDATED_AT = "updated_at";
     static String SIGNING_IN = "Signing In...";
+    private FirebaseAuth mFirebaseAuth;
     DatabaseReference fbRef;
     String email, password;
     LoginActivity log;
@@ -60,9 +61,10 @@ public class LoginFragment extends Fragment {
                     Toast.makeText(log, getResources().getString(R.string.login_error_message_empty_email), Toast.LENGTH_SHORT).show();
                 } else if (password.equals("")) {
                     Toast.makeText(log, getResources().getString(R.string.login_error_message_empty_password), Toast.LENGTH_SHORT).show();
-                } else {
+                } else if (log.haveNetworkConnection()) {
                     pd.setCancelable(false);
                     pd.show();
+                    mFirebaseAuth = FirebaseAuth.getInstance();
                     fbRef = FirebaseDatabase.getInstance().getReference();
                     FirebaseAuth auth = FirebaseAuth.getInstance();
                     auth.signInWithEmailAndPassword(email, password)
@@ -101,7 +103,6 @@ public class LoginFragment extends Fragment {
                                                 Users loggedUser = new Users(id, display_name, affiliation, avatar, bio, latest_contribution, created_at, updated_at);
                                                 log.signed_user_email = email;
                                                 log.signed_user_password = password;
-                                                clearResources();
                                                 pd.dismiss();
                                                 log.continueAsSignedUser(loggedUser);
                                             }
@@ -117,27 +118,26 @@ public class LoginFragment extends Fragment {
                                     }
                                 }
                             });
+                } else {
+                    Toast.makeText(log, "No Internet Connection", Toast.LENGTH_SHORT).show();
                 }
             }
         });
         log.findViewById(R.id.login_tv_join).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clearResources();
-                log.goToJoinActivity();
+                if (log.haveNetworkConnection()) {
+                    log.goToJoinActivity();
+                } else {
+                    Toast.makeText(log, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         log.findViewById(R.id.login_tv_forgot).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clearResources();
                 log.goToForgotFragment();
             }
         });
-    }
-    public void clearResources() {
-        email = null;
-        password = null;
-        fbRef = null;
     }
 }

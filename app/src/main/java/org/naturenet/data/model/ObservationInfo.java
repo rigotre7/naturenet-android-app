@@ -1,8 +1,8 @@
-package org.naturenet.ui;
+package org.naturenet.data.model;
 
-import org.naturenet.data.model.Observation;
+import java.io.Serializable;
 
-public class ObservationInfo {
+public class ObservationInfo implements Serializable {
     Observation observation;
     String observerAvatar;
     String observerName;

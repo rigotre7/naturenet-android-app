@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Path;
 import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
 import org.naturenet.data.model.Observation;
+import org.naturenet.data.model.ObserverInfo;
 
 import java.util.List;
 
@@ -108,8 +110,37 @@ public class ObservationAdapter extends ArrayAdapter<Observation> {
                     }
                 }
             });
-        else
+        else {
             observation_icon.setImageDrawable(getContext().getResources().getDrawable(R.drawable.no_image));
+            for (int i=0; i<observers.size(); i++) {
+                if (observers.get(i).getObserverId().equals(observation.getObserver())) {
+                    ObserverInfo observer = observers.get(i);
+                    if (observer.getObserverAvatar() != null) {
+                        Picasso.with(getContext()).load(observer.getObserverAvatar()).fit().into(observer_avatar, new com.squareup.picasso.Callback() {
+                            @Override
+                            public void onSuccess() {
+                                observer_avatar.setImageBitmap(GetBitmapClippedCircle(((BitmapDrawable) observer_avatar.getDrawable()).getBitmap()));
+                            }
+                            @Override
+                            public void onError() {
+                                observer_avatar.setImageBitmap(GetBitmapClippedCircle(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.default_avatar)));
+                            }
+                        });
+                    } else {
+                        observer_avatar.setImageBitmap(GetBitmapClippedCircle(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.default_avatar)));
+                    }
+                    if (observer.getObserverName() != null)
+                        observer_user_name.setText(observer.getObserverName());
+                    else
+                        observer_user_name.setText(NO_DISPLAY_NAME);
+                    if (observer.getObserverAffiliation() != null)
+                        observer_affiliation.setText(observer.getObserverAffiliation());
+                    else
+                        observer_affiliation.setText(NO_AFFILIATION);
+                    break;
+                }
+            }
+        }
         return view;
     }
     public static Bitmap GetBitmapClippedCircle(Bitmap bitmap) {

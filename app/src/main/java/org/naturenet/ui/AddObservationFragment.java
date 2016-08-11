@@ -40,6 +40,7 @@ public class AddObservationFragment extends Fragment {
     ImageButton back;
     Button choose;
     ListView mProjectsListView;
+    TextView noProjects;
     LinearLayout add_observation_ll;
     AddObservationActivity add;
     DatabaseReference fbRef;
@@ -61,6 +62,7 @@ public class AddObservationFragment extends Fragment {
         choose = (Button) add.findViewById(R.id.add_observation_b_project);
         mProjectsListView = (ListView) add.findViewById(R.id.projects_list);
         add_observation_ll = (LinearLayout) add.findViewById(R.id.add_observation_ll);
+        noProjects = (TextView) add.findViewById(R.id.projecs_tv);
         mProjectsListView.setAdapter(new ProjectAdapter(add, add.mProjects));
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,12 +122,23 @@ public class AddObservationFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 add_observation_ll.setVisibility(View.GONE);
-                mProjectsListView.setVisibility(View.VISIBLE);
+                if (add.signedUser != null) {
+                    mProjectsListView.setVisibility(View.VISIBLE);
+                    noProjects.setVisibility(View.GONE);
+                } else {
+                    mProjectsListView.setVisibility(View.GONE);
+                    noProjects.setVisibility(View.VISIBLE);
+                }
             }
         });
-        selectedProject = add.defaultProject;
-        project.setText(selectedProject.getName()+" (Default)");
+        if (add.defaultProject != null) {
+            selectedProject = add.defaultProject;
+            project.setText(selectedProject.getName()+" (Default)");
+        } else {
+            project.setText("Free Observation (Default)");
+        }
         add_observation_ll.setVisibility(View.VISIBLE);
         mProjectsListView.setVisibility(View.GONE);
+        noProjects.setVisibility(View.GONE);
     }
 }

@@ -73,67 +73,71 @@ public class AddObservationActivity extends AppCompatActivity {
     }
     public void goToAddObservationFragment() {
         toolbar_title.setText(R.string.add_observation_title);
-        fbRef = FirebaseDatabase.getInstance().getReference();
-        pd.setMessage(LOADING);
-        pd.setCancelable(false);
-        pd.show();
-        fbRef.child(Project.NODE_NAME).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                for (DataSnapshot child : snapshot.getChildren()) {
-                    Map<String, Object> map = (Map<String, Object>) child.getValue();
-                    String id = null;
-                    String icon_url = null;
-                    String description = null;
-                    String name = null;
-                    String status = null;
-                    Long latest_contribution = null;
-                    Object created_at = null;
-                    Object updated_at = null;
-                    if (map.get(ID) != null)
-                        id = map.get(ID).toString();
-                    if (map.get(ICON_URL) != null)
-                        icon_url = map.get(ICON_URL).toString();
-                    if (map.get(DESCRIPTION) != null)
-                        description = map.get(DESCRIPTION).toString();
-                    if (map.get(NAME) != null)
-                        name = map.get(NAME).toString();
-                    if (map.get(STATUS) != null)
-                        status = map.get(STATUS).toString();
-                    if (map.get(LATEST_CONTRIBUTION) != null)
-                        latest_contribution = (Long) map.get(LATEST_CONTRIBUTION);
-                    if (map.get(CREATED_AT) != null)
-                        created_at = map.get(CREATED_AT);
-                    if (map.get(UPDATED_AT) != null)
-                        updated_at = map.get(UPDATED_AT);
-                    Project project = new Project(id, icon_url, description, name, status, latest_contribution, created_at, updated_at);
-                    if (project.getId().equals(DEFAULT_PROJECT_ID)) {
-                        defaultProject = project;
-                    }
-                    if (signedUser != null) {
+        if (signedUser != null) {
+            fbRef = FirebaseDatabase.getInstance().getReference();
+            pd.setMessage(LOADING);
+            pd.setCancelable(false);
+            pd.show();
+            fbRef.child(Project.NODE_NAME).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        Map<String, Object> map = (Map<String, Object>) child.getValue();
+                        String id = null;
+                        String icon_url = null;
+                        String description = null;
+                        String name = null;
+                        String status = null;
+                        Long latest_contribution = null;
+                        Object created_at = null;
+                        Object updated_at = null;
+                        if (map.get(ID) != null)
+                            id = map.get(ID).toString();
+                        if (map.get(ICON_URL) != null)
+                            icon_url = map.get(ICON_URL).toString();
+                        if (map.get(DESCRIPTION) != null)
+                            description = map.get(DESCRIPTION).toString();
+                        if (map.get(NAME) != null)
+                            name = map.get(NAME).toString();
+                        if (map.get(STATUS) != null)
+                            status = map.get(STATUS).toString();
+                        if (map.get(LATEST_CONTRIBUTION) != null)
+                            latest_contribution = (Long) map.get(LATEST_CONTRIBUTION);
+                        if (map.get(CREATED_AT) != null)
+                            created_at = map.get(CREATED_AT);
+                        if (map.get(UPDATED_AT) != null)
+                            updated_at = map.get(UPDATED_AT);
+                        Project project = new Project(id, icon_url, description, name, status, latest_contribution, created_at, updated_at);
+                        if (project.getId().equals(DEFAULT_PROJECT_ID)) {
+                            defaultProject = project;
+                        }
                         Map<String, Object> sites = (Map<String, Object>) map.get(SITES);
                         if (sites.containsKey(signedUser.getAffiliation())) {
                             mProjects.add(project);
                         }
-                    } else {
-                        mProjects.add(project);
                     }
+                    if (mProjects.size() != 0) {
+                        getFragmentManager().
+                                beginTransaction().
+                                replace(R.id.fragment_container, new AddObservationFragment(), FRAGMENT_TAG_ADD_OBSERVATION).
+                                addToBackStack(null).
+                                commit();
+                    }
+                    pd.dismiss();
                 }
-                if (mProjects.size() != 0) {
-                    getFragmentManager().
-                            beginTransaction().
-                            replace(R.id.fragment_container, new AddObservationFragment(), FRAGMENT_TAG_ADD_OBSERVATION).
-                            addToBackStack(null).
-                            commit();
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    pd.dismiss();
+                    Toast.makeText(AddObservationActivity.this, "Could not get projects: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-                pd.dismiss();
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                pd.dismiss();
-                Toast.makeText(AddObservationActivity.this, "Could not get projects: "+ databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+            });
+        } else {
+            getFragmentManager().
+                    beginTransaction().
+                    replace(R.id.fragment_container, new AddObservationFragment(), FRAGMENT_TAG_ADD_OBSERVATION).
+                    addToBackStack(null).
+                    commit();
+        }
     }
     public void goBackToMainActivity() {
         Intent resultIntent = new Intent(this, MainActivity.class);

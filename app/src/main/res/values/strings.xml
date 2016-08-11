@@ -20,7 +20,7 @@
     <string name="join_b_join">Join</string>
     <!-- Layout -->
     <!-- Java -->
-    <string name="join_default_avatar">http://res.cloudinary.com/university-of-colorado/image/upload/v1466634736/ettsgswdao0rjhjyvovx.jpg</string>
+    <string name="join_default_avatar">http://res.cloudinary.com/university-of-colorado/image/upload/v1467309210/v1jhqk1aobxi1y3gglv0.jpg</string>
     <string name="join_success_message">Account Created Successfully</string>
     <string name="join_error_message_firebase_read">@string/error_message_firebase_read</string>
     <string name="join_error_message_firebase_create">@string/error_message_firebase_create</string>
@@ -67,6 +67,7 @@
 
     <!-- Project Activity -->
     <string name="project_back">&#60;&#60; PROJECTS</string>
+    <string name="project_back_left_arrows">&#60;&#60; </string>
     <string name="project_tv_no_recent_contributions">No Recent Contributions</string>
     <string name="project_tv_recent_contributions">Recent Contributions</string>
     <!-- Project Activity -->

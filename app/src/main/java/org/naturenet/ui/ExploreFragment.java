@@ -47,6 +47,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.common.base.Strings;
 import com.kosalgeek.android.photoutil.CameraPhoto;
 import com.kosalgeek.android.photoutil.GalleryPhoto;
 import com.kosalgeek.android.photoutil.ImageLoader;
@@ -165,8 +166,8 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                             break;
                         }
                     }
-                    Picasso.with(main).load(preview.observationImageUrl).fit().into(preview_observation_image);
-                    Picasso.with(main).load(preview.observerAvatarUrl).fit().into(preview_observer_avatar, new com.squareup.picasso.Callback() {
+                    Picasso.with(main).load(Strings.emptyToNull(preview.observationImageUrl)).fit().into(preview_observation_image);
+                    Picasso.with(main).load(Strings.emptyToNull(preview.observerAvatarUrl)).fit().into(preview_observer_avatar, new com.squareup.picasso.Callback() {
                         @Override
                         public void onSuccess() {
                             preview_observer_avatar.setImageBitmap(GetBitmapClippedCircle(((BitmapDrawable) preview_observer_avatar.getDrawable()).getBitmap()));

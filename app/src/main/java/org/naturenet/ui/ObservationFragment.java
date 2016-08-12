@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.base.Strings;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
@@ -73,7 +74,7 @@ public class ObservationFragment extends Fragment {
             Log.d("comments", "Comments are not available");
         }
         if (o.selectedObservation.getData().getImage() != null) {
-            Picasso.with(o).load(o.selectedObservation.getData().getImage()).fit().into(observation_image, new com.squareup.picasso.Callback() {
+            Picasso.with(o).load(Strings.emptyToNull(o.selectedObservation.getData().getImage())).fit().into(observation_image, new com.squareup.picasso.Callback() {
                 @Override
                 public void onSuccess() {}
                 @Override
@@ -96,7 +97,8 @@ public class ObservationFragment extends Fragment {
             observeration_timestamp.setText("No Timestamp");
         }
         if (o.selectedObserverInfo.getObserverAvatar() != null) {
-            Picasso.with(o).load(o.selectedObserverInfo.getObserverAvatar()).fit().into(observer_avatar, new com.squareup.picasso.Callback() {
+            Picasso.with(o).load(Strings.emptyToNull(o.selectedObserverInfo.getObserverAvatar()))
+                    .placeholder(R.drawable.default_avatar).fit().into(observer_avatar, new com.squareup.picasso.Callback() {
                 @Override
                 public void onSuccess() {
                     observer_avatar.setImageBitmap(GetBitmapClippedCircle(((BitmapDrawable) observer_avatar.getDrawable()).getBitmap()));

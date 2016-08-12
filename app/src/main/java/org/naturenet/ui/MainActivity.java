@@ -36,6 +36,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -598,7 +599,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         logout.setVisible(true);
                         this.supportInvalidateOptionsMenu();
                         if (signed_user.getAvatar() != null) {
-                            Picasso.with(this).load(signed_user.getAvatar()).fit().into(nav_iv, new com.squareup.picasso.Callback() {
+                            Picasso.with(this).load(Strings.emptyToNull(signed_user.getAvatar()))
+                                    .placeholder(R.drawable.default_avatar).fit().into(nav_iv, new com.squareup.picasso.Callback() {
                                 @Override
                                 public void onSuccess() {
                                     nav_iv.setImageBitmap(GetBitmapClippedCircle(((BitmapDrawable) nav_iv.getDrawable()).getBitmap()));
@@ -634,7 +636,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         signed_user_email = data.getStringExtra(EMAIL);
                         signed_user_password = data.getStringExtra(PASSWORD);
                         updateUINoUser();
-                        Picasso.with(MainActivity.this).load(signed_user.getAvatar()).fit().into(nav_iv, new com.squareup.picasso.Callback() {
+                        Picasso.with(MainActivity.this).load(Strings.emptyToNull(signed_user.getAvatar()))
+                                .placeholder(R.drawable.default_avatar).fit().into(nav_iv, new com.squareup.picasso.Callback() {
                             @Override
                             public void onSuccess() {
                                 updateUIUser(signed_user);
@@ -692,7 +695,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Object created_at = map.get(CREATED_AT);
                 Object updated_at = map.get(UPDATED_AT);
                 signed_user = new Users(id, displayName, affiliationName, avatar, bio, latest_contribution, created_at, updated_at);
-                Picasso.with(MainActivity.this).load(avatar).fit().into(nav_iv, new com.squareup.picasso.Callback() {
+                Picasso.with(MainActivity.this).load(Strings.emptyToNull(signed_user.getAvatar()))
+                        .placeholder(R.drawable.default_avatar).fit().into(nav_iv, new com.squareup.picasso.Callback() {
                     @Override
                     public void onSuccess() {
                         updateUIUser(signed_user);

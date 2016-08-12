@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.common.base.Strings;
 import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
@@ -52,7 +53,8 @@ public class ObservationAdapter extends ArrayAdapter<Observation> {
                         if (observers.get(i).getObserverId().equals(observation.getObserver())) {
                             ObserverInfo observer = observers.get(i);
                             if (observer.getObserverAvatar() != null) {
-                                Picasso.with(getContext()).load(observer.getObserverAvatar()).fit().into(observer_avatar, new com.squareup.picasso.Callback() {
+                                Picasso.with(getContext()).load(Strings.emptyToNull(observer.getObserverAvatar()))
+                                        .placeholder(R.drawable.default_avatar).fit().into(observer_avatar, new com.squareup.picasso.Callback() {
                                     @Override
                                     public void onSuccess() {
                                         observer_avatar.setImageBitmap(GetBitmapClippedCircle(((BitmapDrawable) observer_avatar.getDrawable()).getBitmap()));

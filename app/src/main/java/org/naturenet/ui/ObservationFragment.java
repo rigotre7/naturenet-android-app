@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -125,18 +126,18 @@ public class ObservationFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (o.signed_user != null) {
-                    String value;
+                    Optional<Boolean> value;
                     if (o.like) {
                         o.like = false;
                         like.setImageDrawable(o.getResources().getDrawable(R.drawable.unlike));
-                        value = "";
+                        value = Optional.absent();
                     } else {
                         o.like = true;
                         like.setImageDrawable(o.getResources().getDrawable(R.drawable.like));
-                        value = "true";
+                        value = Optional.of(true);
                     }
                     DatabaseReference fbRef = FirebaseDatabase.getInstance().getReference();
-                    fbRef.child("observations").child(o.selectedObservation.getId()).child("likes").child(o.signed_user.getId()).setValue(value);
+                    fbRef.child("observations").child(o.selectedObservation.getId()).child("likes").child(o.signed_user.getId()).setValue(value.orNull());
                 } else
                     Toast.makeText(o, "Please login to like an observation.", Toast.LENGTH_SHORT).show();
             }

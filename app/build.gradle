@@ -25,6 +25,7 @@ dependencies {
     compile 'com.cloudinary:cloudinary-core:1.2.2'
     compile 'com.cloudinary:cloudinary-android:1.2.2'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.firebase:firebase-client-android:2.3.1'
 }
 
 android {
@@ -57,8 +58,5 @@ android {
         exclude 'META-INF/LICENSE'
     }
 }
-
-
-
 
 apply plugin: 'com.google.gms.google-services'

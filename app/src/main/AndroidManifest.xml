@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.naturenet">
+    package="org.naturenet" >
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -8,7 +8,9 @@
          location permissions for the 'MyLocation' functionality.
     -->
 
-    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -20,8 +22,7 @@
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
     <!-- Creating Permission to receive Google Maps -->
-    <permission
-        android:name="org.naturenet.ui.permission.MAPS_RECEIVE"/>
+    <permission android:name="org.naturenet.ui.permission.MAPS_RECEIVE" />
         android:protectionLevel="signature" />
 
     <!-- Permission to receive Google Maps -->
@@ -38,7 +39,7 @@
         android:icon="@drawable/app_logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.NoActionBar">
+        android:theme="@style/AppTheme.NoActionBar" >
 
         <!-- Services -->
         <!-- Services -->
@@ -49,7 +50,7 @@
             android:name=".ui.SplashActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -83,7 +84,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -92,7 +92,7 @@
             android:value="cloudinary://893246586645466:8Liy-YcDCvHZpokYZ8z3cUxCtyk@university-of-colorado" />
 
         <activity android:name=".ui.JoinActivity" />
-        <activity android:name=".ui.ObservationActivity"></activity>
+        <activity android:name=".ui.ObservationActivity" />
     </application>
 
 </manifest>

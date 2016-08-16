@@ -50,7 +50,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
+import org.naturenet.CroppedCircleTransformation;
 import org.naturenet.R;
 import org.naturenet.data.model.Comment;
 import org.naturenet.data.model.Data;
@@ -148,8 +150,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FirebaseUser mFirebaseUser;
     public static FragmentManager fragmentManager;
     Map<Observation, PreviewInfo> previews = new HashMap<Observation, PreviewInfo>();
+    private Transformation mAvatarTransform = new CroppedCircleTransformation();
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {}
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -443,8 +448,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         signed_user = null;
         logout.setVisible(false);
         this.invalidateOptionsMenu();
-        nav_iv.setImageDrawable(getResources().getDrawable(R.drawable.default_avatar));
-        nav_iv.setImageBitmap(GetBitmapClippedCircle(((BitmapDrawable) nav_iv.getDrawable()).getBitmap()));
+        Picasso.with(this).load(R.drawable.default_avatar)
+                .transform(mAvatarTransform).fit().into(nav_iv);
         display_name.setText(EMPTY);
         affiliation.setText(EMPTY);
         sign_in.setVisibility(View.VISIBLE);
@@ -583,36 +588,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Bitmap output = BitmapFactory.decodeFile(filePath, options);
         return output;
     }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case (REQUEST_CODE_JOIN): {
                 if (resultCode == Activity.RESULT_OK) {
-                    if (data.getExtras().getString(JOIN).equals(GUEST)) {
+                    if (GUEST.equals(data.getExtras().getString(JOIN))) {
                         drawer.openDrawer(GravityCompat.START);
-                    } else if (data.getExtras().getString(JOIN).equals(LAUNCH)) {
+                    } else if (LAUNCH.equals(data.getExtras().getString(JOIN))) {
                         goToLaunchFragment();
-                    } else if (data.getExtras().getString(JOIN).equals(LOGIN)) {
+                    } else if (LOGIN.equals(data.getExtras().getString(JOIN))) {
                         signed_user = (Users) data.getSerializableExtra(NEW_USER);
                         signed_user_email = data.getStringExtra(EMAIL);
                         signed_user_password = data.getStringExtra(PASSWORD);
                         logout.setVisible(true);
                         this.supportInvalidateOptionsMenu();
+
                         if (signed_user.getAvatar() != null) {
                             Picasso.with(this).load(Strings.emptyToNull(signed_user.getAvatar()))
-                                    .placeholder(R.drawable.default_avatar).fit().into(nav_iv, new com.squareup.picasso.Callback() {
-                                @Override
-                                public void onSuccess() {
-                                    nav_iv.setImageBitmap(GetBitmapClippedCircle(((BitmapDrawable) nav_iv.getDrawable()).getBitmap()));
-                                }
-                                @Override
-                                public void onError() {
-                                }
-                            });
-                        } else {
-                            nav_iv.setImageDrawable(getResources().getDrawable(R.drawable.default_avatar));
-                            nav_iv.setImageBitmap(GetBitmapClippedCircle(((BitmapDrawable) nav_iv.getDrawable()).getBitmap()));
+                                    .placeholder(R.drawable.default_avatar)
+                                    .transform(mAvatarTransform).fit().into(nav_iv);
                         }
+
                         display_name.setText(signed_user.getDisplay_name());
                         affiliation.setText(signed_user.getAffiliation());
                         sign_in.setVisibility(View.GONE);
@@ -636,18 +634,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         signed_user_email = data.getStringExtra(EMAIL);
                         signed_user_password = data.getStringExtra(PASSWORD);
                         updateUINoUser();
-                        Picasso.with(MainActivity.this).load(Strings.emptyToNull(signed_user.getAvatar()))
-                                .placeholder(R.drawable.default_avatar).fit().into(nav_iv, new com.squareup.picasso.Callback() {
-                            @Override
-                            public void onSuccess() {
-                                updateUIUser(signed_user);
-                            }
-                            @Override
-                            public void onError() {
-                                nav_iv.setImageDrawable(getResources().getDrawable(R.drawable.default_avatar));
-                                updateUIUser(signed_user);
-                            }
-                        });
+                        updateUIUser(signed_user);
                     }
                 }
                 break;
@@ -714,10 +701,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
     }
+
     public void updateUINoUser() {
+        Picasso.with(this).load(R.drawable.default_avatar)
+                .transform(mAvatarTransform).fit().into(nav_iv);
         logout.setVisible(false);
-        nav_iv.setImageDrawable(getResources().getDrawable(R.drawable.default_avatar));
-        nav_iv.setImageBitmap(GetBitmapClippedCircle(((BitmapDrawable) nav_iv.getDrawable()).getBitmap()));
         display_name.setText(EMPTY);
         affiliation.setText(EMPTY);
         sign_in.setVisibility(View.VISIBLE);
@@ -725,9 +713,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         display_name.setVisibility(View.GONE);
         affiliation.setVisibility(View.GONE);
     }
+
     public void updateUIUser(final Users user) {
+        Picasso.with(MainActivity.this).load(Strings.emptyToNull(user.getAvatar()))
+                .placeholder(R.drawable.default_avatar)
+                .transform(mAvatarTransform).fit().into(nav_iv);
         logout.setVisible(true);
-        nav_iv.setImageBitmap(GetBitmapClippedCircle(((BitmapDrawable) nav_iv.getDrawable()).getBitmap()));
         display_name.setText(user.getDisplay_name());
         affiliation.setText(user.getAffiliation());
         sign_in.setVisibility(View.GONE);
@@ -737,17 +728,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         goToExploreFragment();
         drawer.openDrawer(GravityCompat.START);
     }
-    public static Bitmap GetBitmapClippedCircle(Bitmap bitmap) {
-        final int width = bitmap.getWidth();
-        final int height = bitmap.getHeight();
-        final Bitmap outputBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        final Path path = new Path();
-        path.addCircle((float) (width/2), (float) (height/2), (float) Math.min(width, (height/2)), Path.Direction.CCW);
-        final Canvas canvas = new Canvas(outputBitmap);
-        canvas.clipPath(path);
-        canvas.drawBitmap(bitmap, 0, 0, null);
-        return outputBitmap;
-    }
+
     public boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;

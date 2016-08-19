@@ -16,11 +16,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.base.Strings;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
 import org.naturenet.data.model.Data;
@@ -75,32 +77,13 @@ public class AddObservationFragment extends Fragment {
             public void onClick(View v) {
                 if (add.signedUser != null) {
                     fbRef = FirebaseDatabase.getInstance().getReference();
-                    fbRef.child(GEO).child(ACTIVITIES).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot snapshot) {
-                            String activityLocation = null;
-                            for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                                Map<String, Object> map = (Map<String, Object>) postSnapshot.getValue();
-                                String activity = map.get(ACTIVITY).toString();
-                                String site = map.get(SITE).toString();
-                                if (add.signedUser.getAffiliation().equals(site) && selectedProject.getId().equals(activity)) {
-                                    activityLocation = map.get(ID).toString();
-                                    break;
-                                }
-                            }
-                            if (activityLocation != null) {
-                                Data data = new Data();
-                                data.setText(description.getText().toString());
-                                add.newObservation.setData(data);
-                                add.newObservation.setActivity_location(activityLocation);
-                                add.goBackToMainActivity();
-                            }
-                        }
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            Toast.makeText(add, getResources().getString(R.string.join_error_message_firebase_read) + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
+
+                    Data data = new Data();
+                    data.setText(description.getText().toString());
+                    add.newObservation.setData(data);
+                    add.newObservation.setActivity(selectedProject.getId());
+                    add.newObservation.setSite(add.signedUser.getAffiliation());
+                    add.goBackToMainActivity();
                 } else {
                     Toast.makeText(add, "Please login to add an observation.", Toast.LENGTH_SHORT).show();
                 }
@@ -115,9 +98,7 @@ public class AddObservationFragment extends Fragment {
                 mProjectsListView.setVisibility(View.GONE);
             }
         });
-        if (add.observationBitmap != null) {
-            image.setImageBitmap(BitmapFactory.decodeByteArray(add.observationBitmap, 0, add.observationBitmap.length));
-        }
+        Picasso.with(AddObservationFragment.this.getActivity()).load(add.observationPath).placeholder(R.drawable.no_image).fit().into(image);
         choose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

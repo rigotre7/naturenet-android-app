@@ -25,6 +25,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -67,6 +68,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     final static int REQUEST_CODE_JOIN = 1;
@@ -114,7 +116,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     static String OBSERVERS = "observers";
     static String OBSERVATIONS = "observations";
     static String OBSERVER = "observer";
-    static String ACTIVITY_LOCATION = "activity_location";
+    static String ACTIVITY = "activity";
+    static String SITE = "site";
     static String DATA = "data";
     static String IMAGE = "image";
     static String TEXT = "text";
@@ -134,9 +137,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     List<String> ids, names;
     DatabaseReference fbRef, mFirebase;
     Users signed_user;
-    String signed_user_email, signed_user_password, observationPath;
-    byte[] observationBitmap;
+    String signed_user_email, signed_user_password;
     Observation newObservation;
+    Uri observationPath;
     DrawerLayout drawer;
     Toolbar toolbar;
     NavigationView navigationView;
@@ -313,7 +316,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             Long created_at = (Long) map.get(CREATED_AT);
                             Long updated_at = (Long) map.get(UPDATED_AT);
                             String observerId = map.get(OBSERVER).toString();
-                            String activity_location = map.get(ACTIVITY_LOCATION).toString();
+                            String activity = map.get(ACTIVITY).toString();
+                            String site = map.get(SITE).toString();
                             Data data = new Data();
                             Map<String, Object> d = (Map<String, Object>) map.get(DATA);
                             data.setImage(d.get(IMAGE).toString());
@@ -328,9 +332,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 g = map.get(G).toString();
                             Map<String, Double> l = new HashMap<String, Double>();
                             if (map.get(L) != null) {
-                                ArrayList<Double> lMap = (ArrayList<Double>) map.get(L);
-                                l.put(LAT, lMap.get(0));
-                                l.put(LON, lMap.get(1));
+                                ArrayList<Number> lMap = (ArrayList<Number>) map.get(L);
+                                l.put(LAT, lMap.get(0).doubleValue());
+                                l.put(LON, lMap.get(1).doubleValue());
                             }
                             Map<String, Boolean> comments = new HashMap<String, Boolean>();
                             if (map.get(COMMENTS) != null) {
@@ -348,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     likes.put(key, li.get(key).toString().equals(TRUE));
                             } else
                                 preview.likesCount = "0";
-                            final Observation observation = new Observation(id, created_at, updated_at, observerId, activity_location, data, g, l, comments, likes);
+                            final Observation observation = new Observation(id, created_at, updated_at, observerId, activity, site, data, g, l, comments, likes);
                             observations.add(observation);
                             boolean contains = false;
                             for (int i=0; i<observers.size(); i++) {
@@ -495,7 +499,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void goToAddObservationActivity() {
         Intent addObservation = new Intent(this, AddObservationActivity.class);
         addObservation.putExtra(OBSERVATION_PATH, observationPath);
-        addObservation.putExtra(OBSERVATION_BITMAP, observationBitmap);
         addObservation.putExtra(OBSERVATION, newObservation);
         addObservation.putExtra(SIGNED_USER, signed_user);
         addObservation.putExtra(EMAIL, signed_user_email);
@@ -526,10 +529,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] projection = new String[] { MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DATE_TAKEN };
         cursor = this.getContentResolver().query(uri, projection, null, null, MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC");
-        while (cursor.moveToNext()) {
-            if (listOfAllImages.size() < 8)
-                listOfAllImages.add(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)));
-        }
+        cursor.moveToFirst();
+        do {
+            listOfAllImages.add(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)));
+        } while (cursor.moveToNext() && listOfAllImages.size() < 8);
         cursor.close();
         return listOfAllImages;
     }
@@ -537,8 +540,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         pd.setMessage(SUBMITTING);
         pd.setCancelable(false);
         pd.show();
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("photos").child(observationPath);
-        UploadTask uploadTask = storageRef.putBytes(observationBitmap);
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("photos").child(UUID.randomUUID().toString());
+        UploadTask uploadTask = storageRef.putFile(observationPath);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
@@ -612,7 +615,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
 
                         display_name.setText(signed_user.getDisplay_name());
-                        affiliation.setText(signed_user.getAffiliation());
+                        fbRef.child(SITES).child(signed_user.getAffiliation()).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot snapshot) {
+                                affiliation.setText(snapshot.getValue().toString());
+                            }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.d("MainActivity", "Could not get user's affiliation");
+                            }
+                        });
                         sign_in.setVisibility(View.GONE);
                         join.setVisibility(View.GONE);
                         display_name.setVisibility(View.VISIBLE);

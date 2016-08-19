@@ -12,7 +12,8 @@ public class Observation implements Serializable {
     private Object created_at = null;
     private Object updated_at = null;
     private String observer = null;
-    private String activity_location = null;
+    private String activity = null;
+    private String site = null;
     Data data = null;
     private String g = null; // the geohash of the location where the observation took place
     private Map<String, Double> l = null;
@@ -23,12 +24,13 @@ public class Observation implements Serializable {
         setCreated_at(timestamp);
         setUpdated_at(timestamp);
     }
-    public Observation(String id, Object created_at, Object updated_at, String observer, String activity_location, Data data, String g, Map<String, Double> l, Map<String, Boolean> comments, Map<String, Boolean> likes) {
+    public Observation(String id, Object created_at, Object updated_at, String observer, String activity, String site, Data data, String g, Map<String, Double> l, Map<String, Boolean> comments, Map<String, Boolean> likes) {
         setId(id);
         setCreated_at(created_at);
         setUpdated_at(updated_at);
         setObserver(observer);
-        setActivity_location(activity_location);
+        setActivity(activity);
+        setSite(site);
         setData(data);
         setG(g);
         setL(l);
@@ -49,9 +51,9 @@ public class Observation implements Serializable {
         String observer = "";
         if (this.observer != null)
             observer = this.observer;
-        String activity_location = "";
-        if (this.activity_location != null)
-            activity_location = this.activity_location;
+        String activity = "";
+        if (this.activity != null)
+            activity = this.activity;
         String dataImage = "";
         if (this.data.getImage() != null)
             dataImage = this.data.getImage();
@@ -78,7 +80,7 @@ public class Observation implements Serializable {
                 ", created_at=" + created_at +
                 ", updated_at=" + updated_at +
                 ", observer='" + observer + '\'' +
-                ", activity_location='" + activity_location + '\'' +
+                ", activity='" + activity + '\'' +
                 ", dataImage=" + dataImage +
                 ", dataText=" + dataText +
                 ", g='" + g + '\'' +
@@ -112,12 +114,12 @@ public class Observation implements Serializable {
     public void setObserver(String observer) {
         this.observer = observer;
     }
-    public String getActivity_location() {
-        return activity_location;
+    public String getActivity() {
+        return activity;
     }
-    public void setActivity_location(String activity_location) {
-        this.activity_location = activity_location;
-    }
+    public void setActivity(String activity) { this.activity = activity; }
+    public String getSite() { return site; }
+    public void setSite(String site) { this.site = site; }
     public Data getData() {
         return data;
     }

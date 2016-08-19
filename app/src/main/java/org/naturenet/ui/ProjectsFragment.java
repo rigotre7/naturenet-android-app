@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.NonNull;
@@ -54,6 +55,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -91,7 +93,7 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
     ImageView gallery_item;
     List<String> galleryLatestList;
     String[] galleryLatest;
-    String selectedImage;
+    Uri selectedImage;
     double latValue, longValue;
     GoogleApiClient mGoogleApiClient;
     LocationRequest locationRequest;
@@ -244,14 +246,6 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
             @Override
             public void onClick(View v) {
                 main.observationPath = selectedImage;
-                try {
-                    Bitmap bitmap = ImageLoader.init().from(main.observationPath).requestSize(512, 512).getBitmap();
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    main.observationBitmap = stream.toByteArray();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
                 main.newObservation = new Observation();
                 Map<String, Double> latLong = new HashMap<String, Double>();
                 double latitude = latValue;
@@ -347,7 +341,7 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
                 public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                     ImageView iv = (ImageView) v.findViewById(R.id.gallery_iv);
                     if (selectedImage == null) {
-                        selectedImage = galleryLatest[position];
+                        selectedImage = Uri.fromFile(new File(galleryLatest[position]));
                         iv.setBackground(getResources().getDrawable(R.drawable.border_selected_image));
                         select.setVisibility(View.VISIBLE);
                     } else if (selectedImage.equals(galleryLatest[position])) {
@@ -358,7 +352,7 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
                         for (int i=0; i<galleryLatest.length; i++)
                             if (galleryLatest[i].equals(selectedImage))
                                 gridview.getChildAt(i).findViewById(R.id.gallery_iv).setBackgroundResource(0);
-                        selectedImage = galleryLatest[position];
+                        selectedImage = Uri.fromFile(new File(galleryLatest[position]));
                         iv.setBackground(getResources().getDrawable(R.drawable.border_selected_image));
                         select.setVisibility(View.VISIBLE);
                     }
@@ -375,20 +369,12 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
 //                Toast.makeText(main, "Image saved to:\n" + data.getData().toString(), Toast.LENGTH_LONG).show();
 //                main.observationPath = data.getData().toString();
                 Log.d("camera", "Path: "+cameraPhoto.getPhotoPath());
-                main.observationPath = cameraPhoto.getPhotoPath();
+                main.observationPath = data.getData();
                 cameraPhoto.addToGallery();
             } else if (requestCode == GALLERY_REQUEST) {
                 galleryPhoto.setPhotoUri(data.getData());
                 Log.d("gallery", "Path: "+galleryPhoto.getPath());
-                main.observationPath = galleryPhoto.getPath();
-            }
-            try {
-                Bitmap bitmap = ImageLoader.init().from(main.observationPath).requestSize(512, 512).getBitmap();
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                main.observationBitmap = stream.toByteArray();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                main.observationPath = data.getData();
             }
             main.newObservation = new Observation();
             Map<String, Double> latLong =  new HashMap<String, Double>();

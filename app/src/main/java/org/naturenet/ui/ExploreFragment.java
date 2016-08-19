@@ -13,6 +13,7 @@ import android.graphics.Path;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.NonNull;
@@ -58,6 +59,7 @@ import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.PreviewInfo;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -85,7 +87,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
     MainActivity main;
     List<String> galleryLatestList;
     String[] galleryLatest;
-    String selectedImage;
+    Uri selectedImage;
     double latValue, longValue;
     CameraPhoto cameraPhoto;
     GalleryPhoto galleryPhoto;
@@ -95,7 +97,10 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
     LocationRequest locationRequest;
     Observation previewSelectedObservation;
     private Map<Marker, PreviewInfo> allMarkersMap = new HashMap<Marker, PreviewInfo>();
-    public ExploreFragment() {}
+
+    public ExploreFragment() {
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,11 +114,12 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                     .addOnConnectionFailedListener(this)
                     .build();
             locationRequest = new LocationRequest();
-            locationRequest.setInterval(10*1000);
-            locationRequest.setFastestInterval(1*1000);
+            locationRequest.setInterval(10 * 1000);
+            locationRequest.setFastestInterval(1 * 1000);
             locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         }
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_explore, container, false);
@@ -129,7 +135,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
         googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         if (ContextCompat.checkSelfPermission(main, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             googleMap.setMyLocationEnabled(true);
-        final LocationManager manager = (LocationManager) main.getSystemService( Context.LOCATION_SERVICE );
+        final LocationManager manager = (LocationManager) main.getSystemService(Context.LOCATION_SERVICE);
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             final AlertDialog.Builder builder = new AlertDialog.Builder(main);
             builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
@@ -147,7 +153,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
             final AlertDialog alert = builder.create();
             alert.show();
         }
-        for(int i=0; i<main.observations.size(); i++) {
+        for (int i = 0; i < main.observations.size(); i++) {
             final Observation observation = main.observations.get(i);
             Marker marker = googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(observation.getL().get(LATITUDE), observation.getL().get(LONGITUDE)))
@@ -160,7 +166,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
             public boolean onMarkerClick(Marker marker) {
                 if (!marker.getTitle().equals(MY_LOCATION)) {
                     PreviewInfo preview = allMarkersMap.get(marker);
-                    for (Observation observation: main.previews.keySet()) {
+                    for (Observation observation : main.previews.keySet()) {
                         if (main.previews.get(observation).equals(preview)) {
                             previewSelectedObservation = observation;
                             break;
@@ -172,6 +178,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                         public void onSuccess() {
                             preview_observer_avatar.setImageBitmap(GetBitmapClippedCircle(((BitmapDrawable) preview_observer_avatar.getDrawable()).getBitmap()));
                         }
+
                         @Override
                         public void onError() {
                             preview_observer_avatar.setImageBitmap(GetBitmapClippedCircle(BitmapFactory.decodeResource(main.getResources(), R.drawable.default_avatar)));
@@ -197,29 +204,37 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
         });
         return v;
     }
+
     public static Bitmap GetBitmapClippedCircle(Bitmap bitmap) {
         final int width = bitmap.getWidth();
         final int height = bitmap.getHeight();
         final Bitmap outputBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         final Path path = new Path();
-        path.addCircle((float) (width/2), (float) (height/2), (float) Math.min(width, (height/2)), Path.Direction.CCW);
+        path.addCircle((float) (width / 2), (float) (height / 2), (float) Math.min(width, (height / 2)), Path.Direction.CCW);
         final Canvas canvas = new Canvas(outputBitmap);
         canvas.clipPath(path);
         canvas.drawBitmap(bitmap, 0, 0, null);
         return outputBitmap;
     }
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         requestLocationUpdates();
     }
+
     private void requestLocationUpdates() {
         if (ContextCompat.checkSelfPermission(main, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
     }
+
     @Override
-    public void onConnectionSuspended(int i) {}
+    public void onConnectionSuspended(int i) {
+    }
+
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+    }
+
     @Override
     public void onLocationChanged(Location location) {
         if (latValue == 0 && longValue == 0) {
@@ -232,16 +247,19 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
         latValue = location.getLatitude();
         longValue = location.getLongitude();
     }
+
     @Override
     public void onStart() {
         mGoogleApiClient.connect();
         super.onStart();
     }
+
     @Override
     public void onStop() {
         mGoogleApiClient.disconnect();
         super.onStop();
     }
+
     @Override
     public void onResume() {
         mMapView.onResume();
@@ -249,6 +267,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
             requestLocationUpdates();
         super.onResume();
     }
+
     @Override
     public void onPause() {
         if (mGoogleApiClient.isConnected())
@@ -256,6 +275,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
         super.onPause();
         mMapView.onPause();
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -264,11 +284,13 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
             dialog_preview = null;
         }
     }
+
     @Override
     public void onLowMemory() {
         super.onLowMemory();
         mMapView.onLowMemory();
     }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -358,14 +380,6 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
             @Override
             public void onClick(View v) {
                 main.observationPath = selectedImage;
-                try {
-                    Bitmap bitmap = ImageLoader.init().from(main.observationPath).requestSize(512, 512).getBitmap();
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    main.observationBitmap = stream.toByteArray();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
                 main.newObservation = new Observation();
                 Map<String, Double> latLong = new HashMap<String, Double>();
                 double latitude = latValue;
@@ -411,11 +425,13 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
         });
         design_ideas.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {}
+            public void onClick(View v) {
+            }
         });
         design_challenges.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {}
+            public void onClick(View v) {
+            }
         });
         floating_buttons.setVisibility(View.VISIBLE);
         explore.setVisibility(View.VISIBLE);
@@ -423,7 +439,8 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
         dialog_add_design_idea.setVisibility(View.GONE);
         dialog_preview.setVisibility(View.GONE);
     }
-//    private static Uri getOutputMediaFileUri(int type) {
+
+    //    private static Uri getOutputMediaFileUri(int type) {
 //        return Uri.fromFile(getOutputMediaFile(type));
 //    }
 //    private static File getOutputMediaFile(int type) {
@@ -441,18 +458,23 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
 //    }
     private class ImageAdapter extends BaseAdapter {
         private Context mContext;
+
         public ImageAdapter(Context c) {
             mContext = c;
         }
+
         public int getCount() {
             return galleryLatest.length;
         }
+
         public Object getItem(int position) {
             return null;
         }
+
         public long getItemId(int position) {
             return 0;
         }
+
         public View getView(int position, View convertView, ViewGroup parent) {
             LayoutInflater inflater = (LayoutInflater) main.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.gallery_gv_item, parent, false);
@@ -460,11 +482,12 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
             imageView.setLayoutParams(new GridView.LayoutParams(GV_IMAGE_WIDTH, GV_IMAGE_HEIGHT));
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             imageView.setImageBitmap(main.decodeURI(galleryLatest[position]));
-            imageView.setPadding(10,10,10,10);
+            imageView.setPadding(10, 10, 10, 10);
             imageView.setBackgroundResource(0);
             return imageView;
         }
     }
+
     public void setGallery() {
         galleryLatestList = main.getAllShownImagesPath();
         if (galleryLatestList.size() != 0) {
@@ -474,7 +497,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                 public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                     ImageView iv = (ImageView) v.findViewById(R.id.gallery_iv);
                     if (selectedImage == null) {
-                        selectedImage = galleryLatest[position];
+                        selectedImage = Uri.fromFile(new File(galleryLatest[position]));
                         iv.setBackground(getResources().getDrawable(R.drawable.border_selected_image));
                         select.setVisibility(View.VISIBLE);
                     } else if (selectedImage.equals(galleryLatest[position])) {
@@ -482,10 +505,12 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                         iv.setBackgroundResource(0);
                         select.setVisibility(View.GONE);
                     } else {
-                        for (int i=0; i<galleryLatest.length; i++)
-                            if (galleryLatest[i].equals(selectedImage))
+                        for (int i = 0; i < galleryLatest.length; i++) {
+                            if (galleryLatest[i].equals(selectedImage)) {
                                 gridview.getChildAt(i).findViewById(R.id.gallery_iv).setBackgroundResource(0);
-                        selectedImage = galleryLatest[position];
+                            }
+                        }
+                        selectedImage = Uri.fromFile(new File(galleryLatest[position]));
                         iv.setBackground(getResources().getDrawable(R.drawable.border_selected_image));
                         select.setVisibility(View.VISIBLE);
                     }
@@ -493,6 +518,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
             });
         }
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -501,24 +527,16 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
 //                main.observationPath = fileUri.getPath();
 //                Toast.makeText(main, "Image saved to:\n" + data.getData().toString(), Toast.LENGTH_LONG).show();
 //                main.observationPath = data.getData().toString();
-                Log.d("camera", "Path: "+cameraPhoto.getPhotoPath());
-                main.observationPath = cameraPhoto.getPhotoPath();
+                Log.d("camera", "Path: " + cameraPhoto.getPhotoPath());
+                main.observationPath = Uri.fromFile(new File(cameraPhoto.getPhotoPath()));
                 cameraPhoto.addToGallery();
             } else if (requestCode == GALLERY_REQUEST) {
                 galleryPhoto.setPhotoUri(data.getData());
-                Log.d("gallery", "Path: "+galleryPhoto.getPath());
-                main.observationPath = galleryPhoto.getPath();
-            }
-            try {
-                Bitmap bitmap = ImageLoader.init().from(main.observationPath).requestSize(512, 512).getBitmap();
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                main.observationBitmap = stream.toByteArray();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                Log.d("gallery", "Path: " + galleryPhoto.getPath());
+                main.observationPath = Uri.fromFile(new File(galleryPhoto.getPath()));
             }
             main.newObservation = new Observation();
-            Map<String, Double> latLong =  new HashMap<String, Double>();
+            Map<String, Double> latLong = new HashMap<String, Double>();
             double latitude = latValue;
             double longitude = longValue;
             latLong.put(LATITUDE, latitude);
@@ -528,20 +546,23 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
             main.goToAddObservationActivity();
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case GALLERY_REQUEST:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     setGallery();
-                else
+                } else {
                     Toast.makeText(main, "Gallery Access Permission Denied", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case CAMERA_REQUEST:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     setGallery();
-                else
+                } else {
                     Toast.makeText(main, "Camera Access Permission Denied", Toast.LENGTH_SHORT).show();
+                }
                 break;
             default:
                 break;

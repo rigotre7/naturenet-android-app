@@ -41,13 +41,24 @@
             android:layout_gravity="center"
             android:orientation="horizontal">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Coming soon!"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:textSize="32dp"
+                android:textColor="@color/colorBackground" />
+
             <ImageView
+                android:visibility="gone"
                 android:layout_width="@dimen/dialog_add_design_idea_iv_width"
                 android:layout_height="@dimen/dialog_add_design_idea_iv_height"
                 android:layout_gravity="center_vertical"
                 style="@style/dialog_add_design_idea_iv"/>
 
             <TextView
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -57,6 +68,7 @@
         </LinearLayout>
 
         <Button
+            android:visibility="gone"
             android:id="@+id/dialog_add_design_idea_b_design_ideas"
             android:layout_width="@dimen/dialog_add_design_idea_b_width"
             android:layout_height="@dimen/dialog_add_design_idea_b_height"
@@ -65,6 +77,7 @@
             style="@style/dialog_add_design_idea_b_design_ideas" />
 
         <Button
+            android:visibility="gone"
             android:id="@+id/dialog_add_design_idea_b_design_challenges"
             android:layout_width="@dimen/dialog_add_design_idea_b_width"
             android:layout_height="@dimen/dialog_add_design_idea_b_height"

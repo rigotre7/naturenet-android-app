@@ -5,6 +5,9 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.squareup.picasso.Picasso;
+
+import org.naturenet.BuildConfig;
 import org.naturenet.R;
 
 public class SplashActivity extends AppCompatActivity {
@@ -12,6 +15,7 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Picasso.with(this).setIndicatorsEnabled(BuildConfig.DEBUG);
         setContentView(R.layout.activity_splash);
         new Handler().postDelayed(new Runnable() {
             @Override

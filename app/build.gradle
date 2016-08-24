@@ -16,6 +16,7 @@ dependencies {
     compile 'com.google.firebase:firebase-database:9.0.2'
     compile 'com.google.firebase:firebase-storage:9.0.2'
     compile 'com.google.firebase:firebase-auth:9.0.2'
+    compile 'com.google.firebase:firebase-crash:9.0.2'
     compile 'com.google.guava:guava:16.0.1'
     compile 'org.slf4j:slf4j-android:1.7.16'
     compile 'com.google.android.gms:play-services-maps:9.0.2'

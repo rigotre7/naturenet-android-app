@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.common.base.Strings;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -136,7 +137,21 @@ public class LoginFragment extends Fragment {
         log.findViewById(R.id.login_tv_forgot).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                log.goToForgotFragment();
+                email = ((EditText) log.findViewById(R.id.login_et_email_address)).getText().toString();
+                if (Strings.isNullOrEmpty(email)) {
+                    Toast.makeText(LoginFragment.this.getActivity(), "Please provide the email addressed you used to join NatureNet", Toast.LENGTH_LONG).show();
+                } else {
+                    FirebaseAuth.getInstance().sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(LoginFragment.this.getActivity(), "Check your email for instructions on resetting your password", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(LoginFragment.this.getActivity(), "There was an error handling your request. Please check the email address and try again.", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                }
             }
         });
     }

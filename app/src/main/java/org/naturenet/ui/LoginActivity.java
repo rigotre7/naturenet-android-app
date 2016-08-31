@@ -42,13 +42,7 @@ public class LoginActivity extends AppCompatActivity {
                 addToBackStack(null).
                 commit();
     }
-    public void goToForgotFragment() {
-        getFragmentManager().
-                beginTransaction().
-                replace(R.id.fragment_container, new ForgotFragment(), FRAGMENT_TAG_FORGOT).
-                addToBackStack(null).
-                commit();
-    }
+
     public void goToJoinActivity() {
         Intent resultIntent = new Intent(this, MainActivity.class);
         resultIntent.putExtra(LOGIN, JOIN);

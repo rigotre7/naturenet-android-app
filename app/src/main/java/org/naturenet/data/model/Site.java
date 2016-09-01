@@ -1,11 +1,16 @@
 package org.naturenet.data.model;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
+import java.util.ArrayList;
+
+@IgnoreExtraProperties
 public class Site {
-    private String id;
-    private String name;
-    private String description;
-    private Double[] l;
-    private String g;
-    private Object updated_at;
+    public String id;
+    public String name;
+    public String description;
+    public ArrayList<Double> l;
+    public String g;
+
     public Site() {}
 }

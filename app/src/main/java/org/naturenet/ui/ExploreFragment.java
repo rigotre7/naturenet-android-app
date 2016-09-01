@@ -57,6 +57,7 @@ import com.squareup.picasso.Picasso;
 import org.naturenet.R;
 import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.PreviewInfo;
+import org.naturenet.data.model.Site;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -105,8 +106,14 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         main = ((MainActivity) this.getActivity());
-        latValue = 0;
-        longValue = 0;
+        Site home = main.user_home_site;
+        if(home != null) {
+            latValue = home.l.get(0);
+            longValue = home.l.get(1);
+        } else {
+            latValue = 0;
+            longValue = 0;
+        }
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(main)
                     .addApi(LocationServices.API)

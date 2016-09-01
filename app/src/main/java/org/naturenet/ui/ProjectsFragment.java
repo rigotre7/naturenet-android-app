@@ -51,6 +51,7 @@ import com.kosalgeek.android.photoutil.ImageLoader;
 import org.naturenet.R;
 import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Project;
+import org.naturenet.data.model.Site;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,8 +109,14 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_projects, container, false);
         main = ((MainActivity) getActivity());
-        latValue = 0;
-        longValue = 0;
+        Site home = main.user_home_site;
+        if(home != null) {
+            latValue = home.l.get(0);
+            longValue = home.l.get(1);
+        } else {
+            latValue = 0;
+            longValue = 0;
+        }
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(main)
                     .addApi(LocationServices.API)

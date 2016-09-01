@@ -62,6 +62,7 @@ import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.ObserverInfo;
 import org.naturenet.data.model.PreviewInfo;
 import org.naturenet.data.model.Project;
+import org.naturenet.data.model.Site;
 import org.naturenet.data.model.Users;
 
 import java.io.Serializable;
@@ -138,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     List<String> ids, names;
     DatabaseReference fbRef, mFirebase;
     Users signed_user;
+    Site user_home_site;
     String signed_user_email, signed_user_password;
     Observation newObservation;
     Uri observationPath;
@@ -712,6 +714,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void onError() {
                         nav_iv.setImageDrawable(getResources().getDrawable(R.drawable.default_avatar));
                         updateUIUser(signed_user);
+                    }
+                });
+                fbRef.child(SITES).child(signed_user.getAffiliation()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        user_home_site = dataSnapshot.getValue(Site.class);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(MainActivity.this, getString(R.string.login_error_message_firebase_read), Toast.LENGTH_SHORT).show();
                     }
                 });
             }

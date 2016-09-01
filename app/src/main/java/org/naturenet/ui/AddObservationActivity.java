@@ -78,7 +78,7 @@ public class AddObservationActivity extends AppCompatActivity {
             pd.setMessage(LOADING);
             pd.setCancelable(false);
             pd.show();
-            fbRef.child(Project.NODE_NAME).addListenerForSingleValueEvent(new ValueEventListener() {
+            fbRef.child(Project.NODE_NAME).orderByChild(LATEST_CONTRIBUTION).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
                     for (DataSnapshot child : snapshot.getChildren()) {

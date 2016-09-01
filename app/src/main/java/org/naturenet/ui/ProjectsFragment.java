@@ -411,7 +411,7 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
         pd.setMessage(LOADING_PROJECTS);
         pd.setCancelable(false);
         pd.show();
-        mFirebase.child(Project.NODE_NAME).addListenerForSingleValueEvent(new ValueEventListener() {
+        mFirebase.child(Project.NODE_NAME).orderByChild(LATEST_CONTRIBUTION).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 mLogger.info("Got projects, count: {}", snapshot.getChildrenCount());

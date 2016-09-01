@@ -46,6 +46,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -214,6 +215,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
+        fbRef = FirebaseDatabase.getInstance().getReference();
         updateUINoUser();
         if (mFirebaseUser != null) {
             getSignedUser();
@@ -248,7 +250,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         if (haveNetworkConnection()) {
-            fbRef = FirebaseDatabase.getInstance().getReference();
             int id = item.getItemId();
             switch(id) {
                 case R.id.nav_explore:
@@ -467,7 +468,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void goToJoinActivity() {
         ids = new ArrayList<String>();
         names = new ArrayList<String>();
-        fbRef = FirebaseDatabase.getInstance().getReference();
         fbRef.child(SITES).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -561,8 +561,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     final String id = fbRef.push().getKey();
                                     newObservation.setId(id);
                                     newObservation.getData().setImage(downloadUrl.toString());
-                                    fbRef.child(newObservation.NODE_NAME).child(id).setValue(newObservation);
-                                    pd.dismiss();
+                                    fbRef.child(newObservation.NODE_NAME).child(id).setValue(newObservation, new DatabaseReference.CompletionListener() {
+                                        @Override
+                                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                            pd.dismiss();
+                                            if(databaseError != null) {
+                                                Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_error), Toast.LENGTH_SHORT).show();
+                                            }
+                                            fbRef.child(USERS).child(signed_user.getId()).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
+                                            fbRef.child(Project.NODE_NAME).child(newObservation.getActivity()).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
+                                        }
+                                    });
                                     Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_success), Toast.LENGTH_SHORT).show();
                                 } else {
                                     pd.dismiss();
@@ -676,7 +685,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
     public void getSignedUser() {
-        fbRef = FirebaseDatabase.getInstance().getReference();
         fbRef.child(USERS).child(mFirebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {

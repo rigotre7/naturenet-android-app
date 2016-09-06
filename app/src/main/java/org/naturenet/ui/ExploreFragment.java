@@ -43,6 +43,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -139,75 +140,80 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
         } catch (Exception e) {
             e.printStackTrace();
         }
-        googleMap = mMapView.getMap();
-        googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        if (ContextCompat.checkSelfPermission(main, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-            googleMap.setMyLocationEnabled(true);
-        final LocationManager manager = (LocationManager) main.getSystemService(Context.LOCATION_SERVICE);
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(main);
-            builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
-                    .setCancelable(false)
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                        }
-                    })
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                            dialog.cancel();
-                        }
-                    });
-            final AlertDialog alert = builder.create();
-            alert.show();
-        }
-        for (int i = 0; i < main.observations.size(); i++) {
-            final Observation observation = main.observations.get(i);
-            Marker marker = googleMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(observation.getL().get(LATITUDE), observation.getL().get(LONGITUDE)))
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-                    .title(OBSERVATION));
-            allMarkersMap.put(marker, main.previews.get(observation));
-        }
-        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+        mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
-            public boolean onMarkerClick(Marker marker) {
-                if (!marker.getTitle().equals(MY_LOCATION)) {
-                    PreviewInfo preview = allMarkersMap.get(marker);
-                    for (Observation observation : main.previews.keySet()) {
-                        if (main.previews.get(observation).equals(preview)) {
-                            previewSelectedObservation = observation;
-                            break;
-                        }
+            public void onMapReady(GoogleMap map) {
+                googleMap = map;
+                googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                if (ContextCompat.checkSelfPermission(main, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+                    googleMap.setMyLocationEnabled(true);
+                    final LocationManager manager = (LocationManager) main.getSystemService(Context.LOCATION_SERVICE);
+                    if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(main);
+                        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+                                .setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+                        final AlertDialog alert = builder.create();
+                        alert.show();
                     }
-                    Picasso.with(main).load(Strings.emptyToNull(preview.observationImageUrl)).fit().into(preview_observation_image);
-                    Picasso.with(main).load(Strings.emptyToNull(preview.observerAvatarUrl)).fit().into(preview_observer_avatar, new com.squareup.picasso.Callback() {
+                    for (int i = 0; i < main.observations.size(); i++) {
+                        final Observation observation = main.observations.get(i);
+                        Marker marker = googleMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(observation.getL().get(LATITUDE), observation.getL().get(LONGITUDE)))
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                                .title(OBSERVATION));
+                        allMarkersMap.put(marker, main.previews.get(observation));
+                    }
+                    googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                         @Override
-                        public void onSuccess() {
-                            preview_observer_avatar.setImageBitmap(GetBitmapClippedCircle(((BitmapDrawable) preview_observer_avatar.getDrawable()).getBitmap()));
-                        }
+                        public boolean onMarkerClick(Marker marker) {
+                            if (!marker.getTitle().equals(MY_LOCATION)) {
+                                PreviewInfo preview = allMarkersMap.get(marker);
+                                for (Observation observation : main.previews.keySet()) {
+                                    if (main.previews.get(observation).equals(preview)) {
+                                        previewSelectedObservation = observation;
+                                        break;
+                                    }
+                                }
+                                Picasso.with(main).load(Strings.emptyToNull(preview.observationImageUrl)).fit().into(preview_observation_image);
+                                Picasso.with(main).load(Strings.emptyToNull(preview.observerAvatarUrl)).fit().into(preview_observer_avatar, new com.squareup.picasso.Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        preview_observer_avatar.setImageBitmap(GetBitmapClippedCircle(((BitmapDrawable) preview_observer_avatar.getDrawable()).getBitmap()));
+                                    }
 
-                        @Override
-                        public void onError() {
-                            preview_observer_avatar.setImageBitmap(GetBitmapClippedCircle(BitmapFactory.decodeResource(main.getResources(), R.drawable.default_avatar)));
+                                    @Override
+                                    public void onError() {
+                                        preview_observer_avatar.setImageBitmap(GetBitmapClippedCircle(BitmapFactory.decodeResource(main.getResources(), R.drawable.default_avatar)));
+                                    }
+                                });
+                                preview_observer_user_name.setText(preview.observerName);
+                                preview_observer_affiliation.setText(preview.affiliation);
+                                preview_observation_text.setText(preview.observationText);
+                                preview_likes_count.setText(preview.likesCount);
+                                preview_comments_count.setText(preview.commentsCount);
+                                floating_buttons.setVisibility(View.GONE);
+                                explore.setVisibility(View.GONE);
+                                dialog_preview.setVisibility(View.VISIBLE);
+                            } else {
+                                if (dialog_preview.getVisibility() == View.VISIBLE) {
+                                    floating_buttons.setVisibility(View.VISIBLE);
+                                    explore.setVisibility(View.VISIBLE);
+                                    dialog_preview.setVisibility(View.GONE);
+                                }
+                            }
+                            return false;
                         }
                     });
-                    preview_observer_user_name.setText(preview.observerName);
-                    preview_observer_affiliation.setText(preview.affiliation);
-                    preview_observation_text.setText(preview.observationText);
-                    preview_likes_count.setText(preview.likesCount);
-                    preview_comments_count.setText(preview.commentsCount);
-                    floating_buttons.setVisibility(View.GONE);
-                    explore.setVisibility(View.GONE);
-                    dialog_preview.setVisibility(View.VISIBLE);
-                } else {
-                    if (dialog_preview.getVisibility() == View.VISIBLE) {
-                        floating_buttons.setVisibility(View.VISIBLE);
-                        explore.setVisibility(View.VISIBLE);
-                        dialog_preview.setVisibility(View.GONE);
-                    }
-                }
-                return false;
             }
         });
         return v;

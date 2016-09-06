@@ -17,7 +17,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,8 +51,6 @@ import org.naturenet.R;
 import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Project;
 import org.naturenet.data.model.Site;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -62,6 +59,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import timber.log.Timber;
 
 public class ProjectsFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     final private static int CAMERA_REQUEST = 1;
@@ -81,7 +80,6 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
     static String LONGITUDE = "1";
     MainActivity main;
     ProgressDialog pd;
-    private Logger mLogger = LoggerFactory.getLogger(ProjectsFragment.class);
     private ListView mProjectsListView = null;
     private List<Project> mProjects = Lists.newArrayList();
     private DatabaseReference mFirebase = FirebaseDatabase.getInstance().getReference();
@@ -375,12 +373,12 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
 //                main.observationPath = fileUri.getPath();
 //                Toast.makeText(main, "Image saved to:\n" + data.getData().toString(), Toast.LENGTH_LONG).show();
 //                main.observationPath = data.getData().toString();
-                Log.d("camera", "Path: "+cameraPhoto.getPhotoPath());
+                Timber.d("Camera Path: "+cameraPhoto.getPhotoPath());
                 main.observationPath = data.getData();
                 cameraPhoto.addToGallery();
             } else if (requestCode == GALLERY_REQUEST) {
                 galleryPhoto.setPhotoUri(data.getData());
-                Log.d("gallery", "Path: "+galleryPhoto.getPath());
+                Timber.d("Gallery Path: "+galleryPhoto.getPath());
                 main.observationPath = data.getData();
             }
             main.newObservation = new Observation();
@@ -414,14 +412,14 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
         }
     }
     private void readProjects() {
-        mLogger.info("Getting projects");
+        Timber.d("Getting projects");
         pd.setMessage(LOADING_PROJECTS);
         pd.setCancelable(false);
         pd.show();
         mFirebase.child(Project.NODE_NAME).orderByChild(LATEST_CONTRIBUTION).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                mLogger.info("Got projects, count: {}", snapshot.getChildrenCount());
+                Timber.d("Got projects, count: %d", snapshot.getChildrenCount());
                 for(DataSnapshot child : snapshot.getChildren()) {
                     Map<String, Object> map = (Map<String, Object>) child.getValue();
                     String id = null;
@@ -458,7 +456,7 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                mLogger.error("Failed to read Projects: {}", databaseError.getMessage());
+                Timber.e("Failed to read Projects: %s", databaseError.getMessage());
                 pd.dismiss();
                 Toast.makeText(main, "Could not get projects: "+ databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }

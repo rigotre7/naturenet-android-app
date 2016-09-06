@@ -12,13 +12,12 @@ import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
 import org.naturenet.data.model.Project;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 public class ProjectAdapter extends ArrayAdapter<Project> implements View.OnClickListener {
-    Logger mLogger = LoggerFactory.getLogger(ProjectAdapter.class);
     public ProjectAdapter(Context context, List<Project> objects) {
         super(context, R.layout.project_list_item, objects);
     }
@@ -36,6 +35,6 @@ public class ProjectAdapter extends ArrayAdapter<Project> implements View.OnClic
     }
     @Override
     public void onClick(View v) {
-        mLogger.debug("Clicked on project {}", v.getTag().toString());
+        Timber.d("Clicked on project %s", v.getTag().toString());
     }
 }

@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Path;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +24,8 @@ import org.naturenet.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import timber.log.Timber;
 
 public class SelectedObservationFragment extends Fragment {
     ProjectActivity o;
@@ -61,12 +62,12 @@ public class SelectedObservationFragment extends Fragment {
             like.setImageDrawable(o.getResources().getDrawable(R.drawable.unlike));
         }
         if (o.comments != null) {
-            Log.d("comments", "Comments are available");
+            Timber.d("Comments are available");
             for (int i=0; i<o.comments.size(); i++) {
-                Log.d("comments", "Comment" + i+1 + " : "+ o.comments.get(i).toString());
+                Timber.d("Comment" + i+1 + " : "+ o.comments.get(i).toString());
             }
         } else {
-            Log.d("comments", "Comments are not available");
+            Timber.d("Comments are not available");
         }
         if (o.selectedObservation.getData().getImage() != null) {
             Picasso.with(o).load(o.selectedObservation.getData().getImage()).fit().into(observation_image, new com.squareup.picasso.Callback() {

@@ -20,7 +20,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,6 +65,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import timber.log.Timber;
 
 public class ExploreFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     final private static int CAMERA_REQUEST = 1;
@@ -534,12 +535,12 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
 //                main.observationPath = fileUri.getPath();
 //                Toast.makeText(main, "Image saved to:\n" + data.getData().toString(), Toast.LENGTH_LONG).show();
 //                main.observationPath = data.getData().toString();
-                Log.d("camera", "Path: " + cameraPhoto.getPhotoPath());
+                Timber.d("Camera Path: " + cameraPhoto.getPhotoPath());
                 main.observationPath = Uri.fromFile(new File(cameraPhoto.getPhotoPath()));
                 cameraPhoto.addToGallery();
             } else if (requestCode == GALLERY_REQUEST) {
                 galleryPhoto.setPhotoUri(data.getData());
-                Log.d("gallery", "Path: " + galleryPhoto.getPath());
+                Timber.d("Gallery Path: " + galleryPhoto.getPath());
                 main.observationPath = Uri.fromFile(new File(galleryPhoto.getPath()));
             }
             main.newObservation = new Observation();

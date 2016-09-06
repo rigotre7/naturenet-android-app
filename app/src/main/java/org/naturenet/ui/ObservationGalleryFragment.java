@@ -3,7 +3,6 @@ package org.naturenet.ui;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,8 @@ import org.naturenet.R;
 import org.naturenet.data.model.Observation;
 
 import java.util.List;
+
+import timber.log.Timber;
 
 public class ObservationGalleryFragment extends Fragment {
     ObservationActivity o;
@@ -59,11 +60,11 @@ public class ObservationGalleryFragment extends Fragment {
                         break;
                     }
                 }
-                Log.d("selected", "Observation: " + o.selectedObservation.toString());
-                Log.d("selected", "Observer Id: " + o.selectedObserverInfo.getObserverId());
-                Log.d("selected", "Observer Avatar: " + o.selectedObserverInfo.getObserverAvatar());
-                Log.d("selected", "Observer Name: " + o.selectedObserverInfo.getObserverName());
-                Log.d("selected", "Observer Affiliation: " + o.selectedObserverInfo.getObserverAffiliation());
+                Timber.d("Observation: " + o.selectedObservation.toString());
+                Timber.d("Observer Id: " + o.selectedObserverInfo.getObserverId());
+                Timber.d("Observer Avatar: " + o.selectedObserverInfo.getObserverAvatar());
+                Timber.d("Observer Name: " + o.selectedObserverInfo.getObserverName());
+                Timber.d("Observer Affiliation: " + o.selectedObserverInfo.getObserverAffiliation());
                 o.goToSelectedObservationFragment();
             }
         });

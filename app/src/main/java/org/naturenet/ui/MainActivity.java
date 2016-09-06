@@ -25,7 +25,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -71,6 +70,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     final static int REQUEST_CODE_JOIN = 1;
@@ -633,7 +634,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             }
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
-                                Log.d("MainActivity", "Could not get user's affiliation");
+                                Timber.d("Could not get user's affiliation");
                             }
                         });
                         sign_in.setVisibility(View.GONE);

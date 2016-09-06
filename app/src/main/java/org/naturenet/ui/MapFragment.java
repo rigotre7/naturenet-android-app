@@ -20,13 +20,12 @@ import com.google.common.collect.Lists;
 import org.naturenet.BuildConfig;
 import org.naturenet.R;
 import org.naturenet.data.model.Observation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
-    private Logger mLogger = LoggerFactory.getLogger(MapFragment.class);
     private MapView mMapView;
     private GoogleMap mMap;
     private List<Observation> mVisibleObservations = Lists.newArrayList();
@@ -45,7 +44,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
         try { MapsInitializer.initialize(getActivity().getApplicationContext()); }
-        catch (Exception e) { mLogger.error("Failed to initialize map view: {}", e); }
+        catch (Exception e) { Timber.e(e, "Failed to initialize map view"); }
         mMapView.getMapAsync(this);
 //        root.findViewById(R.id.explore_b_explore).setOnClickListener(new View.OnClickListener() {
 //            @Override

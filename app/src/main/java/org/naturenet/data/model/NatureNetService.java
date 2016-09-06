@@ -11,8 +11,6 @@ import com.google.firebase.database.Transaction;
 
 import org.naturenet.BuildConfig;
 import org.naturenet.data.model.Users;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -27,7 +25,6 @@ public class NatureNetService extends IntentService {
     public static final String ACTION_REGISTER_USER = "REGISTER_USER";
     public static final String ACTION_REGISTER_USER_RESULT = "REGISTER_USER_RESULT";
     public static final String ACTION_LOGOUT = "LOGOUT";
-    private Logger mLogger = LoggerFactory.getLogger(NatureNetService.class);
     private Handler mHandler;
 //    private Firebase mFirebase = new Firebase(BuildConfig.FIREBASE_ROOT_URL);
     public NatureNetService() {

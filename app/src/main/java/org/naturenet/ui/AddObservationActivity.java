@@ -111,10 +111,11 @@ public class AddObservationActivity extends AppCompatActivity {
                         if (project.getId().equals(DEFAULT_PROJECT_ID)) {
                             defaultProject = project;
                         }
-                        Map<String, Object> sites = (Map<String, Object>) map.get(SITES);
-                        if (sites.containsKey(signedUser.affiliation)) {
+                        // TODO: decide on site-project submission rule
+                        //Map<String, Object> sites = (Map<String, Object>) map.get(SITES);
+                        //if (sites.containsKey(signedUser.affiliation)) {
                             mProjects.add(project);
-                        }
+                        //}
                     }
                     if (mProjects.size() != 0) {
                         getFragmentManager().

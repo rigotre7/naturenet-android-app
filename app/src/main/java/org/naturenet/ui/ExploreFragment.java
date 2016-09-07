@@ -363,7 +363,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
             public void onClick(View v) {
                 if (galleryLatest != null)
                     for (int i = 0; i < galleryLatest.length; i++)
-                        if (galleryLatest[i].equals(selectedImage))
+                        if (galleryLatest[i].equals(selectedImage.getPath()))
                             gridview.getChildAt(i).findViewById(R.id.gallery_iv).setBackgroundResource(0);
                 selectedImage = null;
                 select.setVisibility(View.GONE);
@@ -496,13 +496,13 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                         selectedImage = Uri.fromFile(new File(galleryLatest[position]));
                         iv.setBackground(getResources().getDrawable(R.drawable.border_selected_image));
                         select.setVisibility(View.VISIBLE);
-                    } else if (selectedImage.equals(galleryLatest[position])) {
+                    } else if (selectedImage.getPath().equals(galleryLatest[position])) {
                         selectedImage = null;
                         iv.setBackgroundResource(0);
                         select.setVisibility(View.GONE);
                     } else {
                         for (int i = 0; i < galleryLatest.length; i++) {
-                            if (galleryLatest[i].equals(selectedImage)) {
+                            if (galleryLatest[i].equals(selectedImage.getPath())) {
                                 gridview.getChildAt(i).findViewById(R.id.gallery_iv).setBackgroundResource(0);
                             }
                         }

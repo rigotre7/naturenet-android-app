@@ -221,7 +221,7 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
             public void onClick(View v) {
                 if (galleryLatest != null)
                     for (int i = 0; i < galleryLatest.length; i++)
-                        if (galleryLatest[i].equals(selectedImage))
+                        if (galleryLatest[i].equals(selectedImage.getPath()))
                             gridview.getChildAt(i).findViewById(R.id.gallery_iv).setBackgroundResource(0);
                 selectedImage = null;
                 select.setVisibility(View.GONE);
@@ -331,13 +331,13 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
                         selectedImage = Uri.fromFile(new File(galleryLatest[position]));
                         iv.setBackground(getResources().getDrawable(R.drawable.border_selected_image));
                         select.setVisibility(View.VISIBLE);
-                    } else if (selectedImage.equals(galleryLatest[position])) {
+                    } else if (selectedImage.getPath().equals(galleryLatest[position])) {
                         selectedImage = null;
                         iv.setBackgroundResource(0);
                         select.setVisibility(View.GONE);
                     } else {
                         for (int i=0; i<galleryLatest.length; i++)
-                            if (galleryLatest[i].equals(selectedImage))
+                            if (galleryLatest[i].equals(selectedImage.getPath()))
                                 gridview.getChildAt(i).findViewById(R.id.gallery_iv).setBackgroundResource(0);
                         selectedImage = Uri.fromFile(new File(galleryLatest[position]));
                         iv.setBackground(getResources().getDrawable(R.drawable.border_selected_image));
@@ -356,12 +356,12 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
 //                Toast.makeText(main, "Image saved to:\n" + data.getData().toString(), Toast.LENGTH_LONG).show();
 //                main.observationPath = data.getData().toString();
                 Timber.d("Camera Path: "+cameraPhoto.getPhotoPath());
-                main.observationPath = data.getData();
+                main.observationPath = Uri.fromFile(new File(cameraPhoto.getPhotoPath()));
                 cameraPhoto.addToGallery();
             } else if (requestCode == GALLERY_REQUEST) {
                 galleryPhoto.setPhotoUri(data.getData());
                 Timber.d("Gallery Path: "+galleryPhoto.getPath());
-                main.observationPath = data.getData();
+                main.observationPath = Uri.fromFile(new File(galleryPhoto.getPath()));
             }
             main.newObservation = new Observation();
             Map<String, Double> latLong =  new HashMap<String, Double>();

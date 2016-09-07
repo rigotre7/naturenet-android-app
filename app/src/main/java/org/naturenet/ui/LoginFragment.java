@@ -76,32 +76,7 @@ public class LoginFragment extends Fragment {
                                         fbRef.child(USERS).child(task.getResult().getUser().getUid()).addValueEventListener(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(DataSnapshot snapshot) {
-                                                Map<String, Object> map = (Map<String, Object>) snapshot.getValue();
-                                                String id = null;
-                                                String display_name = null;
-                                                String affiliation = null;
-                                                String avatar = null;
-                                                String bio = null;
-                                                Long latest_contribution = null;
-                                                Object created_at = null;
-                                                Object updated_at = null;
-                                                if (map.get(ID) != null)
-                                                    id = map.get(ID).toString();
-                                                if (map.get(DISPLAY_NAME) != null)
-                                                    display_name = map.get(DISPLAY_NAME).toString();
-                                                if (map.get(AFFILIATION) != null)
-                                                    affiliation = map.get(AFFILIATION).toString();
-                                                if (map.get(AVATAR) != null)
-                                                    avatar = map.get(AVATAR).toString();
-                                                if (map.get(BIO) != null)
-                                                    bio = map.get(BIO).toString();
-                                                if (map.get(LATEST_CONTRIBUTION) != null)
-                                                    latest_contribution = (Long) map.get(LATEST_CONTRIBUTION);
-                                                if (map.get(CREATED_AT) != null)
-                                                    created_at = map.get(CREATED_AT);
-                                                if (map.get(UPDATED_AT) != null)
-                                                    updated_at = map.get(UPDATED_AT);
-                                                Users loggedUser = new Users(id, display_name, affiliation, avatar, bio, latest_contribution, created_at, updated_at);
+                                                Users loggedUser = snapshot.getValue(Users.class);
                                                 log.signed_user_email = email;
                                                 log.signed_user_password = password;
                                                 pd.dismiss();

@@ -1,6 +1,7 @@
 package org.naturenet.data.model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.google.firebase.database.PropertyName;
 
 import java.util.ArrayList;
 
@@ -9,8 +10,10 @@ public class Site {
     public String id;
     public String name;
     public String description;
-    public ArrayList<Double> l;
-    public String g;
+    @PropertyName("l")
+    public ArrayList<Double> location;
+    @PropertyName("g")
+    public String geohash;
 
-    public Site() {}
+    private Site() {}
 }

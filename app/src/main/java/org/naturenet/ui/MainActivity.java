@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     List<Comment> comments;
     String[] affiliation_ids, affiliation_names;
     List<String> ids, names;
-    DatabaseReference fbRef, mFirebase;
+    DatabaseReference mFirebase;
     Users signed_user;
     Site user_home_site;
     String signed_user_email, signed_user_password;
@@ -217,7 +217,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
-        fbRef = FirebaseDatabase.getInstance().getReference();
+
+        mFirebase = FirebaseDatabase.getInstance().getReference();
+        mFirebase.child(SITES).keepSynced(true);
+        mFirebase.child(Project.NODE_NAME).keepSynced(true);
+
         updateUINoUser();
         observations = null;
         observers = null;
@@ -482,7 +486,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void goToJoinActivity() {
         ids = new ArrayList<String>();
         names = new ArrayList<String>();
-        fbRef.child(SITES).addValueEventListener(new ValueEventListener() {
+        mFirebase.child(SITES).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
@@ -572,18 +576,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    final String id = fbRef.push().getKey();
+                                    final String id = mFirebase.child(OBSERVATIONS).push().getKey();
                                     newObservation.setId(id);
                                     newObservation.getData().setImage(downloadUrl.toString());
-                                    fbRef.child(newObservation.NODE_NAME).child(id).setValue(newObservation, new DatabaseReference.CompletionListener() {
+                                    mFirebase.child(newObservation.NODE_NAME).child(id).setValue(newObservation, new DatabaseReference.CompletionListener() {
                                         @Override
                                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                             pd.dismiss();
                                             if(databaseError != null) {
                                                 Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_error), Toast.LENGTH_SHORT).show();
                                             }
-                                            fbRef.child(USERS).child(signed_user.getId()).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
-                                            fbRef.child(Project.NODE_NAME).child(newObservation.getActivity()).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
+                                            mFirebase.child(USERS).child(signed_user.id).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
+                                            mFirebase.child(Project.NODE_NAME).child(newObservation.getActivity()).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
                                         }
                                     });
                                     Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_success), Toast.LENGTH_SHORT).show();
@@ -631,21 +635,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         logout.setVisible(true);
                         this.supportInvalidateOptionsMenu();
 
-                        if (signed_user.getAvatar() != null) {
-                            Picasso.with(this).load(Strings.emptyToNull(signed_user.getAvatar()))
+                        if (signed_user.avatar != null) {
+                            Picasso.with(this).load(Strings.emptyToNull(signed_user.avatar))
                                     .placeholder(R.drawable.default_avatar)
                                     .transform(mAvatarTransform).fit().into(nav_iv);
                         }
 
-                        display_name.setText(signed_user.getDisplay_name());
-                        fbRef.child(SITES).child(signed_user.getAffiliation()).addValueEventListener(new ValueEventListener() {
+                        display_name.setText(signed_user.displayName);
+                        mFirebase.child(SITES).child(signed_user.affiliation).child(NAME).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot snapshot) {
                                 affiliation.setText(snapshot.getValue().toString());
                             }
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
-                                Timber.d("Could not get user's affiliation");
+                                Timber.w("Could not get user's affiliation");
                             }
                         });
                         sign_in.setVisibility(View.GONE);
@@ -677,7 +681,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case(REQUEST_CODE_ADD_OBSERVATION): {
                 if(resultCode == Activity.RESULT_OK) {
                     newObservation = (Observation) data.getSerializableExtra(OBSERVATION);
-                    newObservation.setObserver(signed_user.getId());
+                    newObservation.setObserver(signed_user.id);
                     uploadObservation();
                     goToExploreFragment();
                 }
@@ -699,27 +703,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
     public void getSignedUser() {
-        fbRef.child(USERS).child(mFirebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+        mFirebase.child(USERS).child(mFirebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                Map<String, Object> map = (Map<String, Object>) snapshot.getValue();
-                String id = map.get(ID).toString();
-                String displayName = map.get(DISPLAY_NAME).toString();
-                String affiliationName = map.get(AFFILIATION).toString();
-                String avatar = map.get(AVATAR).toString();
-                String bio = null;
-                if (map.get(BIO) != null)
-                    bio = map.get(BIO).toString();
-                Long latest_contribution = null;
-                if (map.get(LATEST_CONTRIBUTION) != null)
-                    latest_contribution = (Long) map.get(LATEST_CONTRIBUTION);
-                Object created_at = map.get(CREATED_AT);
-                Object updated_at = map.get(UPDATED_AT);
-                signed_user = new Users(id, displayName, affiliationName, avatar, bio, latest_contribution, created_at, updated_at);
-                fbRef.child(SITES).child(signed_user.getAffiliation()).addListenerForSingleValueEvent(new ValueEventListener() {
+                signed_user = snapshot.getValue(Users.class);
+                mFirebase.child(SITES).child(signed_user.affiliation).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         user_home_site = dataSnapshot.getValue(Site.class);
+                        updateUIUser(signed_user);
                     }
 
                     @Override
@@ -727,8 +719,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         Toast.makeText(MainActivity.this, getString(R.string.login_error_message_firebase_read), Toast.LENGTH_SHORT).show();
                     }
                 });
-                updateUIUser(signed_user);
-                Toast.makeText(MainActivity.this, String.format("Welcome, %s!", signed_user.getDisplay_name()), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, String.format("Welcome, %s!", signed_user.displayName), Toast.LENGTH_SHORT).show();
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -750,12 +741,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void updateUIUser(final Users user) {
-        Picasso.with(MainActivity.this).load(Strings.emptyToNull(user.getAvatar()))
+        Picasso.with(MainActivity.this).load(Strings.emptyToNull(user.avatar))
                 .placeholder(R.drawable.default_avatar)
                 .transform(mAvatarTransform).fit().into(nav_iv);
         logout.setVisible(true);
-        display_name.setText(user.getDisplay_name());
-        affiliation.setText(user.getAffiliation());
+        display_name.setText(user.displayName);
+        affiliation.setText(user_home_site.name);
         sign_in.setVisibility(View.GONE);
         join.setVisibility(View.GONE);
         display_name.setVisibility(View.VISIBLE);
@@ -784,9 +775,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
         mFirebaseUser = firebaseAuth.getCurrentUser();
         if (mFirebaseUser != null) {
+            mFirebase.child(USERS).child(mFirebaseUser.getUid()).keepSynced(true);
             getSignedUser();
         } else {
             if (signed_user != null) {
+                mFirebase.child(USERS).child(signed_user.id).keepSynced(false);
                 logout();
             }
             updateUINoUser();

@@ -110,8 +110,8 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
         main = ((MainActivity) this.getActivity());
         Site home = main.user_home_site;
         if(home != null) {
-            latValue = home.l.get(0);
-            longValue = home.l.get(1);
+            latValue = home.location.get(0);
+            longValue = home.location.get(1);
         } else {
             latValue = 0;
             longValue = 0;

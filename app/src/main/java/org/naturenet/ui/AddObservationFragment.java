@@ -82,7 +82,7 @@ public class AddObservationFragment extends Fragment {
                     data.setText(description.getText().toString());
                     add.newObservation.setData(data);
                     add.newObservation.setActivity(selectedProject.getId());
-                    add.newObservation.setSite(add.signedUser.getAffiliation());
+                    add.newObservation.setSite(add.signedUser.affiliation);
                     add.goBackToMainActivity();
                 } else {
                     Toast.makeText(add, "Please login to add an observation.", Toast.LENGTH_SHORT).show();

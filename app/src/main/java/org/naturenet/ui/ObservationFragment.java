@@ -138,7 +138,7 @@ public class ObservationFragment extends Fragment {
                         value = Optional.of(true);
                     }
                     DatabaseReference fbRef = FirebaseDatabase.getInstance().getReference();
-                    fbRef.child("observations").child(o.selectedObservation.getId()).child("likes").child(o.signed_user.getId()).setValue(value.orNull());
+                    fbRef.child("observations").child(o.selectedObservation.getId()).child("likes").child(o.signed_user.id).setValue(value.orNull());
                 } else
                     Toast.makeText(o, "Please login to like an observation.", Toast.LENGTH_SHORT).show();
             }

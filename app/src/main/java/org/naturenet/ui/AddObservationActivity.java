@@ -112,7 +112,7 @@ public class AddObservationActivity extends AppCompatActivity {
                             defaultProject = project;
                         }
                         Map<String, Object> sites = (Map<String, Object>) map.get(SITES);
-                        if (sites.containsKey(signedUser.getAffiliation())) {
+                        if (sites.containsKey(signedUser.affiliation)) {
                             mProjects.add(project);
                         }
                     }

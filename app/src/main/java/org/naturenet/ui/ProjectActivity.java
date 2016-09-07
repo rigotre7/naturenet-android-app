@@ -266,7 +266,7 @@ public class ProjectActivity extends AppCompatActivity {
             like = false;
             if (likes != null) {
                 for (String id: likes) {
-                    if (signed_user.getId().equals(id))
+                    if (signed_user.id.equals(id))
                         like = true;
                     break;
                 }

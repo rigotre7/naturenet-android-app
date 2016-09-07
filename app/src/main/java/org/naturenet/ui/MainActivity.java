@@ -386,14 +386,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 final ObserverInfo observer = new ObserverInfo();
                                 observer.setObserverId(observerId);
                                 DatabaseReference f = FirebaseDatabase.getInstance().getReference();
-                                f.child(USERS).child(observerId).addValueEventListener(new ValueEventListener() {
+                                f.child(USERS).child(observerId).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot snapshot) {
                                         Map<String, String> map = (Map<String, String>) snapshot.getValue();
                                         observer.setObserverName(map.get(DISPLAY_NAME));
                                         observer.setObserverAvatar(map.get(AVATAR));
                                         DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
-                                        fb.child(SITES).child(map.get(AFFILIATION)).addValueEventListener(new ValueEventListener() {
+                                        fb.child(SITES).child(map.get(AFFILIATION)).addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(DataSnapshot snapshot) {
                                                 Map<String, String> map = (Map<String, String>) snapshot.getValue();
@@ -486,7 +486,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void goToJoinActivity() {
         ids = new ArrayList<String>();
         names = new ArrayList<String>();
-        mFirebase.child(SITES).addValueEventListener(new ValueEventListener() {
+        mFirebase.child(SITES).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
@@ -642,7 +642,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
 
                         display_name.setText(signed_user.displayName);
-                        mFirebase.child(SITES).child(signed_user.affiliation).child(NAME).addValueEventListener(new ValueEventListener() {
+                        mFirebase.child(SITES).child(signed_user.affiliation).child(NAME).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot snapshot) {
                                 affiliation.setText(snapshot.getValue().toString());
@@ -703,7 +703,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
     public void getSignedUser() {
-        mFirebase.child(USERS).child(mFirebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+        mFirebase.child(USERS).child(mFirebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 signed_user = snapshot.getValue(Users.class);

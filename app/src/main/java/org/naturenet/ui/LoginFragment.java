@@ -73,7 +73,7 @@ public class LoginFragment extends Fragment {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
-                                        fbRef.child(USERS).child(task.getResult().getUser().getUid()).addValueEventListener(new ValueEventListener() {
+                                        fbRef.child(USERS).child(task.getResult().getUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(DataSnapshot snapshot) {
                                                 Users loggedUser = snapshot.getValue(Users.class);

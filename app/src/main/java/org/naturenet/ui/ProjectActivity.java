@@ -198,14 +198,14 @@ public class ProjectActivity extends AppCompatActivity {
                                         observer.setObserverId(observerId);
                                         DatabaseReference f = FirebaseDatabase.getInstance().getReference();
                                         final int finalMyCount = myCount;
-                                        f.child(USERS).child(observerId).addValueEventListener(new ValueEventListener() {
+                                        f.child(USERS).child(observerId).addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(DataSnapshot snapshot) {
                                                 Map<String, String> map = (Map<String, String>) snapshot.getValue();
                                                 observer.setObserverName(map.get(DISPLAY_NAME));
                                                 observer.setObserverAvatar(map.get(AVATAR));
                                                 DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
-                                                fb.child(SITES).child(map.get(AFFILIATION)).addValueEventListener(new ValueEventListener() {
+                                                fb.child(SITES).child(map.get(AFFILIATION)).addListenerForSingleValueEvent(new ValueEventListener() {
                                                     @Override
                                                     public void onDataChange(DataSnapshot snapshot) {
                                                         Map<String, String> map = (Map<String, String>) snapshot.getValue();

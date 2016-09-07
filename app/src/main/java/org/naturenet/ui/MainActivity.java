@@ -73,7 +73,7 @@ import java.util.UUID;
 
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FirebaseAuth.AuthStateListener {
     final static int REQUEST_CODE_JOIN = 1;
     final static int REQUEST_CODE_LOGIN = 2;
     final static int REQUEST_CODE_ADD_OBSERVATION = 3;
@@ -153,7 +153,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ImageView nav_iv;
     MenuItem logout;
     ProgressDialog pd;
-    private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     public static FragmentManager fragmentManager;
     Map<Observation, PreviewInfo> previews = new HashMap<Observation, PreviewInfo>();
@@ -185,8 +184,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
-        mFirebaseAuth = FirebaseAuth.getInstance();
-        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        FirebaseAuth.getInstance().addAuthStateListener(this);
         licenses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -220,11 +218,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
         fbRef = FirebaseDatabase.getInstance().getReference();
         updateUINoUser();
-        if (mFirebaseUser != null) {
-            getSignedUser();
-        } else {
-            goToLaunchFragment();
-        }
         observations = null;
         observers = null;
         selectedObservation = null;
@@ -705,18 +698,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Object created_at = map.get(CREATED_AT);
                 Object updated_at = map.get(UPDATED_AT);
                 signed_user = new Users(id, displayName, affiliationName, avatar, bio, latest_contribution, created_at, updated_at);
-                Picasso.with(MainActivity.this).load(Strings.emptyToNull(signed_user.getAvatar()))
-                        .placeholder(R.drawable.default_avatar).fit().into(nav_iv, new com.squareup.picasso.Callback() {
-                    @Override
-                    public void onSuccess() {
-                        updateUIUser(signed_user);
-                    }
-                    @Override
-                    public void onError() {
-                        nav_iv.setImageDrawable(getResources().getDrawable(R.drawable.default_avatar));
-                        updateUIUser(signed_user);
-                    }
-                });
                 fbRef.child(SITES).child(signed_user.getAffiliation()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -728,6 +709,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         Toast.makeText(MainActivity.this, getString(R.string.login_error_message_firebase_read), Toast.LENGTH_SHORT).show();
                     }
                 });
+                updateUIUser(signed_user);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -777,5 +759,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     haveConnectedMobile = true;
         }
         return haveConnectedWifi || haveConnectedMobile;
+    }
+
+    @Override
+    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+        mFirebaseUser = firebaseAuth.getCurrentUser();
+        if (mFirebaseUser != null) {
+            getSignedUser();
+        } else {
+            updateUINoUser();
+            goToLaunchFragment();
+        }
     }
 }

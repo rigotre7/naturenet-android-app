@@ -277,7 +277,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     pd.setCancelable(false);
                     pd.show();
                     FirebaseAuth.getInstance().signOut();
-                    logout();
                     pd.dismiss();
                     break;
             }
@@ -446,6 +445,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 commit();
     }
     public void logout() {
+        Toast.makeText(this, "You have been logged out.", Toast.LENGTH_SHORT).show();
         signed_user = null;
         logout.setVisible(false);
         this.invalidateOptionsMenu();
@@ -710,6 +710,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 });
                 updateUIUser(signed_user);
+                Toast.makeText(MainActivity.this, String.format("Welcome, %s!", signed_user.getDisplay_name()), Toast.LENGTH_SHORT).show();
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -767,6 +768,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (mFirebaseUser != null) {
             getSignedUser();
         } else {
+            if (signed_user != null) {
+                logout();
+            }
             updateUINoUser();
             goToLaunchFragment();
         }

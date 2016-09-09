@@ -82,33 +82,8 @@ public class AddObservationActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
                     for (DataSnapshot child : snapshot.getChildren()) {
-                        Map<String, Object> map = (Map<String, Object>) child.getValue();
-                        String id = null;
-                        String icon_url = null;
-                        String description = null;
-                        String name = null;
-                        String status = null;
-                        Long latest_contribution = null;
-                        Object created_at = null;
-                        Object updated_at = null;
-                        if (map.get(ID) != null)
-                            id = map.get(ID).toString();
-                        if (map.get(ICON_URL) != null)
-                            icon_url = map.get(ICON_URL).toString();
-                        if (map.get(DESCRIPTION) != null)
-                            description = map.get(DESCRIPTION).toString();
-                        if (map.get(NAME) != null)
-                            name = map.get(NAME).toString();
-                        if (map.get(STATUS) != null)
-                            status = map.get(STATUS).toString();
-                        if (map.get(LATEST_CONTRIBUTION) != null)
-                            latest_contribution = (Long) map.get(LATEST_CONTRIBUTION);
-                        if (map.get(CREATED_AT) != null)
-                            created_at = map.get(CREATED_AT);
-                        if (map.get(UPDATED_AT) != null)
-                            updated_at = map.get(UPDATED_AT);
-                        Project project = new Project(id, icon_url, description, name, status, latest_contribution, created_at, updated_at);
-                        if (project.getId().equals(DEFAULT_PROJECT_ID)) {
+                        Project project = child.getValue(Project.class);
+                        if (project.id.equals(DEFAULT_PROJECT_ID)) {
                             defaultProject = project;
                         }
                         // TODO: decide on site-project submission rule

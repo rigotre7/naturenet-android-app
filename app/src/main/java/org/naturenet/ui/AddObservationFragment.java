@@ -81,7 +81,7 @@ public class AddObservationFragment extends Fragment {
                     Data data = new Data();
                     data.setText(description.getText().toString());
                     add.newObservation.setData(data);
-                    add.newObservation.setActivity(selectedProject.getId());
+                    add.newObservation.setActivity(selectedProject.id);
                     add.newObservation.setSite(add.signedUser.affiliation);
                     add.goBackToMainActivity();
                 } else {
@@ -92,7 +92,7 @@ public class AddObservationFragment extends Fragment {
         mProjectsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                project.setText(add.mProjects.get(position).getName());
+                project.setText(add.mProjects.get(position).name);
                 selectedProject = add.mProjects.get(position);
                 add_observation_ll.setVisibility(View.VISIBLE);
                 mProjectsListView.setVisibility(View.GONE);
@@ -114,7 +114,7 @@ public class AddObservationFragment extends Fragment {
         });
         if (add.defaultProject != null) {
             selectedProject = add.defaultProject;
-            project.setText(selectedProject.getName()+" (Default)");
+            project.setText(selectedProject.name+" (Default)");
         } else {
             project.setText("Free Observation (Default)");
         }

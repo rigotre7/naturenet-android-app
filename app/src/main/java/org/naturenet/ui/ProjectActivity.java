@@ -118,7 +118,7 @@ public class ProjectActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.stay, R.anim.slide_down);
     }
     public void goToProjectDetailFragment() {
-        toolbar_title.setText(project.getName());
+        toolbar_title.setText(project.name);
         if (haveNetworkConnection()) {
             pd.setMessage(LOADING);
             pd.show();
@@ -134,7 +134,7 @@ public class ProjectActivity extends AppCompatActivity {
                             count = count+1;
                             Map<String, Object> map = (Map<String, Object>) child.getValue();
                             if (map.get(ACTIVITY) != null) {
-                                if (map.get(ACTIVITY).toString().equals(project.getId()) && (observations.size() < NUM_OF_OBSERVATIONS)) {
+                                if (map.get(ACTIVITY).toString().equals(project.id) && (observations.size() < NUM_OF_OBSERVATIONS)) {
                                     String id = map.get(ID).toString();
                                     Long created_at = (Long) map.get(CREATED_AT);
                                     Long updated_at = (Long) map.get(UPDATED_AT);
@@ -252,7 +252,7 @@ public class ProjectActivity extends AppCompatActivity {
     }
     public void goToSelectedObservationFragment() {
         toolbar_title.setVisibility(View.GONE);
-        project_back.setText(leftArrows+" "+project.getName());
+        project_back.setText(leftArrows+" "+project.name);
         String[] commentsList = selectedObservation.getComments().keySet().toArray(new String[selectedObservation.getComments().keySet().size()]);
         String[] likes = selectedObservation.getLikes().keySet().toArray(new String[selectedObservation.getLikes().keySet().size()]);
         comments = null;
@@ -316,8 +316,8 @@ public class ProjectActivity extends AppCompatActivity {
         selectedObservation = null;
         selectedObserverInfo = null;
         project_back.setText(leftArrows+" PROJECTS");
-        if (project.getName() != null)
-            toolbar_title.setText(project.getName());
+        if (project.name != null)
+            toolbar_title.setText(project.name);
         toolbar_title.setVisibility(View.VISIBLE);
         getFragmentManager().
                 beginTransaction().

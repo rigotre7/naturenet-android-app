@@ -1,18 +1,14 @@
 package org.naturenet.ui;
 
 import android.Manifest;
-import android.app.AlertDialog;
+import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -45,16 +41,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.kosalgeek.android.photoutil.CameraPhoto;
 import com.kosalgeek.android.photoutil.GalleryPhoto;
-import com.kosalgeek.android.photoutil.ImageLoader;
 
 import org.naturenet.R;
 import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Project;
 import org.naturenet.data.model.Site;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -67,14 +60,7 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
     final private static int GALLERY_REQUEST = 2;
     final private static int GV_IMAGE_WIDTH = 240;
     final private static int GV_IMAGE_HEIGHT = 240;
-    static String ID = "id";
-    static String ICON_URL = "icon_url";
-    static String DESCRIPTION = "description";
-    static String NAME = "name";
-    static String STATUS = "status";
     static String LATEST_CONTRIBUTION = "latest_contribution";
-    static String CREATED_AT = "created_at";
-    static String UPDATED_AT = "updated_at";
     static String LOADING_PROJECTS = "Loading Projects...";
     static String LATITUDE = "0";
     static String LONGITUDE = "1";
@@ -403,32 +389,7 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
             public void onDataChange(DataSnapshot snapshot) {
                 Timber.d("Got projects, count: %d", snapshot.getChildrenCount());
                 for(DataSnapshot child : snapshot.getChildren()) {
-                    Map<String, Object> map = (Map<String, Object>) child.getValue();
-                    String id = null;
-                    String icon_url = null;
-                    String description = null;
-                    String name = null;
-                    String status = null;
-                    Long latest_contribution = null;
-                    Long created_at = null;
-                    Long updated_at = null;
-                    if (map.get(ID) != null)
-                        id = map.get(ID).toString();
-                    if (map.get(ICON_URL) != null)
-                        icon_url = map.get(ICON_URL).toString();
-                    if (map.get(DESCRIPTION) != null)
-                        description = map.get(DESCRIPTION).toString();
-                    if (map.get(NAME) != null)
-                        name = map.get(NAME).toString();
-                    if (map.get(STATUS) != null)
-                        status = map.get(STATUS).toString();
-                    if (map.get(LATEST_CONTRIBUTION) != null)
-                        latest_contribution = (Long) map.get(LATEST_CONTRIBUTION);
-                    if (map.get(CREATED_AT) != null)
-                        created_at = (Long) map.get(CREATED_AT);
-                    if (map.get(UPDATED_AT) != null)
-                        updated_at = (Long) map.get(UPDATED_AT);
-                    Project project = new Project(id, icon_url, description, name, status, latest_contribution, created_at, updated_at);
+                    Project project = child.getValue(Project.class);
                     mProjects.add(project);
                 }
                 if (mProjects.size() != 0) {

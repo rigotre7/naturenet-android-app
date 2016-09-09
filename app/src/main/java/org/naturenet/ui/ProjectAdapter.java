@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.common.base.Strings;
 import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
@@ -28,9 +29,9 @@ public class ProjectAdapter extends ArrayAdapter<Project> implements View.OnClic
         Project project = getItem(position);
         view.setTag(project);
         ImageView thumbnail = (ImageView) view.findViewById(R.id.project_thumbnail);
-        Picasso.with(getContext()).load(project.getIcon_url()).fit().into(thumbnail);
+        Picasso.with(getContext()).load(Strings.emptyToNull(project.iconUrl)).fit().into(thumbnail);
         TextView name = (TextView) view.findViewById(R.id.project_name);
-        name.setText(project.getName());
+        name.setText(project.name);
         return view;
     }
     @Override

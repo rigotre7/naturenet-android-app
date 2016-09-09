@@ -2,14 +2,18 @@ package org.naturenet.data.model;
 
 import android.support.annotation.Nullable;
 
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
 
 import java.io.Serializable;
+import java.util.Map;
 
 @IgnoreExtraProperties
 public class Users implements Serializable {
+
+    public static final String NODE_NAME = "users";
 
     public String id;
 
@@ -24,14 +28,12 @@ public class Users implements Serializable {
     @Nullable
     public String bio;
 
+    @Nullable
+    public Map<String, Boolean> groups;
+
+    @Nullable
     @PropertyName("latest_contribution")
-    public Long latestContribution = 0L;
-
-    @PropertyName("created_at")
-    public Object createdAt = ServerValue.TIMESTAMP;
-
-    @PropertyName("updated_at")
-    public Object updatedAt = ServerValue.TIMESTAMP;
+    public Long latestContribution;
 
     private Users() {}
 
@@ -40,5 +42,24 @@ public class Users implements Serializable {
         this.displayName = displayName;
         this.affiliation = affiliation;
         this.avatar = avatar;
+    }
+
+    /**
+     * Remove and inherit from TimestampedData when Firebase inheritance bug is fixed.
+     */
+    @PropertyName("created_at")
+    protected Object createdAt = ServerValue.TIMESTAMP;
+
+    @PropertyName("updated_at")
+    protected Object updatedAt = ServerValue.TIMESTAMP;
+
+    @Exclude
+    @Nullable public Long getCreatedAtMillis() {
+        return createdAt instanceof Long ? (Long)createdAt : null;
+    }
+
+    @Exclude
+    @Nullable public Long getUpdatedAtMillis() {
+        return createdAt instanceof Long ? (Long)updatedAt : null;
     }
 }

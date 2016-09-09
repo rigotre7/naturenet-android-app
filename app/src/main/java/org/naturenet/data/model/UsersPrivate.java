@@ -1,44 +1,50 @@
 package org.naturenet.data.model;
 
+import android.support.annotation.Nullable;
+
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public class UsersPrivate implements Serializable {
-    private String id = null;
-    private String name = null;
-    private Object created_at = null;
-    private Object updated_at = null;
-    public UsersPrivate() {}
-    public UsersPrivate(String mId, String mName) {
-        setId(mId);
-        setName(mName);
-        Object timestamp = ServerValue.TIMESTAMP;
-        setCreated_at(timestamp);
-        setUpdated_at(timestamp);
-    }
-    public String getId() {
-        return id;
-    }
-    public void setId(String id) {
+
+    @Exclude
+    public static final String NODE_NAME = "users-private";
+
+    public String id;
+
+    public String name;
+
+    @Nullable
+    public Map<String, Boolean> demographics;
+
+    private UsersPrivate() {}
+
+    public UsersPrivate(String id, String name) {
         this.id = id;
-    }
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
         this.name = name;
     }
-    public Object getCreated_at() {
-        return created_at;
+
+    /**
+     * Remove and inherit from TimestampedData when Firebase inheritance bug is fixed.
+     */
+    @PropertyName("created_at")
+    protected Object createdAt = ServerValue.TIMESTAMP;
+
+    @PropertyName("updated_at")
+    protected Object updatedAt = ServerValue.TIMESTAMP;
+
+    @Exclude
+    @Nullable
+    public Long getCreatedAtMillis() {
+        return createdAt instanceof Long ? (Long)createdAt : null;
     }
-    public void setCreated_at(Object created_at) {
-        this.created_at = created_at;
-    }
-    public Object getUpdated_at() {
-        return updated_at;
-    }
-    public void setUpdated_at(Object updated_at) {
-        this.updated_at = updated_at;
+
+    @Exclude
+    @Nullable public Long getUpdatedAtMillis() {
+        return createdAt instanceof Long ? (Long)updatedAt : null;
     }
 }

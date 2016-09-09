@@ -11,6 +11,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.squareup.picasso.Picasso;
 
@@ -44,19 +45,19 @@ public class ProjectDetailFragment extends Fragment {
         recent = (TextView) p.findViewById(R.id.project_tv_recent_contributions);
         icon = (ImageView) p.findViewById(R.id.project_iv_icon);
         iv_status = (ImageView) p.findViewById(R.id.project_iv_status);
-        name.setText(p.project.getName());
-        if (p.project.getStatus() != null) {
-            status.setText(p.project.getStatus());
-            if (p.project.getStatus().equals(COMPLETED))
+        name.setText(p.project.name);
+        if (p.project.status != null) {
+            status.setText(p.project.status);
+            if (p.project.status.equals(COMPLETED))
                 iv_status.setVisibility(View.VISIBLE);
             else
                 iv_status.setVisibility(View.GONE);
         } else
             iv_status.setVisibility(View.GONE);
-        if (p.project.getDescription() != null)
-            description.setText(p.project.getDescription());
-        if (p.project.getIcon_url() != null)
-            Picasso.with(p).load(p.project.getIcon_url()).fit().into(icon);
+        if (p.project.description != null)
+            description.setText(p.project.description);
+        if (p.project.iconUrl != null)
+            Picasso.with(p).load(Strings.emptyToNull(p.project.iconUrl)).fit().into(icon);
         if (p.observations != null && p.observations.size() != 0) {
             recent.setVisibility(View.VISIBLE);
             no_recent.setVisibility(View.GONE);

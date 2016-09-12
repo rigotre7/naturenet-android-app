@@ -29,7 +29,7 @@
     <!--NatureNet-Staging-->
 
     <!--NatureNet-Production-->
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyBEBxc1FD08FyWbj8VlTgKsG5MVwXsV5fc</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAHnmseUlBB-_XN838EJpk0Pxp-R2n1xto</string>
     <!--NatureNet-Production-->
 
 </resources>

@@ -75,18 +75,8 @@ public class ObservationFragment extends Fragment {
         } else {
             Timber.d("Comments are not available");
         }
-        if (o.selectedObservation.getData().getImage() != null) {
-            Picasso.with(o).load(Strings.emptyToNull(o.selectedObservation.getData().getImage())).fit().into(observation_image, new com.squareup.picasso.Callback() {
-                @Override
-                public void onSuccess() {}
-                @Override
-                public void onError() {
-                    observation_image.setImageDrawable(o.getResources().getDrawable(R.drawable.no_image));
-                }
-            });
-        } else {
-            observation_image.setImageDrawable(o.getResources().getDrawable(R.drawable.no_image));
-        }
+        Picasso.with(o).load(Strings.emptyToNull(o.selectedObservation.getData().getImage()))
+                .placeholder(R.drawable.no_image).error(R.drawable.no_image).fit().into(observation_image);
         if (o.selectedObservation.getData().getText() != null)
             observeration_text.setText(o.selectedObservation.getData().getText());
         else

@@ -16,10 +16,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.base.Strings;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
+import org.naturenet.CroppedCircleTransformation;
 import org.naturenet.R;
 
 import java.text.SimpleDateFormat;
@@ -33,6 +36,7 @@ public class SelectedObservationFragment extends Fragment {
     TextView observer_name, observer_affiliation, observeration_timestamp, observeration_text, send;
     EditText comment;
     ListView lv_comments;
+    private Transformation mAvatarTransform = new CroppedCircleTransformation();
     public SelectedObservationFragment() {}
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,18 +73,8 @@ public class SelectedObservationFragment extends Fragment {
         } else {
             Timber.d("Comments are not available");
         }
-        if (o.selectedObservation.getData().getImage() != null) {
-            Picasso.with(o).load(o.selectedObservation.getData().getImage()).fit().into(observation_image, new com.squareup.picasso.Callback() {
-                @Override
-                public void onSuccess() {}
-                @Override
-                public void onError() {
-                    observation_image.setImageDrawable(o.getResources().getDrawable(R.drawable.no_image));
-                }
-            });
-        } else {
-            observation_image.setImageDrawable(o.getResources().getDrawable(R.drawable.no_image));
-        }
+        Picasso.with(o).load(Strings.emptyToNull(o.selectedObservation.getData().getImage()))
+                .placeholder(R.drawable.no_image).error(R.drawable.no_image).fit().into(observation_image);
         if (o.selectedObservation.getData().getText() != null)
             observeration_text.setText(o.selectedObservation.getData().getText());
         else
@@ -92,20 +86,8 @@ public class SelectedObservationFragment extends Fragment {
         } else {
             observeration_timestamp.setText("No Timestamp");
         }
-        if (o.selectedObserverInfo.getObserverAvatar() != null) {
-            Picasso.with(o).load(o.selectedObserverInfo.getObserverAvatar()).fit().into(observer_avatar, new com.squareup.picasso.Callback() {
-                @Override
-                public void onSuccess() {
-                    observer_avatar.setImageBitmap(GetBitmapClippedCircle(((BitmapDrawable) observer_avatar.getDrawable()).getBitmap()));
-                }
-                @Override
-                public void onError() {
-                    observer_avatar.setImageBitmap(GetBitmapClippedCircle(BitmapFactory.decodeResource(o.getResources(), R.drawable.default_avatar)));
-                }
-            });
-        } else {
-            observer_avatar.setImageBitmap(GetBitmapClippedCircle(BitmapFactory.decodeResource(o.getResources(), R.drawable.default_avatar)));
-        }
+        Picasso.with(o).load(Strings.emptyToNull(o.selectedObserverInfo.getObserverAvatar()))
+                .placeholder(R.drawable.default_avatar).error(R.drawable.default_avatar).fit().transform(mAvatarTransform).into(observer_avatar);
         if (o.selectedObserverInfo.getObserverName() != null) {
             observer_name.setText(o.selectedObserverInfo.getObserverName());
         } else {
@@ -146,16 +128,5 @@ public class SelectedObservationFragment extends Fragment {
                 }
             }
         });
-    }
-    public static Bitmap GetBitmapClippedCircle(Bitmap bitmap) {
-        final int width = bitmap.getWidth();
-        final int height = bitmap.getHeight();
-        final Bitmap outputBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        final Path path = new Path();
-        path.addCircle((float) (width/2), (float) (height/2), (float) Math.min(width, (height/2)), Path.Direction.CCW);
-        final Canvas canvas = new Canvas(outputBitmap);
-        canvas.clipPath(path);
-        canvas.drawBitmap(bitmap, 0, 0, null);
-        return outputBitmap;
     }
 }

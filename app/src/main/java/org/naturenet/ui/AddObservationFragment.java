@@ -98,7 +98,8 @@ public class AddObservationFragment extends Fragment {
                 mProjectsListView.setVisibility(View.GONE);
             }
         });
-        Picasso.with(AddObservationFragment.this.getActivity()).load(add.observationPath).placeholder(R.drawable.no_image).fit().into(image);
+        Picasso.with(AddObservationFragment.this.getActivity()).load(add.observationPath)
+                .placeholder(R.drawable.no_image).error(R.drawable.no_image).fit().into(image);
         choose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

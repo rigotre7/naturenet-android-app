@@ -1,67 +1,56 @@
 package org.naturenet.data.model;
 
+import android.support.annotation.Nullable;
+
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
+import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
 
 import java.io.Serializable;
 
+@IgnoreExtraProperties
 public class Comment implements Serializable {
-    private String id;
-    private String comment;
-    private String commenter;
-    private String parent;
-    private String context;
-    private Object created_at = null;
-    private Object updated_at = null;
-    public Comment() {}
-    public Comment(String id, String comment, String commenter, String parent) {
-        setId(id);
-        setComment(comment);
-        setCommenter(commenter);
-        setParent(parent);
-        Object timestamp = ServerValue.TIMESTAMP;
-        setCreated_at(timestamp);
-        setUpdated_at(timestamp);
-    }
-    public String getId() {
-        return id;
-    }
-    public void setId(String id) {
+
+    public static final String NODE_NAME = "comments";
+
+    public String id;
+
+    public String comment;
+
+    public String commenter;
+
+    public String parent;
+
+    public String context;
+
+    private Comment() {}
+
+    public Comment(String id, String comment, String commenter, String parent, String context) {
         this.id = id;
-    }
-    public String getComment() {
-        return comment;
-    }
-    public void setComment(String comment) {
         this.comment = comment;
-    }
-    public String getCommenter() {
-        return commenter;
-    }
-    public void setCommenter(String commenter) {
         this.commenter = commenter;
-    }
-    public String getParent() {
-        return parent;
-    }
-    public void setParent(String parent) {
         this.parent = parent;
-    }
-    public String getContext() {
-        return context;
-    }
-    public void setContext(String context) {
         this.context = context;
     }
-    public Object getCreated_at() {
-        return created_at;
+
+    /**
+     * Remove and inherit from TimestampedData when Firebase inheritance bug is fixed.
+     */
+    @PropertyName("created_at")
+    protected Object createdAt = ServerValue.TIMESTAMP;
+
+    @PropertyName("updated_at")
+    protected Object updatedAt = ServerValue.TIMESTAMP;
+
+    @Exclude
+    @Nullable
+    public Long getCreatedAtMillis() {
+        return createdAt instanceof Long ? (Long)createdAt : null;
     }
-    public void setCreated_at(Object created_at) {
-        this.created_at = created_at;
-    }
-    public Object getUpdated_at() {
-        return updated_at;
-    }
-    public void setUpdated_at(Object updated_at) {
-        this.updated_at = updated_at;
+
+    @Exclude
+    @Nullable public Long getUpdatedAtMillis() {
+        return createdAt instanceof Long ? (Long)updatedAt : null;
     }
 }

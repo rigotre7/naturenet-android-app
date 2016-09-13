@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.common.collect.Lists;
 import com.google.firebase.database.DataSnapshot;
@@ -27,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import timber.log.Timber;
+
 public class ObservationActivity extends AppCompatActivity {
     static String FRAGMENT_TAG_OBSERVATION_GALLERY = "observation_gallery_fragment";
     static String FRAGMENT_TAG_OBSERVATION = "observation_fragment";
@@ -35,14 +38,6 @@ public class ObservationActivity extends AppCompatActivity {
     static String OBSERVERS = "observers";
     static String OBSERVATION = "observation";
     static String OBSERVATIONS = "observations";
-    static String ID = "id";
-    static String CREATED_AT = "created_at";
-    static String UPDATED_AT = "updated_at";
-    static String COMMENTS = "comments";
-    static String COMMENT = "comment";
-    static String COMMENTER = "commenter";
-    static String PARENT = "parent";
-    static String CONTEXT = "context";
     static String EMPTY = "";
     Toolbar toolbar;
     Observation selectedObservation;
@@ -131,9 +126,7 @@ public class ObservationActivity extends AppCompatActivity {
         comments = null;
         like = null;
         if (commentsList != null) {
-            comments = Lists.newArrayList();
-            for (String commentId: commentsList)
-                addComment(commentId);
+            getCommentsFor(selectedObservation.getId());
         }
         if (signed_user != null) {
             like = false;
@@ -151,38 +144,21 @@ public class ObservationActivity extends AppCompatActivity {
                 addToBackStack(null).
                 commit();
     }
-    private void addComment(String s) {
-        final Comment c = new Comment();
+    private void getCommentsFor(final String parent) {
+        comments = Lists.newArrayList();
         mFirebase = FirebaseDatabase.getInstance().getReference();
-        mFirebase.child(COMMENTS).child(s).addValueEventListener(new ValueEventListener() {
+        mFirebase.child(Comment.NODE_NAME).orderByChild("parent").equalTo(parent).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                Map<String, Object> map = (Map<String, Object>) snapshot.getValue();
-                if (map.get(ID) != null) {
-                    c.setId(map.get(ID).toString());
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    comments.add(child.getValue(Comment.class));
                 }
-                if (map.get(COMMENT) != null) {
-                    c.setComment(map.get(COMMENT).toString());
-                }
-                if (map.get(COMMENTER) != null) {
-                    c.setCommenter(map.get(COMMENTER).toString());
-                }
-                if (map.get(PARENT) != null) {
-                    c.setParent(map.get(PARENT).toString());
-                }
-                if (map.get(CONTEXT) != null) {
-                    c.setContext(map.get(CONTEXT).toString());
-                }
-                if (map.get(CREATED_AT) != null) {
-                    c.setCreated_at(map.get(CREATED_AT));
-                }
-                if (map.get(UPDATED_AT) != null) {
-                    c.setUpdated_at(map.get(UPDATED_AT));
-                }
-                comments.add(c);
             }
             @Override
-            public void onCancelled(DatabaseError databaseError) {}
+            public void onCancelled(DatabaseError databaseError) {
+                Timber.w("Could not load comments for record %s, query canceled: %s", parent, databaseError.getDetails());
+                Toast.makeText(ObservationActivity.this, "Unable to load comments for this observation.", Toast.LENGTH_SHORT).show();
+            }
         });
     }
     public void goBackToObservationGalleryFragment() {

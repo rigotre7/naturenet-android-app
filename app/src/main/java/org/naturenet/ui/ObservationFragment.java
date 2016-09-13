@@ -18,11 +18,14 @@ import android.widget.Toast;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
+import org.naturenet.data.model.Comment;
+import org.naturenet.data.model.Observation;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -136,10 +139,33 @@ public class ObservationFragment extends Fragment {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (o.signed_user != null) {
-
-                } else {
-                    Toast.makeText(o, "Please login to comment an observation.", Toast.LENGTH_SHORT).show();
+                String commentText = comment.getText().toString();
+                if (!commentText.isEmpty()) {
+                    if (o.signed_user != null) {
+                        send.setEnabled(false);
+                        comment.setEnabled(false);
+                        final DatabaseReference commentRef = FirebaseDatabase.getInstance().getReference().child(Comment.NODE_NAME).push();
+                        Comment newComment = new Comment(commentRef.getKey(), commentText, o.signed_user.id, o.selectedObservation.getId(), Observation.NODE_NAME);
+                        commentRef.setValue(newComment, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                send.setEnabled(true);
+                                comment.setEnabled(true);
+                                if (databaseError != null) {
+                                    Timber.w("Could not write comment for %s: %s", o.selectedObservation.getId(), databaseError.getDetails());
+                                    Toast.makeText(o, "Your comment could not be submitted.", Toast.LENGTH_LONG).show();
+                                } else {
+                                    // Update /observations/<observation-id>/comments/ with new comment
+                                    FirebaseDatabase.getInstance().getReference().child(Observation.NODE_NAME)
+                                            .child(o.selectedObservation.getId()).child("comments").child(commentRef.getKey()).setValue(true);
+                                    comment.getText().clear();
+                                    Toast.makeText(o, "Your comment has been submitted.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    } else {
+                        Toast.makeText(o, "Please login to comment.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });

@@ -41,8 +41,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|right"
-                android:layout_marginRight="@dimen/add_observation_margin_right"
+                android:paddingRight="@dimen/add_observation_margin_right"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
                 style="@style/add_observation_toolbar_send" />
+
+            <ProgressBar
+                android:id="@+id/toolbar_busy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|right"
+                android:indeterminate="true"
+                android:visibility="gone"/>
 
         </android.support.v7.widget.Toolbar>
 

@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,15 +24,25 @@ import org.naturenet.data.model.Project;
 import org.naturenet.data.model.Users;
 
 import java.util.List;
+import java.util.Map;
 
 public class AddObservationActivity extends AppCompatActivity {
     static String FRAGMENT_TAG_ADD_OBSERVATION = "add_observation_fragment";
     static String OBSERVATION = "observation";
     static String OBSERVATION_PATH = "observation_path";
+    static String OBSERVATION_BITMAP = "observation_bitmap";
     static String SIGNED_USER = "signed_user";
     static String EMAIL = "email";
     static String PASSWORD = "password";
+    static String ID = "id";
+    static String ICON_URL = "icon_url";
+    static String DESCRIPTION = "description";
+    static String NAME = "name";
+    static String STATUS = "status";
     static String LATEST_CONTRIBUTION = "latest_contribution";
+    static String CREATED_AT = "created_at";
+    static String UPDATED_AT = "updated_at";
+    static String SITES = "sites";
     static String LOADING = "Loading...";
     static String DEFAULT_PROJECT_ID = "-ACES_a38";
     static String EMPTY = "";
@@ -106,6 +117,8 @@ public class AddObservationActivity extends AppCompatActivity {
         }
     }
     public void goBackToMainActivity() {
+        findViewById(R.id.toolbar_send).setVisibility(View.GONE);
+        findViewById(R.id.toolbar_busy).setVisibility(View.VISIBLE);
         Intent resultIntent = new Intent(this, MainActivity.class);
         resultIntent.putExtra(OBSERVATION, newObservation);
         setResult(Activity.RESULT_OK, resultIntent);

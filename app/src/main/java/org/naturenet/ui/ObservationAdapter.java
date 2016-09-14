@@ -47,7 +47,7 @@ public class ObservationAdapter extends ArrayAdapter<Observation> {
         final Observation observation = getItem(position);
         view.setTag(observation);
         Picasso.with(getContext()).load(Strings.emptyToNull(observation.getData().getImage()))
-                .error(R.drawable.no_image).fit().into(observation_icon);
+                .error(R.drawable.no_image).fit().centerCrop().into(observation_icon);
 
         for (ObserverInfo observer : observers) {
             if (observer.getObserverId().equals(observation.getObserver())) {

@@ -74,7 +74,7 @@ public class SelectedObservationFragment extends Fragment {
             Timber.d("Comments are not available");
         }
         Picasso.with(o).load(Strings.emptyToNull(o.selectedObservation.getData().getImage()))
-                .placeholder(R.drawable.no_image).error(R.drawable.no_image).fit().into(observation_image);
+                .placeholder(R.drawable.no_image).error(R.drawable.no_image).fit().centerInside().into(observation_image);
         if (o.selectedObservation.getData().getText() != null)
             observeration_text.setText(o.selectedObservation.getData().getText());
         else

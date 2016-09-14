@@ -48,7 +48,7 @@ public class ImageGalleryAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.gallery_gv_item, parent, false);
         }
         ImageView imageView = (ImageView) convertView.findViewById(R.id.gallery_iv);
-        Picasso.with(mContext).load(mImages.get(position)).error(R.drawable.no_image).fit().into(imageView);
+        Picasso.with(mContext).load(mImages.get(position)).error(R.drawable.no_image).fit().centerCrop().into(imageView);
         return convertView;
     }
 }

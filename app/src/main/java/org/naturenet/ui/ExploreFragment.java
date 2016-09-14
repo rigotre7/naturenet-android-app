@@ -171,7 +171,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                                     break;
                                 }
                             }
-                            Picasso.with(main).load(Strings.emptyToNull(preview.observationImageUrl)).fit().into(preview_observation_image);
+                            Picasso.with(main).load(Strings.emptyToNull(preview.observationImageUrl)).fit().centerCrop().into(preview_observation_image);
                             Picasso.with(main).load(Strings.emptyToNull(preview.observerAvatarUrl))
                                     .transform(mAvatarTransform).fit().into(preview_observer_avatar);
                             preview_observer_user_name.setText(preview.observerName);

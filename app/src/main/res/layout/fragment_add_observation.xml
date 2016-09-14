@@ -64,6 +64,7 @@
                 android:layout_marginRight="@dimen/add_observation_margin_right"
                 android:gravity="left"
                 android:padding="5dp"
+                android:inputType="textCapSentences|textMultiLine"
                 style="@style/add_observation_et_description" />
 
             <TextView
@@ -86,6 +87,8 @@
                 android:layout_marginRight="@dimen/add_observation_margin_right"
                 android:gravity="left"
                 android:padding="5dp"
+                android:inputType="textCapSentences|textMultiLine"
+                android:maxLines="2"
                 android:hint="(Optional)"
                 style="@style/add_observation_et_where" />
 

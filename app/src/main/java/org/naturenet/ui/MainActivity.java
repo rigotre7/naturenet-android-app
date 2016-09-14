@@ -30,13 +30,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -98,17 +95,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     static String DISPLAY_NAME = "display_name";
     static String AFFILIATION = "affiliation";
     static String AVATAR = "avatar";
-    static String BIO = "bio";
     static String LATEST_CONTRIBUTION = "latest_contribution";
     static String CREATED_AT = "created_at";
     static String UPDATED_AT = "updated_at";
     static String NAME = "name";
     static String OBSERVATION = "observation";
     static String OBSERVATION_PATH = "observation_path";
-    static String OBSERVATION_BITMAP = "observation_bitmap";
     static String PROJECT = "project";
-    static String EMAIL = "email";
-    static String PASSWORD = "password";
     static String EMPTY = "";
     static String SUBMITTING = "Submitting...";
     static String LOADING_OBSERVATIONS = "Loading Observations...";
@@ -140,7 +133,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DatabaseReference mFirebase;
     Users signed_user;
     Site user_home_site;
-    String signed_user_email, signed_user_password;
     Observation newObservation;
     Uri observationPath;
     DrawerLayout drawer;
@@ -517,8 +509,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         addObservation.putExtra(OBSERVATION_PATH, observationPath);
         addObservation.putExtra(OBSERVATION, newObservation);
         addObservation.putExtra(SIGNED_USER, signed_user);
-        addObservation.putExtra(EMAIL, signed_user_email);
-        addObservation.putExtra(PASSWORD, signed_user_password);
         startActivityForResult(addObservation, REQUEST_CODE_ADD_OBSERVATION);
         overridePendingTransition(R.anim.slide_up, R.anim.stay);
     }
@@ -557,50 +547,42 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return listOfAllImages;
     }
     public void uploadObservation() {
-        pd.setMessage(SUBMITTING);
-        pd.setCancelable(false);
-        pd.show();
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("photos").child(UUID.randomUUID().toString());
-        UploadTask uploadTask = storageRef.putFile(observationPath);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                pd.dismiss();
-                Toast.makeText(MainActivity.this, "Failed to upload image to Firebase", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                final Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                mAuth.signInWithEmailAndPassword(signed_user_email, signed_user_password)
-                        .addOnCompleteListener(MainActivity.this, new OnCompleteListener<AuthResult>() {
+        if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+            pd.setMessage(SUBMITTING);
+            pd.setCancelable(false);
+            pd.show();
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("photos").child(UUID.randomUUID().toString());
+            UploadTask uploadTask = storageRef.putFile(observationPath);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    pd.dismiss();
+                    Toast.makeText(MainActivity.this, "Failed to upload image to Firebase", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    final Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                        final String id = mFirebase.child(OBSERVATIONS).push().getKey();
+                        newObservation.setId(id);
+                        newObservation.getData().setImage(downloadUrl.toString());
+                        mFirebase.child(newObservation.NODE_NAME).child(id).setValue(newObservation, new DatabaseReference.CompletionListener() {
                             @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    final String id = mFirebase.child(OBSERVATIONS).push().getKey();
-                                    newObservation.setId(id);
-                                    newObservation.getData().setImage(downloadUrl.toString());
-                                    mFirebase.child(newObservation.NODE_NAME).child(id).setValue(newObservation, new DatabaseReference.CompletionListener() {
-                                        @Override
-                                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                            pd.dismiss();
-                                            if(databaseError != null) {
-                                                Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_error), Toast.LENGTH_SHORT).show();
-                                            }
-                                            mFirebase.child(USERS).child(signed_user.id).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
-                                            mFirebase.child(Project.NODE_NAME).child(newObservation.getActivity()).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
-                                        }
-                                    });
-                                    Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_success), Toast.LENGTH_SHORT).show();
-                                } else {
-                                    pd.dismiss();
-                                    Toast.makeText(MainActivity.this, getResources().getString(R.string.login_error_message_firebase_login) + task.getException(), Toast.LENGTH_SHORT).show();
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                pd.dismiss();
+                                if(databaseError != null) {
+                                    Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_error), Toast.LENGTH_SHORT).show();
                                 }
+                                mFirebase.child(USERS).child(signed_user.id).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
+                                mFirebase.child(Project.NODE_NAME).child(newObservation.getActivity()).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
                             }
                         });
-            }
-        });
+                        Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_success), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(this, "Please sign in to create an observation.", Toast.LENGTH_LONG).show();
+        }
     }
     public Bitmap decodeURI(String filePath) {
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -632,8 +614,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         goToLaunchFragment();
                     } else if (LOGIN.equals(data.getExtras().getString(JOIN))) {
                         signed_user = (Users) data.getSerializableExtra(NEW_USER);
-                        signed_user_email = data.getStringExtra(EMAIL);
-                        signed_user_password = data.getStringExtra(PASSWORD);
                         logout.setVisible(true);
                         this.supportInvalidateOptionsMenu();
 
@@ -672,8 +652,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         drawer.openDrawer(GravityCompat.START);
                     } else if (data.getStringExtra(LOGIN).equals(LOGIN)) {
                         signed_user = (Users) data.getSerializableExtra(SIGNED_USER);
-                        signed_user_email = data.getStringExtra(EMAIL);
-                        signed_user_password = data.getStringExtra(PASSWORD);
                         updateUINoUser();
                         updateUIUser(signed_user);
                     }

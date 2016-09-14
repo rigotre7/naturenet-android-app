@@ -25,7 +25,7 @@ import org.naturenet.data.model.Project;
 
 public class AddObservationFragment extends Fragment {
     TextView send, project;
-    EditText description;
+    EditText description, whereIsIt;
     ImageView image;
     ImageButton back;
     Button choose;
@@ -49,6 +49,7 @@ public class AddObservationFragment extends Fragment {
         project = (TextView) add.findViewById(R.id.add_observation_tv_project);
         image = (ImageView) add.findViewById(R.id.add_observation_iv);
         description = (EditText) add.findViewById(R.id.add_observation_et_description);
+        whereIsIt = (EditText) add.findViewById(R.id.add_observation_et_where);
         choose = (Button) add.findViewById(R.id.add_observation_b_project);
         mProjectsListView = (ListView) add.findViewById(R.id.projects_list);
         add_observation_ll = (LinearLayout) add.findViewById(R.id.add_observation_ll);
@@ -68,6 +69,10 @@ public class AddObservationFragment extends Fragment {
 
                     Data data = new Data();
                     data.setText(description.getText().toString());
+                    String where = whereIsIt.getText().toString().trim();
+                    if(!where.isEmpty()) {
+                        add.newObservation.setWhere(where);
+                    }
                     add.newObservation.setData(data);
                     add.newObservation.setActivity(selectedProject.id);
                     add.newObservation.setSite(add.signedUser.affiliation);

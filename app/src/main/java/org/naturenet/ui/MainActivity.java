@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     static String OBSERVER = "observer";
     static String ACTIVITY = "activity";
     static String SITE = "site";
+    static String WHERE = "where";
     static String DATA = "data";
     static String IMAGE = "image";
     static String TEXT = "text";
@@ -326,6 +327,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             String observerId = map.get(OBSERVER).toString();
                             String activity = map.get(ACTIVITY).toString();
                             String site = map.get(SITE).toString();
+                            String where = null;
+                            if (map.get(WHERE) != null) {
+                                where = map.get(WHERE).toString();
+                            }
                             Data data = new Data();
                             Map<String, Object> d = (Map<String, Object>) map.get(DATA);
                             data.setImage(d.get(IMAGE).toString());
@@ -360,7 +365,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     likes.put(key, li.get(key).toString().equals(TRUE));
                             } else
                                 preview.likesCount = "0";
-                            final Observation observation = new Observation(id, created_at, updated_at, observerId, activity, site, data, g, l, comments, likes);
+                            final Observation observation = new Observation(id, created_at, updated_at, observerId, activity, site, where, data, g, l, comments, likes);
                             observations.add(observation);
                             boolean contains = false;
                             for (int i=0; i<observers.size(); i++) {

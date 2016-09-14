@@ -130,6 +130,18 @@
         <item name="android:inputType">textMultiLine</item>
         <item name="android:background">@drawable/border_description</item>
     </style>
+    <style name="add_observation_tv_where" parent="android:Widget.TextView">
+        <item name="android:text">@string/add_observation_tv_where</item>
+        <item name="android:textSize">@dimen/font_size_16</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/colorTheme</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+    </style>
+    <style name="add_observation_et_where" parent="android:Widget.EditText">
+        <item name="android:textSize">@dimen/font_size_14</item>
+        <item name="android:inputType">textShortMessage</item>
+        <item name="android:background">@drawable/border_description</item>
+    </style>
     <style name="add_observation_tv_project_label" parent="android:Widget.TextView">
         <item name="android:text">@string/add_observation_tv_project_label</item>
         <item name="android:textSize">@dimen/font_size_16</item>

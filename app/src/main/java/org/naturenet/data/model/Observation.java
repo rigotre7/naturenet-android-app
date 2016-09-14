@@ -13,7 +13,17 @@ public class Observation implements Serializable {
     private Object updated_at = null;
     private String observer = null;
     private String activity = null;
+
+    public String getWhere() {
+        return where;
+    }
+
+    public void setWhere(String where) {
+        this.where = where;
+    }
+
     private String site = null;
+    private String where = null;
     Data data = null;
     private String g = null; // the geohash of the location where the observation took place
     private Map<String, Double> l = null;
@@ -24,13 +34,14 @@ public class Observation implements Serializable {
         setCreated_at(timestamp);
         setUpdated_at(timestamp);
     }
-    public Observation(String id, Object created_at, Object updated_at, String observer, String activity, String site, Data data, String g, Map<String, Double> l, Map<String, Boolean> comments, Map<String, Boolean> likes) {
+    public Observation(String id, Object created_at, Object updated_at, String observer, String activity, String site, String where, Data data, String g, Map<String, Double> l, Map<String, Boolean> comments, Map<String, Boolean> likes) {
         setId(id);
         setCreated_at(created_at);
         setUpdated_at(updated_at);
         setObserver(observer);
         setActivity(activity);
         setSite(site);
+        setWhere(where);
         setData(data);
         setG(g);
         setL(l);

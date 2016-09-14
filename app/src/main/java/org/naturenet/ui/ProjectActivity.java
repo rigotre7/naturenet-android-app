@@ -54,6 +54,7 @@ public class ProjectActivity extends AppCompatActivity {
     static String OBSERVER = "observer";
     static String ACTIVITY = "activity";
     static String SITE = "site";
+    static String WHERE = "where";
     static String DATA = "data";
     static String IMAGE = "image";
     static String TEXT = "text";
@@ -139,6 +140,10 @@ public class ProjectActivity extends AppCompatActivity {
                                     String observerId = map.get(OBSERVER).toString();
                                     String activity = map.get(ACTIVITY).toString();
                                     String site = map.get(SITE).toString();
+                                    String where = null;
+                                    if (map.get(WHERE) != null) {
+                                        where = map.get(WHERE).toString();
+                                    }
                                     Data data = new Data();
                                     Map<String, Object> d = (Map<String, Object>) map.get(DATA);
                                     if (d.get(IMAGE) != null) {
@@ -167,7 +172,7 @@ public class ProjectActivity extends AppCompatActivity {
                                         for (String key: li.keySet())
                                             likes.put(key, li.get(key).toString().equals(TRUE));
                                     }
-                                    final Observation observation = new Observation(id, created_at, updated_at, observerId, activity, site, data, g, l, comments, likes);
+                                    final Observation observation = new Observation(id, created_at, updated_at, observerId, activity, site, where, data, g, l, comments, likes);
                                     observations.add(observation);
                                 }
                             }

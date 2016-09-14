@@ -60,6 +60,7 @@
     <string name="add_observation_tv_back">&#60;&#60; Back</string>
     <string name="add_observation_tv_send">Send</string>
     <string name="add_observation_tv_description">Description</string>
+    <string name="add_observation_tv_where">Where is it?</string>
     <string name="add_observation_tv_project_label">Project</string>
     <string name="add_observation_b_project">Choose a Project</string>
     <!-- Add Observation Fragment -->

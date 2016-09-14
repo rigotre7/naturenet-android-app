@@ -1,8 +1,7 @@
 package org.naturenet.ui;
 
-import android.graphics.BitmapFactory;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,26 +15,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.common.base.Strings;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
 import org.naturenet.data.model.Data;
 import org.naturenet.data.model.Project;
 
-import java.util.Map;
-
 public class AddObservationFragment extends Fragment {
-    static String GEO = "geo";
-    static String ACTIVITIES = "activities";
-    static String ACTIVITY = "activity";
-    static String SITE = "site";
-    static String ID = "id";
     TextView send, project;
     EditText description;
     ImageView image;

@@ -1,11 +1,6 @@
 package org.naturenet.ui;
 
 import android.app.Fragment;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Path;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +17,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
+import org.naturenet.CroppedCircleTransformation;
 import org.naturenet.R;
 import org.naturenet.data.model.Comment;
 import org.naturenet.data.model.Observation;
@@ -38,6 +35,7 @@ public class ObservationFragment extends Fragment {
     TextView observer_name, observer_affiliation, observeration_timestamp, observeration_text, send;
     EditText comment;
     ListView lv_comments;
+    private Transformation mAvatarTransform = new CroppedCircleTransformation();
     public ObservationFragment() {}
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,21 +89,8 @@ public class ObservationFragment extends Fragment {
         } else {
             observeration_timestamp.setText("No Timestamp");
         }
-        if (o.selectedObserverInfo.getObserverAvatar() != null) {
-            Picasso.with(o).load(Strings.emptyToNull(o.selectedObserverInfo.getObserverAvatar()))
-                    .placeholder(R.drawable.default_avatar).fit().into(observer_avatar, new com.squareup.picasso.Callback() {
-                @Override
-                public void onSuccess() {
-                    observer_avatar.setImageBitmap(GetBitmapClippedCircle(((BitmapDrawable) observer_avatar.getDrawable()).getBitmap()));
-                }
-                @Override
-                public void onError() {
-                    observer_avatar.setImageBitmap(GetBitmapClippedCircle(BitmapFactory.decodeResource(o.getResources(), R.drawable.default_avatar)));
-                }
-            });
-        } else {
-            observer_avatar.setImageBitmap(GetBitmapClippedCircle(BitmapFactory.decodeResource(o.getResources(), R.drawable.default_avatar)));
-        }
+        Picasso.with(o).load(Strings.emptyToNull(o.selectedObserverInfo.getObserverAvatar()))
+                .transform(mAvatarTransform).placeholder(R.drawable.default_avatar).fit().into(observer_avatar);
         if (o.selectedObserverInfo.getObserverName() != null) {
             observer_name.setText(o.selectedObserverInfo.getObserverName());
         } else {
@@ -169,16 +154,5 @@ public class ObservationFragment extends Fragment {
                 }
             }
         });
-    }
-    public static Bitmap GetBitmapClippedCircle(Bitmap bitmap) {
-        final int width = bitmap.getWidth();
-        final int height = bitmap.getHeight();
-        final Bitmap outputBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        final Path path = new Path();
-        path.addCircle((float) (width/2), (float) (height/2), (float) Math.min(width, (height/2)), Path.Direction.CCW);
-        final Canvas canvas = new Canvas(outputBitmap);
-        canvas.clipPath(path);
-        canvas.drawBitmap(bitmap, 0, 0, null);
-        return outputBitmap;
     }
 }

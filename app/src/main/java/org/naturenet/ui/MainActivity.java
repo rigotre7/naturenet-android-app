@@ -8,9 +8,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Path;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -65,6 +62,7 @@ import org.naturenet.data.model.Project;
 import org.naturenet.data.model.Site;
 import org.naturenet.data.model.Users;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -540,18 +538,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivityForResult(observation, REQUEST_CODE_OBSERVATION_ACTIVITY);
         overridePendingTransition(R.anim.slide_up, R.anim.stay);
     }
-    public List<String> getAllShownImagesPath() {
+    public List<Uri> getRecentImagesUris() {
         Uri uri;
         Cursor cursor;
-        List<String> listOfAllImages = new ArrayList<String>();
+        List<Uri> listOfAllImages = Lists.newArrayList();
         uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] projection = new String[] { MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.DATE_TAKEN };
         cursor = this.getContentResolver().query(uri, projection, null, null, MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC");
-        cursor.moveToFirst();
-        do {
-            listOfAllImages.add(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)));
-        } while (cursor.moveToNext() && listOfAllImages.size() < 8);
-        cursor.close();
+        if (cursor != null) {
+            cursor.moveToFirst();
+            do {
+                listOfAllImages.add(Uri.fromFile(new File(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)))));
+            } while (cursor.moveToNext() && listOfAllImages.size() < 8);
+            cursor.close();
+        }else {
+            Timber.e("Could not get MediaStore content!");
+        }
         return listOfAllImages;
     }
     public void uploadObservation() {

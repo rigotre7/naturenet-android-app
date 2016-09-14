@@ -1,21 +1,12 @@
 package org.naturenet.ui;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Path;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -24,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.GridView;
@@ -51,17 +41,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.common.base.Strings;
 import com.kosalgeek.android.photoutil.CameraPhoto;
 import com.kosalgeek.android.photoutil.GalleryPhoto;
-import com.kosalgeek.android.photoutil.ImageLoader;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
+import org.naturenet.CroppedCircleTransformation;
 import org.naturenet.R;
 import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.PreviewInfo;
 import org.naturenet.data.model.Site;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -72,14 +61,10 @@ import timber.log.Timber;
 public class ExploreFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     final private static int CAMERA_REQUEST = 1;
     final private static int GALLERY_REQUEST = 2;
-    final private static int GV_IMAGE_WIDTH = 240;
-    final private static int GV_IMAGE_HEIGHT = 240;
-    static String ZERO = "0";
     static String LATITUDE = "0";
     static String LONGITUDE = "1";
     static String MY_LOCATION = "My Location";
     static String OBSERVATION = "Observation";
-    static String NO_DESCRIPTION = "No Description";
     ImageButton add_observation, add_design_idea;
     Button explore, camera, gallery, design_ideas, design_challenges;
     TextView preview_observer_user_name, preview_observer_affiliation, preview_observation_text, preview_likes_count, preview_comments_count, select, add_observation_cancel, add_design_idea_cancel;
@@ -88,8 +73,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
     GridView gridview;
     ImageView preview_cancel, preview_observation_image, preview_observer_avatar, gallery_item;
     MainActivity main;
-    List<String> galleryLatestList;
-    String[] galleryLatest;
+    List<Uri> recentImageGallery;
     Uri selectedImage;
     double latValue, longValue;
     CameraPhoto cameraPhoto;
@@ -99,6 +83,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
     GoogleApiClient mGoogleApiClient;
     LocationRequest locationRequest;
     Observation previewSelectedObservation;
+    Transformation mAvatarTransform = new CroppedCircleTransformation();
     private Map<Marker, PreviewInfo> allMarkersMap = new HashMap<Marker, PreviewInfo>();
 
     public ExploreFragment() {
@@ -167,17 +152,8 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                                     }
                                 }
                                 Picasso.with(main).load(Strings.emptyToNull(preview.observationImageUrl)).fit().into(preview_observation_image);
-                                Picasso.with(main).load(Strings.emptyToNull(preview.observerAvatarUrl)).fit().into(preview_observer_avatar, new com.squareup.picasso.Callback() {
-                                    @Override
-                                    public void onSuccess() {
-                                        preview_observer_avatar.setImageBitmap(GetBitmapClippedCircle(((BitmapDrawable) preview_observer_avatar.getDrawable()).getBitmap()));
-                                    }
-
-                                    @Override
-                                    public void onError() {
-                                        preview_observer_avatar.setImageBitmap(GetBitmapClippedCircle(BitmapFactory.decodeResource(main.getResources(), R.drawable.default_avatar)));
-                                    }
-                                });
+                                Picasso.with(main).load(Strings.emptyToNull(preview.observerAvatarUrl))
+                                        .transform(mAvatarTransform).fit().into(preview_observer_avatar);
                                 preview_observer_user_name.setText(preview.observerName);
                                 preview_observer_affiliation.setText(preview.affiliation);
                                 preview_observation_text.setText(preview.observationText);
@@ -199,18 +175,6 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
             }
         });
         return v;
-    }
-
-    public static Bitmap GetBitmapClippedCircle(Bitmap bitmap) {
-        final int width = bitmap.getWidth();
-        final int height = bitmap.getHeight();
-        final Bitmap outputBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        final Path path = new Path();
-        path.addCircle((float) (width / 2), (float) (height / 2), (float) Math.min(width, (height / 2)), Path.Direction.CCW);
-        final Canvas canvas = new Canvas(outputBitmap);
-        canvas.clipPath(path);
-        canvas.drawBitmap(bitmap, 0, 0, null);
-        return outputBitmap;
     }
 
     @Override
@@ -361,10 +325,12 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
         add_observation_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (galleryLatest != null)
-                    for (int i = 0; i < galleryLatest.length; i++)
-                        if (galleryLatest[i].equals(selectedImage.getPath()))
-                            gridview.getChildAt(i).findViewById(R.id.gallery_iv).setBackgroundResource(0);
+                if (recentImageGallery != null) {
+                    int index = recentImageGallery.indexOf(selectedImage);
+                    if (index >= 0) {
+                        gridview.getChildAt(index).findViewById(R.id.gallery_iv).setBackgroundResource(0);
+                    }
+                }
                 selectedImage = null;
                 select.setVisibility(View.GONE);
                 floating_buttons.setVisibility(View.VISIBLE);
@@ -392,10 +358,6 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
             public void onClick(View v) {
                 setGallery();
                 select.setVisibility(View.GONE);
-//                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                fileUri = getOutputMediaFileUri(1);
-//                intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-//                startActivityForResult(intent, CAMERA_REQUEST);
                 try {
                     startActivityForResult(cameraPhoto.takePhotoIntent(), CAMERA_REQUEST);
                 } catch (IOException e) {
@@ -436,77 +398,27 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
         dialog_preview.setVisibility(View.GONE);
     }
 
-    //    private static Uri getOutputMediaFileUri(int type) {
-//        return Uri.fromFile(getOutputMediaFile(type));
-//    }
-//    private static File getOutputMediaFile(int type) {
-//        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "MyCameraApp");
-//        if (!mediaStorageDir.exists())
-//            if (!mediaStorageDir.mkdirs())
-//                return null;
-//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-//        File mediaFile;
-//        if (type == 1)
-//            mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
-//        else
-//            return null;
-//        return mediaFile;
-//    }
-    private class ImageAdapter extends BaseAdapter {
-        private Context mContext;
-
-        public ImageAdapter(Context c) {
-            mContext = c;
-        }
-
-        public int getCount() {
-            return galleryLatest.length;
-        }
-
-        public Object getItem(int position) {
-            return null;
-        }
-
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        public View getView(int position, View convertView, ViewGroup parent) {
-            LayoutInflater inflater = (LayoutInflater) main.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.gallery_gv_item, parent, false);
-            ImageView imageView = (ImageView) convertView.findViewById(R.id.gallery_iv);
-            imageView.setLayoutParams(new GridView.LayoutParams(GV_IMAGE_WIDTH, GV_IMAGE_HEIGHT));
-            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            imageView.setImageBitmap(main.decodeURI(galleryLatest[position]));
-            imageView.setPadding(10, 10, 10, 10);
-            imageView.setBackgroundResource(0);
-            return imageView;
-        }
-    }
-
     public void setGallery() {
-        galleryLatestList = main.getAllShownImagesPath();
-        if (galleryLatestList.size() != 0) {
-            galleryLatest = galleryLatestList.toArray(new String[galleryLatestList.size()]);
-            gridview.setAdapter(new ImageAdapter(main));
+        recentImageGallery = main.getRecentImagesUris();
+        if (recentImageGallery.size() != 0) {
+            gridview.setAdapter(new ImageGalleryAdapter(main, recentImageGallery));
             gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                     ImageView iv = (ImageView) v.findViewById(R.id.gallery_iv);
                     if (selectedImage == null) {
-                        selectedImage = Uri.fromFile(new File(galleryLatest[position]));
+                        selectedImage = recentImageGallery.get(position);
                         iv.setBackground(getResources().getDrawable(R.drawable.border_selected_image));
                         select.setVisibility(View.VISIBLE);
-                    } else if (selectedImage.getPath().equals(galleryLatest[position])) {
+                    } else if (selectedImage.equals(recentImageGallery.get(position))) {
                         selectedImage = null;
                         iv.setBackgroundResource(0);
                         select.setVisibility(View.GONE);
                     } else {
-                        for (int i = 0; i < galleryLatest.length; i++) {
-                            if (galleryLatest[i].equals(selectedImage.getPath())) {
-                                gridview.getChildAt(i).findViewById(R.id.gallery_iv).setBackgroundResource(0);
-                            }
+                        int index = recentImageGallery.indexOf(selectedImage);
+                        if (index >= 0) {
+                            gridview.getChildAt(index).findViewById(R.id.gallery_iv).setBackgroundResource(0);
                         }
-                        selectedImage = Uri.fromFile(new File(galleryLatest[position]));
+                        selectedImage = recentImageGallery.get(position);
                         iv.setBackground(getResources().getDrawable(R.drawable.border_selected_image));
                         select.setVisibility(View.VISIBLE);
                     }
@@ -518,17 +430,14 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == main.RESULT_OK) {
+        if (resultCode == MainActivity.RESULT_OK) {
             if (requestCode == CAMERA_REQUEST) {
-//                main.observationPath = fileUri.getPath();
-//                Toast.makeText(main, "Image saved to:\n" + data.getData().toString(), Toast.LENGTH_LONG).show();
-//                main.observationPath = data.getData().toString();
-                Timber.d("Camera Path: " + cameraPhoto.getPhotoPath());
+                Timber.d("Camera Path: %s", cameraPhoto.getPhotoPath());
                 main.observationPath = Uri.fromFile(new File(cameraPhoto.getPhotoPath()));
                 cameraPhoto.addToGallery();
             } else if (requestCode == GALLERY_REQUEST) {
                 galleryPhoto.setPhotoUri(data.getData());
-                Timber.d("Gallery Path: " + galleryPhoto.getPath());
+                Timber.d("Gallery Path: %s", galleryPhoto.getPath());
                 main.observationPath = Uri.fromFile(new File(galleryPhoto.getPath()));
             }
             main.newObservation = new Observation();

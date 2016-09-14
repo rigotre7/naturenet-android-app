@@ -124,6 +124,7 @@
     <dimen name="dialog_add_observation_b_height">30dp</dimen>
     <dimen name="dialog_add_observation_gv_vertical_spacing">0dp</dimen>
     <dimen name="dialog_add_observation_gv_horizontal_spacing">0dp</dimen>
+    <dimen name="dialog_add_observation_gv_col_width">100dp</dimen>
     <!-- Add Observation Dialog -->
 
     <!-- Add Design Idea Dialog -->

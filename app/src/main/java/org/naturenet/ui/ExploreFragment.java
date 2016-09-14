@@ -26,9 +26,16 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -52,6 +59,7 @@ import org.naturenet.data.model.Site;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,6 +119,18 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
             locationRequest.setInterval(10 * 1000);
             locationRequest.setFastestInterval(1 * 1000);
             locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
+            PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi
+                    .checkLocationSettings(mGoogleApiClient, builder.build());
+            result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+                @Override
+                public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
+                    final Status status = locationSettingsResult.getStatus();
+                    if (status.getStatusCode() != LocationSettingsStatusCodes.SUCCESS) {
+                        zoomToUser();
+                    }
+                }
+            });
         }
     }
 
@@ -130,48 +150,48 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
             public void onMapReady(GoogleMap map) {
                 googleMap = map;
                 googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                if (ContextCompat.checkSelfPermission(main, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-                    googleMap.setMyLocationEnabled(true);
-                    for (int i = 0; i < main.observations.size(); i++) {
-                        final Observation observation = main.observations.get(i);
-                        Marker marker = googleMap.addMarker(new MarkerOptions()
-                                .position(new LatLng(observation.getL().get(LATITUDE), observation.getL().get(LONGITUDE)))
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-                                .title(OBSERVATION));
-                        allMarkersMap.put(marker, main.previews.get(observation));
-                    }
-                    googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                        @Override
-                        public boolean onMarkerClick(Marker marker) {
-                            if (!marker.getTitle().equals(MY_LOCATION)) {
-                                PreviewInfo preview = allMarkersMap.get(marker);
-                                for (Observation observation : main.previews.keySet()) {
-                                    if (main.previews.get(observation).equals(preview)) {
-                                        previewSelectedObservation = observation;
-                                        break;
-                                    }
-                                }
-                                Picasso.with(main).load(Strings.emptyToNull(preview.observationImageUrl)).fit().into(preview_observation_image);
-                                Picasso.with(main).load(Strings.emptyToNull(preview.observerAvatarUrl))
-                                        .transform(mAvatarTransform).fit().into(preview_observer_avatar);
-                                preview_observer_user_name.setText(preview.observerName);
-                                preview_observer_affiliation.setText(preview.affiliation);
-                                preview_observation_text.setText(preview.observationText);
-                                preview_likes_count.setText(preview.likesCount);
-                                preview_comments_count.setText(preview.commentsCount);
-                                floating_buttons.setVisibility(View.GONE);
-                                explore.setVisibility(View.GONE);
-                                dialog_preview.setVisibility(View.VISIBLE);
-                            } else {
-                                if (dialog_preview.getVisibility() == View.VISIBLE) {
-                                    floating_buttons.setVisibility(View.VISIBLE);
-                                    explore.setVisibility(View.VISIBLE);
-                                    dialog_preview.setVisibility(View.GONE);
+                // Default to CONUS until we get location info
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40, -96), 3));
+                for (int i = 0; i < main.observations.size(); i++) {
+                    final Observation observation = main.observations.get(i);
+                    Marker marker = googleMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(observation.getL().get(LATITUDE), observation.getL().get(LONGITUDE)))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                            .title(OBSERVATION));
+                    allMarkersMap.put(marker, main.previews.get(observation));
+                }
+                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+                        if (!marker.getTitle().equals(MY_LOCATION)) {
+                            PreviewInfo preview = allMarkersMap.get(marker);
+                            for (Observation observation : main.previews.keySet()) {
+                                if (main.previews.get(observation).equals(preview)) {
+                                    previewSelectedObservation = observation;
+                                    break;
                                 }
                             }
-                            return false;
+                            Picasso.with(main).load(Strings.emptyToNull(preview.observationImageUrl)).fit().into(preview_observation_image);
+                            Picasso.with(main).load(Strings.emptyToNull(preview.observerAvatarUrl))
+                                    .transform(mAvatarTransform).fit().into(preview_observer_avatar);
+                            preview_observer_user_name.setText(preview.observerName);
+                            preview_observer_affiliation.setText(preview.affiliation);
+                            preview_observation_text.setText(preview.observationText);
+                            preview_likes_count.setText(preview.likesCount);
+                            preview_comments_count.setText(preview.commentsCount);
+                            floating_buttons.setVisibility(View.GONE);
+                            explore.setVisibility(View.GONE);
+                            dialog_preview.setVisibility(View.VISIBLE);
+                        } else {
+                            if (dialog_preview.getVisibility() == View.VISIBLE) {
+                                floating_buttons.setVisibility(View.VISIBLE);
+                                explore.setVisibility(View.VISIBLE);
+                                dialog_preview.setVisibility(View.GONE);
+                            }
                         }
-                    });
+                        return false;
+                    }
+                });
             }
         });
         return v;
@@ -197,7 +217,11 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
 
     @Override
     public void onLocationChanged(Location location) {
-        if (latValue == 0 && longValue == 0) {
+        if (!googleMap.isMyLocationEnabled()) {
+            if (ContextCompat.checkSelfPermission(main, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                googleMap.setMyLocationEnabled(true);
+            }
+
             googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(location.getLatitude(), location.getLongitude()))
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE))
@@ -206,6 +230,12 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
         }
         latValue = location.getLatitude();
         longValue = location.getLongitude();
+    }
+
+    private void zoomToUser() {
+        if(latValue != 0.0 && longValue != 0.0) {
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latValue, longValue), 10));
+        }
     }
 
     @Override

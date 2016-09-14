@@ -464,6 +464,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void logout() {
         Toast.makeText(this, "You have been logged out.", Toast.LENGTH_SHORT).show();
         signed_user = null;
+        user_home_site = null;
         logout.setVisible(false);
         this.invalidateOptionsMenu();
         Picasso.with(this).load(R.drawable.default_avatar)

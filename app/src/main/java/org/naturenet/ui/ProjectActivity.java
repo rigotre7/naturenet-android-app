@@ -40,7 +40,7 @@ public class ProjectActivity extends AppCompatActivity {
     static String FRAGMENT_TAG_SELECTED_OBSERVATION = "selected_observation_fragment";
     static String SIGNED_USER = "signed_user";
     static String EMPTY = "";
-    static int NUM_OF_OBSERVATIONS = 4;
+    static int NUM_OF_OBSERVATIONS = 10;
     static String SITES = "sites";
     static String ID = "id";
     static String USERS = "users";
@@ -125,7 +125,7 @@ public class ProjectActivity extends AppCompatActivity {
                 observations = Lists.newArrayList();
                 observers = Lists.newArrayList();
                 mFirebase = FirebaseDatabase.getInstance().getReference();
-                mFirebase.child(Observation.NODE_NAME).orderByChild(UPDATED_AT).addListenerForSingleValueEvent(new ValueEventListener() {
+                mFirebase.child(Observation.NODE_NAME).orderByChild(ACTIVITY).equalTo(project.id).limitToLast(NUM_OF_OBSERVATIONS).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
                         int count = 0;
@@ -133,48 +133,46 @@ public class ProjectActivity extends AppCompatActivity {
                             count = count+1;
                             Map<String, Object> map = (Map<String, Object>) child.getValue();
                             if (map.get(ACTIVITY) != null) {
-                                if (map.get(ACTIVITY).toString().equals(project.id) && (observations.size() < NUM_OF_OBSERVATIONS)) {
-                                    String id = map.get(ID).toString();
-                                    Long created_at = (Long) map.get(CREATED_AT);
-                                    Long updated_at = (Long) map.get(UPDATED_AT);
-                                    String observerId = map.get(OBSERVER).toString();
-                                    String activity = map.get(ACTIVITY).toString();
-                                    String site = map.get(SITE).toString();
-                                    String where = null;
-                                    if (map.get(WHERE) != null) {
-                                        where = map.get(WHERE).toString();
-                                    }
-                                    Data data = new Data();
-                                    Map<String, Object> d = (Map<String, Object>) map.get(DATA);
-                                    if (d.get(IMAGE) != null) {
-                                        data.setImage(d.get(IMAGE).toString());
-                                    }
-                                    if (d.get(TEXT) != null)
-                                        data.setText(d.get(TEXT).toString());
-                                    String g = null;
-                                    if (map.get(G) != null)
-                                        g = map.get(G).toString();
-                                    Map<String, Double> l = new HashMap<String, Double>();
-                                    if (map.get(L) != null) {
-                                        ArrayList<Double> lMap = (ArrayList<Double>) map.get(L);
-                                        l.put(LAT, lMap.get(0));
-                                        l.put(LON, lMap.get(1));
-                                    }
-                                    Map<String, Boolean> comments = new HashMap<String, Boolean>();
-                                    if (map.get(COMMENTS) != null) {
-                                        Map<String, Object> c = (Map<String, Object>) map.get(COMMENTS);
-                                        for (String key: c.keySet())
-                                            comments.put(key, c.get(key).toString().equals(TRUE));
-                                    }
-                                    Map<String, Boolean> likes = new HashMap<String, Boolean>();
-                                    if (map.get(LIKES) != null) {
-                                        Map<String, Object> li = (Map<String, Object>) map.get(LIKES);
-                                        for (String key: li.keySet())
-                                            likes.put(key, li.get(key).toString().equals(TRUE));
-                                    }
-                                    final Observation observation = new Observation(id, created_at, updated_at, observerId, activity, site, where, data, g, l, comments, likes);
-                                    observations.add(observation);
+                                String id = map.get(ID).toString();
+                                Long created_at = (Long) map.get(CREATED_AT);
+                                Long updated_at = (Long) map.get(UPDATED_AT);
+                                String observerId = map.get(OBSERVER).toString();
+                                String activity = map.get(ACTIVITY).toString();
+                                String site = map.get(SITE).toString();
+                                String where = null;
+                                if (map.get(WHERE) != null) {
+                                    where = map.get(WHERE).toString();
                                 }
+                                Data data = new Data();
+                                Map<String, Object> d = (Map<String, Object>) map.get(DATA);
+                                if (d.get(IMAGE) != null) {
+                                    data.setImage(d.get(IMAGE).toString());
+                                }
+                                if (d.get(TEXT) != null)
+                                    data.setText(d.get(TEXT).toString());
+                                String g = null;
+                                if (map.get(G) != null)
+                                    g = map.get(G).toString();
+                                Map<String, Double> l = new HashMap<String, Double>();
+                                if (map.get(L) != null) {
+                                    ArrayList<Double> lMap = (ArrayList<Double>) map.get(L);
+                                    l.put(LAT, lMap.get(0));
+                                    l.put(LON, lMap.get(1));
+                                }
+                                Map<String, Boolean> comments = new HashMap<String, Boolean>();
+                                if (map.get(COMMENTS) != null) {
+                                    Map<String, Object> c = (Map<String, Object>) map.get(COMMENTS);
+                                    for (String key: c.keySet())
+                                        comments.put(key, c.get(key).toString().equals(TRUE));
+                                }
+                                Map<String, Boolean> likes = new HashMap<String, Boolean>();
+                                if (map.get(LIKES) != null) {
+                                    Map<String, Object> li = (Map<String, Object>) map.get(LIKES);
+                                    for (String key: li.keySet())
+                                        likes.put(key, li.get(key).toString().equals(TRUE));
+                                }
+                                final Observation observation = new Observation(id, created_at, updated_at, observerId, activity, site, where, data, g, l, comments, likes);
+                                observations.add(observation);
                             }
                             if (count == snapshot.getChildrenCount()) {
                                 int myCount = 0;

@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     final static int REQUEST_CODE_ADD_OBSERVATION = 3;
     final static int REQUEST_CODE_PROJECT_ACTIVITY = 4;
     final static int REQUEST_CODE_OBSERVATION_ACTIVITY = 5;
-    static int NUM_OF_OBSERVATIONS = 8;
+    static int NUM_OF_OBSERVATIONS = 20;
     static String FRAGMENT_TAG_LAUNCH = "launch_fragment";
     static String FRAGMENT_TAG_EXPLORE = "explore_fragment";
     static String FRAGMENT_TAG_PROJECTS = "projects_fragment";
@@ -398,7 +398,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                                 preview.affiliation = observer.getObserverAffiliation();
                                                 observers.add(observer);
                                                 previews.put(observation, preview);
-                                                if (observations.size() == 8) {
+                                                if (observations.size() >= NUM_OF_OBSERVATIONS) {
                                                     pd.dismiss();
                                                     toolbar_title.setText(R.string.explore_title);
                                                     getFragmentManager().

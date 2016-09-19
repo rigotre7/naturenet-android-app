@@ -1,6 +1,7 @@
 <resources>
 
     <!-- Application -->
+    <string name="app_description">NatureNet is a platform for sharing place-based nature observations and contributing design ideas. Please do NOT contribute photos of humans or pets. NatureNet is a moderated site. Postings that are inappropriate or irrelevant will be deleted. If you want one of your observations to be removed, please send an email to naturenetapp@gmail.com with a description of the content you would like to be removed.</string>
     <!-- Application -->
 
     <!-- Splash Activity -->

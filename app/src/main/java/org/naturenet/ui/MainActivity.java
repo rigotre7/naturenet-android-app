@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(v.getContext())
-                        .setView(getLayoutInflater().inflate(R.layout.license_information, null))
+                        .setView(getLayoutInflater().inflate(R.layout.about, null))
                         .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {}
                         })

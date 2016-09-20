@@ -84,7 +84,9 @@
             android:layout_height="match_parent"
             android:layout_below="@+id/selected_observation_text"
             android:layout_above="@+id/scroll_view"
-            android:layout_margin="3dp"/>
+            android:layout_margin="3dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"/>
 
         <ScrollView
             android:id="@+id/scroll_view"

@@ -156,8 +156,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                     final Observation observation = main.observations.get(i);
                     Marker marker = googleMap.addMarker(new MarkerOptions()
                             .position(new LatLng(observation.getL().get(LATITUDE), observation.getL().get(LONGITUDE)))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-                            .title(OBSERVATION));
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                     allMarkersMap.put(marker, main.previews.get(observation));
                 }
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {

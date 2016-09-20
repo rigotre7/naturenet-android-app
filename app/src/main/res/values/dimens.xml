@@ -15,13 +15,16 @@
     <dimen name="font_size_20">20dp</dimen>
     <!-- Font Size -->
 
+    <!-- Common Widgets -->
+    <dimen name="btn_collapse_size">40dp</dimen>
+    <dimen name="btn_collapse_padding">10dp</dimen>
+    <!-- Common Widgets -->
+
+
     <!-- Splash Activity -->
     <!-- Splash Activity -->
 
     <!-- Join Activity -->
-    <dimen name="join_back_width">20dp</dimen>
-    <dimen name="join_back_height">20dp</dimen>
-    <dimen name="join_margin">5dp</dimen>
     <dimen name="join_title_margin_top">20dp</dimen>
     <dimen name="join_title_margin_bottom">20dp</dimen>
     <dimen name="join_margin_bottom">5dp</dimen>
@@ -83,8 +86,6 @@
     <!-- Project Activity -->
 
     <!-- Observation Activity -->
-    <dimen name="observation_back_width">20dp</dimen>
-    <dimen name="observation_back_height">20dp</dimen>
     <!-- Observation Activity -->
 
     <!-- Main Activity -->

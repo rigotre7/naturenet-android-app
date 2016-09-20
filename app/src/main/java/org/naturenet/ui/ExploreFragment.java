@@ -162,7 +162,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
                     public boolean onMarkerClick(Marker marker) {
-                        if (!marker.getTitle().equals(MY_LOCATION)) {
+                        if (!MY_LOCATION.equals(marker.getTitle())) {
                             PreviewInfo preview = allMarkersMap.get(marker);
                             for (Observation observation : main.previews.keySet()) {
                                 if (main.previews.get(observation).equals(preview)) {

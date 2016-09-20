@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="30dp"
-        android:text="Choose an Affiliation"
+        android:text="Choose your home site"
         android:textSize="@dimen/font_size_14"
         android:textStyle="bold"
         android:textColor="@android:color/white"

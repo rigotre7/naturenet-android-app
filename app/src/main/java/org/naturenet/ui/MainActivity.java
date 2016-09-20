@@ -482,7 +482,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void goToJoinActivity() {
         ids = new ArrayList<String>();
         names = new ArrayList<String>();
-        mFirebase.child(SITES).addListenerForSingleValueEvent(new ValueEventListener() {
+        mFirebase.child(SITES).orderByKey().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {

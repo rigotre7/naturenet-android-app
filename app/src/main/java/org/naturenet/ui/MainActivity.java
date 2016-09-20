@@ -87,14 +87,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     static String JOIN = "join";
     static String IDS = "ids";
     static String NAMES = "names";
-    static String SITES = "sites";
     static String NEW_USER = "new_user";
     static String SIGNED_USER = "signed_user";
     static String ID = "id";
-    static String USERS = "users";
-    static String DISPLAY_NAME = "display_name";
-    static String AFFILIATION = "affiliation";
-    static String AVATAR = "avatar";
     static String LATEST_CONTRIBUTION = "latest_contribution";
     static String CREATED_AT = "created_at";
     static String UPDATED_AT = "updated_at";
@@ -210,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         mFirebase = FirebaseDatabase.getInstance().getReference();
-        mFirebase.child(SITES).keepSynced(true);
+        mFirebase.child(Site.NODE_NAME).keepSynced(true);
         mFirebase.child(Project.NODE_NAME).keepSynced(true);
 
         updateUINoUser();
@@ -381,18 +376,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 final ObserverInfo observer = new ObserverInfo();
                                 observer.setObserverId(observerId);
                                 DatabaseReference f = FirebaseDatabase.getInstance().getReference();
-                                f.child(USERS).child(observerId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                f.child(Users.NODE_NAME).child(observerId).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot snapshot) {
-                                        Map<String, String> map = (Map<String, String>) snapshot.getValue();
-                                        observer.setObserverName(map.get(DISPLAY_NAME));
-                                        observer.setObserverAvatar(map.get(AVATAR));
+                                        Users user = snapshot.getValue(Users.class);
+                                        observer.setObserverName(user.displayName);
+                                        observer.setObserverAvatar(user.avatar);
                                         DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
-                                        fb.child(SITES).child(map.get(AFFILIATION)).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        fb.child(Site.NODE_NAME).child(user.affiliation).addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(DataSnapshot snapshot) {
-                                                Map<String, String> map = (Map<String, String>) snapshot.getValue();
-                                                observer.setObserverAffiliation(map.get(NAME));
+                                                Site site =  snapshot.getValue(Site.class);
+                                                observer.setObserverAffiliation(site.name);
                                                 preview.observerAvatarUrl = observer.getObserverAvatar();
                                                 preview.observerName = observer.getObserverName();
                                                 preview.affiliation = observer.getObserverAffiliation();
@@ -482,13 +477,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void goToJoinActivity() {
         ids = new ArrayList<String>();
         names = new ArrayList<String>();
-        mFirebase.child(SITES).orderByKey().addListenerForSingleValueEvent(new ValueEventListener() {
+        mFirebase.child(Site.NODE_NAME).orderByKey().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                    Map<String, String> map = (Map<String, String>) postSnapshot.getValue();
-                    ids.add(map.get(ID));
-                    names.add(map.get(NAME));
+                    Site site = postSnapshot.getValue(Site.class);
+                    ids.add(site.id);
+                    names.add(site.name);
                 }
                 if (ids.size() != 0 && names.size() != 0) {
                     affiliation_ids = ids.toArray(new String[ids.size()]);
@@ -579,7 +574,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 if(databaseError != null) {
                                     Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_error), Toast.LENGTH_SHORT).show();
                                 }
-                                mFirebase.child(USERS).child(signed_user.id).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
+                                mFirebase.child(Users.NODE_NAME).child(signed_user.id).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
                                 mFirebase.child(Project.NODE_NAME).child(newObservation.getActivity()).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
                             }
                         });
@@ -630,10 +625,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
 
                         display_name.setText(signed_user.displayName);
-                        mFirebase.child(SITES).child(signed_user.affiliation).child(NAME).addListenerForSingleValueEvent(new ValueEventListener() {
+                        mFirebase.child(Site.NODE_NAME).child(signed_user.affiliation).child(NAME).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot snapshot) {
-                                affiliation.setText(snapshot.getValue().toString());
+                                affiliation.setText((String)snapshot.getValue());
                             }
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
@@ -689,11 +684,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
     public void getSignedUser() {
-        mFirebase.child(USERS).child(mFirebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+        mFirebase.child(Users.NODE_NAME).child(mFirebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 signed_user = snapshot.getValue(Users.class);
-                mFirebase.child(SITES).child(signed_user.affiliation).addListenerForSingleValueEvent(new ValueEventListener() {
+                mFirebase.child(Site.NODE_NAME).child(signed_user.affiliation).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         user_home_site = dataSnapshot.getValue(Site.class);
@@ -761,11 +756,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
         mFirebaseUser = firebaseAuth.getCurrentUser();
         if (mFirebaseUser != null) {
-            mFirebase.child(USERS).child(mFirebaseUser.getUid()).keepSynced(true);
+            mFirebase.child(Users.NODE_NAME).child(mFirebaseUser.getUid()).keepSynced(true);
             getSignedUser();
         } else {
             if (signed_user != null) {
-                mFirebase.child(USERS).child(signed_user.id).keepSynced(false);
+                mFirebase.child(Users.NODE_NAME).child(signed_user.id).keepSynced(false);
                 logout();
             }
             updateUINoUser();

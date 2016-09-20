@@ -26,6 +26,7 @@ import org.naturenet.data.model.Data;
 import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.ObserverInfo;
 import org.naturenet.data.model.Project;
+import org.naturenet.data.model.Site;
 import org.naturenet.data.model.Users;
 
 import java.util.ArrayList;
@@ -202,15 +203,15 @@ public class ProjectActivity extends AppCompatActivity {
                                         f.child(USERS).child(observerId).addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(DataSnapshot snapshot) {
-                                                Map<String, String> map = (Map<String, String>) snapshot.getValue();
-                                                observer.setObserverName(map.get(DISPLAY_NAME));
-                                                observer.setObserverAvatar(map.get(AVATAR));
+                                                Users user = snapshot.getValue(Users.class);
+                                                observer.setObserverName(user.displayName);
+                                                observer.setObserverAvatar(user.avatar);
                                                 DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
-                                                fb.child(SITES).child(map.get(AFFILIATION)).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                fb.child(SITES).child(user.affiliation).child(NAME).addListenerForSingleValueEvent(new ValueEventListener() {
                                                     @Override
                                                     public void onDataChange(DataSnapshot snapshot) {
-                                                        Map<String, String> map = (Map<String, String>) snapshot.getValue();
-                                                        observer.setObserverAffiliation(map.get(NAME));
+                                                        String siteName = (String)snapshot.getValue();
+                                                        observer.setObserverAffiliation(siteName);
                                                         observers.add(observer);
                                                         if (finalMyCount == observations.size()) {
                                                             pd.dismiss();

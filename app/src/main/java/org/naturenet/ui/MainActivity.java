@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.LocationManager;
@@ -538,10 +539,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         cursor = this.getContentResolver().query(uri, projection, null, null, MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC");
         if (cursor != null) {
             cursor.moveToFirst();
-            do {
-                listOfAllImages.add(Uri.fromFile(new File(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)))));
-            } while (cursor.moveToNext() && listOfAllImages.size() < 8);
-            cursor.close();
+            try {
+                do {
+                    listOfAllImages.add(Uri.fromFile(new File(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)))));
+                } while (cursor.moveToNext() && listOfAllImages.size() < 8);
+            } catch (CursorIndexOutOfBoundsException ex) {
+                Timber.e(ex, "Could not read data from MediaStore, image gallery may be empty");
+            } finally {
+                cursor.close();
+            }
         }else {
             Timber.e("Could not get MediaStore content!");
         }

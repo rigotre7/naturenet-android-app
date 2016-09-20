@@ -10,7 +10,8 @@
         android:gravity="bottom"
         android:orientation="vertical"
         android:background="@android:color/white"
-        android:padding="@dimen/dialog_add_design_idea_ll_padding">
+        android:padding="@dimen/dialog_add_design_idea_ll_padding"
+        android:clickable="true">
 
         <TextView
             android:id="@+id/dialog_add_design_idea_tv_cancel"

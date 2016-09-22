@@ -21,6 +21,7 @@ import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
 import org.naturenet.data.model.Data;
+import org.naturenet.data.model.PhotoCaptionContent;
 import org.naturenet.data.model.Project;
 
 public class AddObservationFragment extends Fragment {
@@ -67,15 +68,15 @@ public class AddObservationFragment extends Fragment {
                 if (add.signedUser != null) {
                     fbRef = FirebaseDatabase.getInstance().getReference();
 
-                    Data data = new Data();
-                    data.setText(description.getText().toString());
+                    PhotoCaptionContent data = new PhotoCaptionContent();
+                    data.text = description.getText().toString();
                     String where = whereIsIt.getText().toString().trim();
                     if(!where.isEmpty()) {
-                        add.newObservation.setWhere(where);
+                        add.newObservation.where = where;
                     }
-                    add.newObservation.setData(data);
-                    add.newObservation.setActivity(selectedProject.id);
-                    add.newObservation.setSite(add.signedUser.affiliation);
+                    add.newObservation.data = data;
+                    add.newObservation.projectId = selectedProject.id;
+                    add.newObservation.siteId = add.signedUser.affiliation;
                     add.goBackToMainActivity();
                 } else {
                     Toast.makeText(add, "Please login to add an observation.", Toast.LENGTH_SHORT).show();

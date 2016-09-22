@@ -1,164 +1,74 @@
 package org.naturenet.data.model;
 
+import android.support.annotation.Nullable;
+
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
+import com.google.firebase.database.PropertyName;
 import com.google.firebase.database.ServerValue;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+@IgnoreExtraProperties
 public class Observation implements Serializable {
     public static final String NODE_NAME = "observations";
-    private String id = null;
-    private Object created_at = null;
-    private Object updated_at = null;
-    private String observer = null;
-    private String activity = null;
 
-    public String getWhere() {
-        return where;
-    }
+    public String id;
 
-    public void setWhere(String where) {
-        this.where = where;
-    }
+    @PropertyName("observer")
+    public String userId;
 
-    private String site = null;
-    private String where = null;
-    Data data = null;
-    private String g = null; // the geohash of the location where the observation took place
-    private Map<String, Double> l = null;
-    private Map<String, Boolean> comments = null;
-    private Map<String, Boolean> likes = null;
-    public Observation() {
-        Object timestamp = ServerValue.TIMESTAMP;
-        setCreated_at(timestamp);
-        setUpdated_at(timestamp);
-    }
-    public Observation(String id, Object created_at, Object updated_at, String observer, String activity, String site, String where, Data data, String g, Map<String, Double> l, Map<String, Boolean> comments, Map<String, Boolean> likes) {
-        setId(id);
-        setCreated_at(created_at);
-        setUpdated_at(updated_at);
-        setObserver(observer);
-        setActivity(activity);
-        setSite(site);
-        setWhere(where);
-        setData(data);
-        setG(g);
-        setL(l);
-        setComments(comments);
-        setLikes(likes);
-    }
-    @Override
-    public String toString() {
-        String id = "";
-        if (this.id != null)
-            id = this.id;
-        String created_at = "";
-        if (this.created_at != null)
-            created_at = this.created_at.toString();
-        String updated_at = "";
-        if (this.updated_at != null)
-            updated_at = this.updated_at.toString();
-        String observer = "";
-        if (this.observer != null)
-            observer = this.observer;
-        String activity = "";
-        if (this.activity != null)
-            activity = this.activity;
-        String dataImage = "";
-        if (this.data.getImage() != null)
-            dataImage = this.data.getImage();
-        String dataText = "";
-        if (this.data.getText() != null)
-            dataText = this.data.getText();
-        String g = "";
-        if (this.g != null)
-            g = this.g;
-        String lat = "";
-        if (this.l != null && this.l.get("0") != null)
-            lat = this.l.get("0").toString();
-        String lon = "";
-        if (this.l != null && this.l.get("1") != null)
-            lon = this.l.get("1").toString();
-        String comments = "";
-        if (this.comments != null)
-            comments = this.comments.keySet().toString();
-        String likes = "";
-        if (this.likes != null)
-            likes = this.likes.keySet().toString();
-        return "Observation{" +
-                "id='" + id + '\'' +
-                ", created_at=" + created_at +
-                ", updated_at=" + updated_at +
-                ", observer='" + observer + '\'' +
-                ", activity='" + activity + '\'' +
-                ", dataImage=" + dataImage +
-                ", dataText=" + dataText +
-                ", g='" + g + '\'' +
-                ", lat=" + lat +
-                ", long=" + lon +
-                ", comments=" + comments +
-                ", likes=" + likes +
-                '}';
-    }
-    public String getId() {
-        return id;
-    }
-    public void setId(String id) {
+    @PropertyName("activity")
+    public String projectId;
+
+    @PropertyName("site")
+    public String siteId;
+
+    public String where;
+
+    @PropertyName("g")
+    public String geohash;
+
+    @PropertyName("l")
+    public List<Double> location;
+
+    public PhotoCaptionContent data;
+
+    public Map<String, Boolean> comments = null;
+
+    public Map<String, Boolean> likes = null;
+
+    public Observation() {}
+
+    public Observation(String id, String observer, String projectId, String siteId, String where, List<Double> location, PhotoCaptionContent data) {
         this.id = id;
-    }
-    public Object getCreated_at() {
-        return created_at;
-    }
-    public void setCreated_at(Object created_at) {
-        this.created_at = created_at;
-    }
-    public Object getUpdated_at() {
-        return updated_at;
-    }
-    public void setUpdated_at(Object updated_at) {
-        this.updated_at = updated_at;
-    }
-    public String getObserver() {
-        return observer;
-    }
-    public void setObserver(String observer) {
-        this.observer = observer;
-    }
-    public String getActivity() {
-        return activity;
-    }
-    public void setActivity(String activity) { this.activity = activity; }
-    public String getSite() { return site; }
-    public void setSite(String site) { this.site = site; }
-    public Data getData() {
-        return data;
-    }
-    public void setData(Data data) {
+        this.userId = observer;
+        this.projectId = projectId;
+        this.siteId = siteId;
+        this.where = where;
+        this.location = location;
         this.data = data;
     }
-    public String getG() {
-        return g;
+
+    /**
+     * Remove and inherit from TimestampedData when Firebase inheritance bug is fixed.
+     */
+    @PropertyName("created_at")
+    protected Object createdAt = ServerValue.TIMESTAMP;
+
+    @PropertyName("updated_at")
+    protected Object updatedAt = ServerValue.TIMESTAMP;
+
+    @Exclude
+    @Nullable
+    public Long getCreatedAtMillis() {
+        return createdAt instanceof Long ? (Long)createdAt : null;
     }
-    public void setG(String g) {
-        this.g = g;
-    }
-    public Map<String, Double> getL() {
-        return l;
-    }
-    public void setL(Map<String, Double> l) {
-        this.l = l;
-    }
-    public Map<String, Boolean> getComments() {
-        return comments;
-    }
-    public void setComments(Map<String, Boolean> comments) {
-        this.comments = comments;
-    }
-    public Map<String, Boolean> getLikes() {
-        return likes;
-    }
-    public void setLikes(Map<String, Boolean> likes) {
-        this.likes = likes;
+
+    @Exclude
+    @Nullable public Long getUpdatedAtMillis() {
+        return createdAt instanceof Long ? (Long)updatedAt : null;
     }
 }

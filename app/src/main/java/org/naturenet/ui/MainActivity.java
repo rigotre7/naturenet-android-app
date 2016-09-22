@@ -34,7 +34,10 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.base.Strings;
+import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Multisets;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -90,9 +93,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     static String NAMES = "names";
     static String NEW_USER = "new_user";
     static String SIGNED_USER = "signed_user";
-    static String ID = "id";
     static String LATEST_CONTRIBUTION = "latest_contribution";
-    static String CREATED_AT = "created_at";
     static String UPDATED_AT = "updated_at";
     static String NAME = "name";
     static String OBSERVATION = "observation";
@@ -106,20 +107,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     static String SIGNING_OUT = "Signing Out...";
     static String OBSERVERS = "observers";
     static String OBSERVATIONS = "observations";
-    static String OBSERVER = "observer";
-    static String ACTIVITY = "activity";
-    static String SITE = "site";
-    static String WHERE = "where";
-    static String DATA = "data";
-    static String IMAGE = "image";
-    static String TEXT = "text";
-    static String G = "g";
-    static String L = "l";
-    static String LAT = "0";
-    static String LON = "1";
-    static String TRUE = "true";
-    static String COMMENTS = "comments";
-    static String LIKES = "likes";
     Observation selectedObservation, previewSelectedObservation;
     ObserverInfo selectedObserverInfo;
     List<Observation> observations;
@@ -315,57 +302,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
                         for(DataSnapshot child : snapshot.getChildren()) {
-                            Map<String, Object> map = (Map<String, Object>) child.getValue();
-                            final PreviewInfo preview = new PreviewInfo();
-                            String id = map.get(ID).toString();
-                            Long created_at = (Long) map.get(CREATED_AT);
-                            Long updated_at = (Long) map.get(UPDATED_AT);
-                            String observerId = map.get(OBSERVER).toString();
-                            String activity = map.get(ACTIVITY).toString();
-                            String site = map.get(SITE).toString();
-                            String where = null;
-                            if (map.get(WHERE) != null) {
-                                where = map.get(WHERE).toString();
-                            }
-                            Data data = new Data();
-                            Map<String, Object> d = (Map<String, Object>) map.get(DATA);
-                            data.setImage(d.get(IMAGE).toString());
-                            preview.observationImageUrl = d.get(IMAGE).toString();
-                            if (d.get(TEXT) != null) {
-                                data.setText(d.get(TEXT).toString());
-                                preview.observationText = d.get(TEXT).toString();
-                            } else
-                                preview.observationText = "No Description";
-                            String g = null;
-                            if (map.get(G) != null)
-                                g = map.get(G).toString();
-                            Map<String, Double> l = new HashMap<String, Double>();
-                            if (map.get(L) != null) {
-                                ArrayList<Number> lMap = (ArrayList<Number>) map.get(L);
-                                l.put(LAT, lMap.get(0).doubleValue());
-                                l.put(LON, lMap.get(1).doubleValue());
-                            }
-                            Map<String, Boolean> comments = new HashMap<String, Boolean>();
-                            if (map.get(COMMENTS) != null) {
-                                Map<String, Object> c = (Map<String, Object>) map.get(COMMENTS);
-                                preview.commentsCount = Integer.toString(c.keySet().size());
-                                for (String key: c.keySet())
-                                    comments.put(key, c.get(key).toString().equals(TRUE));
-                            } else
-                                preview.commentsCount = "0";
-                            Map<String, Boolean> likes = new HashMap<String, Boolean>();
-                            if (map.get(LIKES) != null) {
-                                Map<String, Object> li = (Map<String, Object>) map.get(LIKES);
-                                preview.likesCount = Integer.toString(li.keySet().size());
-                                for (String key: li.keySet())
-                                    likes.put(key, li.get(key).toString().equals(TRUE));
-                            } else
-                                preview.likesCount = "0";
-                            final Observation observation = new Observation(id, created_at, updated_at, observerId, activity, site, where, data, g, l, comments, likes);
+                            final Observation observation = child.getValue(Observation.class);
                             observations.add(observation);
+                            final PreviewInfo preview = new PreviewInfo();
+                            preview.observationImageUrl = observation.data.image;
+                            if (observation.data.text != null) {
+                                preview.observationText = observation.data.text;
+                            } else {
+                                preview.observationText = "No Description";
+                            }
+                            if (observation.comments != null) {
+                                preview.commentsCount = Integer.toString(observation.comments.size());
+                            } else {
+                                preview.commentsCount = "0";
+                            }
+                            if (observation.likes != null) {
+                                preview.likesCount = String.valueOf(HashMultiset.create(observation.likes.values()).count(new Boolean(true)));
+                            } else {
+                                preview.likesCount = "0";
+                            }
                             boolean contains = false;
                             for (int i=0; i<observers.size(); i++) {
-                                contains = observers.get(i).getObserverId().equals(observerId);
+                                contains = observers.get(i).getObserverId().equals(observation.userId);
                                 if (contains) {
                                     preview.observerAvatarUrl = observers.get(i).getObserverAvatar();
                                     preview.observerName = observers.get(i).getObserverName();
@@ -375,9 +333,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             }
                             if (!contains) {
                                 final ObserverInfo observer = new ObserverInfo();
-                                observer.setObserverId(observerId);
+                                observer.setObserverId(observation.userId);
                                 DatabaseReference f = FirebaseDatabase.getInstance().getReference();
-                                f.child(Users.NODE_NAME).child(observerId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                f.child(Users.NODE_NAME).child(observation.userId).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot snapshot) {
                                         Users user = snapshot.getValue(Users.class);
@@ -571,8 +529,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     final Uri downloadUrl = taskSnapshot.getDownloadUrl();
                         final String id = mFirebase.child(OBSERVATIONS).push().getKey();
-                        newObservation.setId(id);
-                        newObservation.getData().setImage(downloadUrl.toString());
+                        newObservation.id = id;
+                        newObservation.data.image = downloadUrl.toString();
                         mFirebase.child(newObservation.NODE_NAME).child(id).setValue(newObservation, new DatabaseReference.CompletionListener() {
                             @Override
                             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
@@ -581,7 +539,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_error), Toast.LENGTH_SHORT).show();
                                 }
                                 mFirebase.child(Users.NODE_NAME).child(signed_user.id).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
-                                mFirebase.child(Project.NODE_NAME).child(newObservation.getActivity()).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
+                                mFirebase.child(Project.NODE_NAME).child(newObservation.projectId).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
                             }
                         });
                         Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_success), Toast.LENGTH_SHORT).show();
@@ -668,7 +626,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case(REQUEST_CODE_ADD_OBSERVATION): {
                 if(resultCode == Activity.RESULT_OK) {
                     newObservation = (Observation) data.getSerializableExtra(OBSERVATION);
-                    newObservation.setObserver(signed_user.id);
+                    newObservation.userId = signed_user.id;
                     uploadObservation();
                     goToExploreFragment();
                 }

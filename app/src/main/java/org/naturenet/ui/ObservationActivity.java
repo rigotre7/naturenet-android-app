@@ -73,7 +73,7 @@ public class ObservationActivity extends AppCompatActivity {
         if (getIntent().getSerializableExtra(OBSERVATION) != null) {
             selectedObservation = (Observation) getIntent().getSerializableExtra(OBSERVATION);
             for (int i=0; i<observers.size(); i++) {
-                if (observers.get(i).getObserverId().equals(selectedObservation.getObserver())) {
+                if (observers.get(i).getObserverId().equals(selectedObservation.userId)) {
                     selectedObserverInfo = observers.get(i);
                     break;
                 }
@@ -121,22 +121,13 @@ public class ObservationActivity extends AppCompatActivity {
         toolbar_title.setVisibility(View.GONE);
         back.setVisibility(View.GONE);
         explore_tv_back.setVisibility(View.VISIBLE);
-        String[] commentsList = selectedObservation.getComments().keySet().toArray(new String[selectedObservation.getComments().keySet().size()]);
-        String[] likes = selectedObservation.getLikes().keySet().toArray(new String[selectedObservation.getLikes().keySet().size()]);
         comments = null;
         like = null;
-        if (commentsList != null) {
-            getCommentsFor(selectedObservation.getId());
+        if (selectedObservation.comments != null) {
+            getCommentsFor(selectedObservation.id);
         }
         if (signed_user != null) {
-            like = false;
-            if (likes != null) {
-                for (String id: likes) {
-                    if (signed_user.id.equals(id))
-                        like = true;
-                    break;
-                }
-            }
+            like = (selectedObservation.likes != null) && selectedObservation.likes.keySet().contains(signed_user.id);
         }
         getFragmentManager().
                 beginTransaction().

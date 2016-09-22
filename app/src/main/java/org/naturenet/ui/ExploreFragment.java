@@ -46,6 +46,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.kosalgeek.android.photoutil.CameraPhoto;
 import com.kosalgeek.android.photoutil.GalleryPhoto;
 import com.squareup.picasso.Picasso;
@@ -69,10 +70,7 @@ import timber.log.Timber;
 public class ExploreFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     final private static int CAMERA_REQUEST = 1;
     final private static int GALLERY_REQUEST = 2;
-    static String LATITUDE = "0";
-    static String LONGITUDE = "1";
     static String MY_LOCATION = "My Location";
-    static String OBSERVATION = "Observation";
     ImageButton add_observation, add_design_idea;
     Button explore, camera, gallery, design_ideas, design_challenges;
     TextView preview_observer_user_name, preview_observer_affiliation, preview_observation_text, preview_likes_count, preview_comments_count, select, add_observation_cancel, add_design_idea_cancel;
@@ -155,7 +153,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                 for (int i = 0; i < main.observations.size(); i++) {
                     final Observation observation = main.observations.get(i);
                     Marker marker = googleMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(observation.getL().get(LATITUDE), observation.getL().get(LONGITUDE)))
+                            .position(new LatLng(observation.location.get(0), observation.location.get(1)))
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                     allMarkersMap.put(marker, main.previews.get(observation));
                 }
@@ -372,12 +370,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
             public void onClick(View v) {
                 main.observationPath = selectedImage;
                 main.newObservation = new Observation();
-                Map<String, Double> latLong = new HashMap<String, Double>();
-                double latitude = latValue;
-                double longitude = longValue;
-                latLong.put(LATITUDE, latitude);
-                latLong.put(LONGITUDE, longitude);
-                main.newObservation.setL(latLong);
+                main.newObservation.location = Lists.newArrayList(latValue, longValue);
                 setGallery();
                 main.goToAddObservationActivity();
             }
@@ -470,12 +463,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                 main.observationPath = Uri.fromFile(new File(galleryPhoto.getPath()));
             }
             main.newObservation = new Observation();
-            Map<String, Double> latLong = new HashMap<String, Double>();
-            double latitude = latValue;
-            double longitude = longValue;
-            latLong.put(LATITUDE, latitude);
-            latLong.put(LONGITUDE, longitude);
-            main.newObservation.setL(latLong);
+            main.newObservation.location = Lists.newArrayList(latValue, longValue);
             setGallery();
             main.goToAddObservationActivity();
         }

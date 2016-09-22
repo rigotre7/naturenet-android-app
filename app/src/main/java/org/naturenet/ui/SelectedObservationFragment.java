@@ -73,15 +73,15 @@ public class SelectedObservationFragment extends Fragment {
         } else {
             Timber.d("Comments are not available");
         }
-        Picasso.with(o).load(Strings.emptyToNull(o.selectedObservation.getData().getImage()))
+        Picasso.with(o).load(Strings.emptyToNull(o.selectedObservation.data.image))
                 .placeholder(R.drawable.no_image).error(R.drawable.no_image).fit().centerInside().into(observation_image);
-        if (o.selectedObservation.getData().getText() != null)
-            observeration_text.setText(o.selectedObservation.getData().getText());
+        if (o.selectedObservation.data.text != null)
+            observeration_text.setText(o.selectedObservation.data.text);
         else
             observeration_text.setText("No Description");
-        if (o.selectedObservation.getUpdated_at() != null) {
+        if (o.selectedObservation.getUpdatedAtMillis() != null) {
             SimpleDateFormat sfd = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
-            Date date = new Date((Long) o.selectedObservation.getUpdated_at());
+            Date date = new Date((Long) o.selectedObservation.getUpdatedAtMillis());
             observeration_timestamp.setText(sfd.format(date).toString());
         } else {
             observeration_timestamp.setText("No Timestamp");
@@ -113,7 +113,7 @@ public class SelectedObservationFragment extends Fragment {
                         value = "true";
                     }
                     DatabaseReference fbRef = FirebaseDatabase.getInstance().getReference();
-                    fbRef.child("observations").child(o.selectedObservation.getId()).child("likes").child(o.signed_user.id).setValue(value);
+                    fbRef.child("observations").child(o.selectedObservation.id).child("likes").child(o.signed_user.id).setValue(value);
                 } else
                     Toast.makeText(o, "Please login to like an observation.", Toast.LENGTH_SHORT).show();
             }

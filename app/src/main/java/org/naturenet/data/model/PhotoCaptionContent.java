@@ -1,19 +1,14 @@
 package org.naturenet.data.model;
 
-public class PhotoCaptionContent {
-    private String image;
-    private String text;
-    protected PhotoCaptionContent() {}
-    public String getImage() {
-        return image;
-    }
-    public void setImage(String image) {
-        this.image = image;
-    }
-    public String getText() {
-        return text;
-    }
-    public void setText(String text) {
-        this.text = text;
-    }
+import com.google.firebase.database.IgnoreExtraProperties;
+
+import java.io.Serializable;
+
+@IgnoreExtraProperties
+public class PhotoCaptionContent implements Serializable {
+
+    public String image;
+    public String text;
+
+    public PhotoCaptionContent() {}
 }

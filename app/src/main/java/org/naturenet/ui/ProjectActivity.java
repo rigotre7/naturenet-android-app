@@ -6,8 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
@@ -22,17 +22,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.naturenet.R;
 import org.naturenet.data.model.Comment;
-import org.naturenet.data.model.Data;
 import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.ObserverInfo;
 import org.naturenet.data.model.Project;
 import org.naturenet.data.model.Site;
 import org.naturenet.data.model.Users;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import timber.log.Timber;
 
@@ -42,30 +38,9 @@ public class ProjectActivity extends AppCompatActivity {
     static String SIGNED_USER = "signed_user";
     static String EMPTY = "";
     static int NUM_OF_OBSERVATIONS = 10;
-    static String SITES = "sites";
-    static String ID = "id";
-    static String USERS = "users";
-    static String DISPLAY_NAME = "display_name";
-    static String AFFILIATION = "affiliation";
-    static String AVATAR = "avatar";
-    static String CREATED_AT = "created_at";
-    static String UPDATED_AT = "updated_at";
     static String NAME = "name";
     static String LOADING = "Loading...";
-    static String OBSERVER = "observer";
     static String ACTIVITY = "activity";
-    static String SITE = "site";
-    static String WHERE = "where";
-    static String DATA = "data";
-    static String IMAGE = "image";
-    static String TEXT = "text";
-    static String G = "g";
-    static String L = "l";
-    static String LAT = "0";
-    static String LON = "1";
-    static String TRUE = "true";
-    static String COMMENTS = "comments";
-    static String LIKES = "likes";
     String leftArrows;
     Project project;
     List<Observation> observations;
@@ -131,66 +106,21 @@ public class ProjectActivity extends AppCompatActivity {
                     public void onDataChange(DataSnapshot snapshot) {
                         int count = 0;
                         for(DataSnapshot child : snapshot.getChildren()) {
-                            count = count+1;
-                            Map<String, Object> map = (Map<String, Object>) child.getValue();
-                            if (map.get(ACTIVITY) != null) {
-                                String id = map.get(ID).toString();
-                                Long created_at = (Long) map.get(CREATED_AT);
-                                Long updated_at = (Long) map.get(UPDATED_AT);
-                                String observerId = map.get(OBSERVER).toString();
-                                String activity = map.get(ACTIVITY).toString();
-                                String site = map.get(SITE).toString();
-                                String where = null;
-                                if (map.get(WHERE) != null) {
-                                    where = map.get(WHERE).toString();
-                                }
-                                Data data = new Data();
-                                Map<String, Object> d = (Map<String, Object>) map.get(DATA);
-                                if (d.get(IMAGE) != null) {
-                                    data.setImage(d.get(IMAGE).toString());
-                                }
-                                if (d.get(TEXT) != null)
-                                    data.setText(d.get(TEXT).toString());
-                                String g = null;
-                                if (map.get(G) != null)
-                                    g = map.get(G).toString();
-                                Map<String, Double> l = new HashMap<String, Double>();
-                                if (map.get(L) != null) {
-                                    ArrayList<Double> lMap = (ArrayList<Double>) map.get(L);
-                                    l.put(LAT, lMap.get(0));
-                                    l.put(LON, lMap.get(1));
-                                }
-                                Map<String, Boolean> comments = new HashMap<String, Boolean>();
-                                if (map.get(COMMENTS) != null) {
-                                    Map<String, Object> c = (Map<String, Object>) map.get(COMMENTS);
-                                    for (String key: c.keySet())
-                                        comments.put(key, c.get(key).toString().equals(TRUE));
-                                }
-                                Map<String, Boolean> likes = new HashMap<String, Boolean>();
-                                if (map.get(LIKES) != null) {
-                                    Map<String, Object> li = (Map<String, Object>) map.get(LIKES);
-                                    for (String key: li.keySet())
-                                        likes.put(key, li.get(key).toString().equals(TRUE));
-                                }
-                                final Observation observation = new Observation(id, created_at, updated_at, observerId, activity, site, where, data, g, l, comments, likes);
-                                observations.add(observation);
-                            }
+                            count++;
+                            final Observation observation = child.getValue(Observation.class);
+                            observations.add(observation);
                             if (count == snapshot.getChildrenCount()) {
                                 int myCount = 0;
-                                for (int j=0; j<observations.size(); j++) {
-                                    myCount = myCount+1;
-                                    String observerId = observations.get(j).getObserver();
+                                for (Observation obs : observations) {
+                                    myCount++;
+                                    String observerId = obs.userId;
                                     boolean contains = false;
-                                    for (int i=0; i<observers.size(); i++) {
-                                        contains = observers.get(i).getObserverId().equals(observerId);
+                                    for (ObserverInfo info : observers) {
+                                        contains = info.getObserverId().equals(observerId);
                                         if (contains) {
                                             if (myCount == observations.size()) {
                                                 pd.dismiss();
-                                                getFragmentManager().
-                                                        beginTransaction().
-                                                        replace(R.id.fragment_container, new ProjectDetailFragment(), FRAGMENT_TAG_PROJECT_DETAIL).
-                                                        addToBackStack(null).
-                                                        commit();
+                                                showDetailFragment();
                                             }
                                             break;
                                         }
@@ -200,14 +130,14 @@ public class ProjectActivity extends AppCompatActivity {
                                         observer.setObserverId(observerId);
                                         DatabaseReference f = FirebaseDatabase.getInstance().getReference();
                                         final int finalMyCount = myCount;
-                                        f.child(USERS).child(observerId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        f.child(Users.NODE_NAME).child(observerId).addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(DataSnapshot snapshot) {
                                                 Users user = snapshot.getValue(Users.class);
                                                 observer.setObserverName(user.displayName);
                                                 observer.setObserverAvatar(user.avatar);
                                                 DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
-                                                fb.child(SITES).child(user.affiliation).child(NAME).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                fb.child(Site.NODE_NAME).child(user.affiliation).child(NAME).addListenerForSingleValueEvent(new ValueEventListener() {
                                                     @Override
                                                     public void onDataChange(DataSnapshot snapshot) {
                                                         String siteName = (String)snapshot.getValue();
@@ -223,11 +153,15 @@ public class ProjectActivity extends AppCompatActivity {
                                                         }
                                                     }
                                                     @Override
-                                                    public void onCancelled(DatabaseError databaseError) {}
+                                                    public void onCancelled(DatabaseError databaseError) {
+                                                        pd.dismiss();
+                                                        Toast.makeText(ProjectActivity.this, "Could not get observations: "+ databaseError.getMessage(), Toast.LENGTH_SHORT).show();}
                                                 });
                                             }
                                             @Override
-                                            public void onCancelled(DatabaseError databaseError) {}
+                                            public void onCancelled(DatabaseError databaseError) {
+                                                pd.dismiss();
+                                                Toast.makeText(ProjectActivity.this, "Could not get observations: "+ databaseError.getMessage(), Toast.LENGTH_SHORT).show();}
                                         });
                                     }
                                 }
@@ -242,11 +176,7 @@ public class ProjectActivity extends AppCompatActivity {
                 });
             } else {
                 pd.dismiss();
-                getFragmentManager().
-                        beginTransaction().
-                        replace(R.id.fragment_container, new ProjectDetailFragment(), FRAGMENT_TAG_PROJECT_DETAIL).
-                        addToBackStack(null).
-                        commit();
+                showDetailFragment();
             }
         } else {
             Toast.makeText(ProjectActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
@@ -255,22 +185,13 @@ public class ProjectActivity extends AppCompatActivity {
     public void goToSelectedObservationFragment() {
         toolbar_title.setVisibility(View.GONE);
         project_back.setText(leftArrows+" "+project.name);
-        String[] commentsList = selectedObservation.getComments().keySet().toArray(new String[selectedObservation.getComments().keySet().size()]);
-        String[] likes = selectedObservation.getLikes().keySet().toArray(new String[selectedObservation.getLikes().keySet().size()]);
         comments = null;
         like = null;
-        if (commentsList != null) {
-            getCommentsFor(selectedObservation.getId());
+        if (selectedObservation.comments != null) {
+            getCommentsFor(selectedObservation.id);
         }
         if (signed_user != null) {
-            like = false;
-            if (likes != null) {
-                for (String id: likes) {
-                    if (signed_user.id.equals(id))
-                        like = true;
-                    break;
-                }
-            }
+            like = (selectedObservation.likes != null) && selectedObservation.likes.keySet().contains(signed_user.id);
         }
         getFragmentManager().
                 beginTransaction().
@@ -281,7 +202,7 @@ public class ProjectActivity extends AppCompatActivity {
     private void getCommentsFor(final String parent) {
         comments = Lists.newArrayList();
         mFirebase = FirebaseDatabase.getInstance().getReference();
-        mFirebase.child(COMMENTS).orderByChild("parent").equalTo(parent).addListenerForSingleValueEvent(new ValueEventListener() {
+        mFirebase.child(Comment.NODE_NAME).orderByChild("parent").equalTo(parent).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot child : snapshot.getChildren()) {
@@ -322,5 +243,10 @@ public class ProjectActivity extends AppCompatActivity {
                     haveConnectedMobile = true;
         }
         return haveConnectedWifi || haveConnectedMobile;
+    }
+    private void showDetailFragment() {
+        getFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new ProjectDetailFragment(), FRAGMENT_TAG_PROJECT_DETAIL)
+                .addToBackStack(null).commit();
     }
 }

@@ -76,15 +76,15 @@ public class ObservationFragment extends Fragment {
         } else {
             Timber.d("Comments are not available");
         }
-        Picasso.with(o).load(Strings.emptyToNull(o.selectedObservation.getData().getImage()))
+        Picasso.with(o).load(Strings.emptyToNull(o.selectedObservation.data.image))
                 .placeholder(R.drawable.no_image).error(R.drawable.no_image).fit().centerInside().into(observation_image);
-        if (o.selectedObservation.getData().getText() != null)
-            observeration_text.setText(o.selectedObservation.getData().getText());
+        if (o.selectedObservation.data.text != null)
+            observeration_text.setText(o.selectedObservation.data.text);
         else
             observeration_text.setText("No Description");
-        if (o.selectedObservation.getUpdated_at() != null) {
+        if (o.selectedObservation.getUpdatedAtMillis() != null) {
             SimpleDateFormat sfd = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
-            Date date = new Date((Long) o.selectedObservation.getUpdated_at());
+            Date date = new Date(o.selectedObservation.getUpdatedAtMillis());
             observeration_timestamp.setText(sfd.format(date).toString());
         } else {
             observeration_timestamp.setText("No Timestamp");
@@ -116,7 +116,7 @@ public class ObservationFragment extends Fragment {
                         value = Optional.of(true);
                     }
                     DatabaseReference fbRef = FirebaseDatabase.getInstance().getReference();
-                    fbRef.child("observations").child(o.selectedObservation.getId()).child("likes").child(o.signed_user.id).setValue(value.orNull());
+                    fbRef.child("observations").child(o.selectedObservation.id).child("likes").child(o.signed_user.id).setValue(value.orNull());
                 } else
                     Toast.makeText(o, "Please login to like an observation.", Toast.LENGTH_SHORT).show();
             }
@@ -130,19 +130,19 @@ public class ObservationFragment extends Fragment {
                         send.setEnabled(false);
                         comment.setEnabled(false);
                         final DatabaseReference commentRef = FirebaseDatabase.getInstance().getReference().child(Comment.NODE_NAME).push();
-                        Comment newComment = new Comment(commentRef.getKey(), commentText, o.signed_user.id, o.selectedObservation.getId(), Observation.NODE_NAME);
+                        Comment newComment = new Comment(commentRef.getKey(), commentText, o.signed_user.id, o.selectedObservation.id, Observation.NODE_NAME);
                         commentRef.setValue(newComment, new DatabaseReference.CompletionListener() {
                             @Override
                             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                                 send.setEnabled(true);
                                 comment.setEnabled(true);
                                 if (databaseError != null) {
-                                    Timber.w("Could not write comment for %s: %s", o.selectedObservation.getId(), databaseError.getDetails());
+                                    Timber.w("Could not write comment for %s: %s", o.selectedObservation.id, databaseError.getDetails());
                                     Toast.makeText(o, "Your comment could not be submitted.", Toast.LENGTH_LONG).show();
                                 } else {
                                     // Update /observations/<observation-id>/comments/ with new comment
                                     FirebaseDatabase.getInstance().getReference().child(Observation.NODE_NAME)
-                                            .child(o.selectedObservation.getId()).child("comments").child(commentRef.getKey()).setValue(true);
+                                            .child(o.selectedObservation.id).child("comments").child(commentRef.getKey()).setValue(true);
                                     comment.getText().clear();
                                     Toast.makeText(o, "Your comment has been submitted.", Toast.LENGTH_SHORT).show();
                                 }

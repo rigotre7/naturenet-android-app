@@ -55,7 +55,7 @@ public class ObservationGalleryFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 o.selectedObservation = observations.get(position);
                 for (int i=0; i<o.observers.size(); i++) {
-                    if (o.observers.get(i).getObserverId().equals(o.selectedObservation.getObserver())) {
+                    if (o.observers.get(i).getObserverId().equals(o.selectedObservation.userId)) {
                         o.selectedObserverInfo = o.observers.get(i);
                         break;
                     }

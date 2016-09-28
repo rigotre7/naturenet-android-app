@@ -217,12 +217,7 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
             public void onClick(View v) {
                 main.observationPath = selectedImage;
                 main.newObservation = new Observation();
-                Map<String, Double> latLong = new HashMap<String, Double>();
-                double latitude = latValue;
-                double longitude = longValue;
-                latLong.put(LATITUDE, latitude);
-                latLong.put(LONGITUDE, longitude);
-                main.newObservation.setL(latLong);
+                main.newObservation.location = Lists.newArrayList(latValue, longValue);
                 setGallery();
                 main.goToAddObservationActivity();
             }
@@ -319,12 +314,7 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
                 main.observationPath = Uri.fromFile(new File(galleryPhoto.getPath()));
             }
             main.newObservation = new Observation();
-            Map<String, Double> latLong =  new HashMap<String, Double>();
-            double latitude = latValue;
-            double longitude = longValue;
-            latLong.put(LATITUDE, latitude);
-            latLong.put(LONGITUDE, longitude);
-            main.newObservation.setL(latLong);
+            main.newObservation.location = Lists.newArrayList(latValue, longValue);
             setGallery();
             main.goToAddObservationActivity();
         }

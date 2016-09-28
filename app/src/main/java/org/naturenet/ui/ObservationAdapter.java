@@ -46,11 +46,11 @@ public class ObservationAdapter extends ArrayAdapter<Observation> {
         observer_affiliation = (TextView) view.findViewById(R.id.observer_affiliation);
         final Observation observation = getItem(position);
         view.setTag(observation);
-        Picasso.with(getContext()).load(Strings.emptyToNull(observation.getData().getImage()))
+        Picasso.with(getContext()).load(Strings.emptyToNull(observation.data.image))
                 .error(R.drawable.no_image).fit().centerCrop().into(observation_icon);
 
         for (ObserverInfo observer : observers) {
-            if (observer.getObserverId().equals(observation.getObserver())) {
+            if (observer.getObserverId().equals(observation.userId)) {
                 Picasso.with(getContext()).load(Strings.emptyToNull(observer.getObserverAvatar())).transform(mAvatarTransform)
                             .placeholder(R.drawable.default_avatar).error(R.drawable.default_avatar).fit().into(observer_avatar);
                 if (observer.getObserverName() != null) {

@@ -34,7 +34,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -52,15 +51,14 @@ import com.kosalgeek.android.photoutil.GalleryPhoto;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
-import org.naturenet.CroppedCircleTransformation;
+import org.naturenet.util.CroppedCircleTransformation;
 import org.naturenet.R;
 import org.naturenet.data.model.Observation;
-import org.naturenet.data.model.PreviewInfo;
+import org.naturenet.data.PreviewInfo;
 import org.naturenet.data.model.Site;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

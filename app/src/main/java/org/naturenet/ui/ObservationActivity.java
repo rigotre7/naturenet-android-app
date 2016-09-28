@@ -21,12 +21,11 @@ import com.google.firebase.database.ValueEventListener;
 import org.naturenet.R;
 import org.naturenet.data.model.Comment;
 import org.naturenet.data.model.Observation;
-import org.naturenet.data.model.ObserverInfo;
+import org.naturenet.data.ObserverInfo;
 import org.naturenet.data.model.Users;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import timber.log.Timber;
 

@@ -19,7 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
-import org.naturenet.CroppedCircleTransformation;
+import org.naturenet.util.CroppedCircleTransformation;
 import org.naturenet.R;
 import org.naturenet.data.model.Comment;
 import org.naturenet.data.model.Observation;

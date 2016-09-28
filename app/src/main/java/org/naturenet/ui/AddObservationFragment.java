@@ -20,7 +20,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
-import org.naturenet.data.model.Data;
 import org.naturenet.data.model.PhotoCaptionContent;
 import org.naturenet.data.model.Project;
 

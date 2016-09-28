@@ -1,8 +1,6 @@
 package org.naturenet.ui;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +12,10 @@ import com.google.common.base.Strings;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
-import org.naturenet.CroppedCircleTransformation;
+import org.naturenet.util.CroppedCircleTransformation;
 import org.naturenet.R;
 import org.naturenet.data.model.Observation;
-import org.naturenet.data.model.ObserverInfo;
+import org.naturenet.data.ObserverInfo;
 
 import java.util.List;
 

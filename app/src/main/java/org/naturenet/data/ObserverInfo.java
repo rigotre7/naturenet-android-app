@@ -1,4 +1,4 @@
-package org.naturenet.data.model;
+package org.naturenet.data;
 
 import java.io.Serializable;
 

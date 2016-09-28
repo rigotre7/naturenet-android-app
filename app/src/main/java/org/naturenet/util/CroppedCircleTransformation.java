@@ -1,4 +1,4 @@
-package org.naturenet;
+package org.naturenet.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;

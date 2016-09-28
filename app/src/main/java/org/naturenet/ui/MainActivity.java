@@ -36,8 +36,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Multisets;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -52,16 +50,15 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
-import org.naturenet.CroppedCircleTransformation;
 import org.naturenet.R;
+import org.naturenet.data.ObserverInfo;
+import org.naturenet.data.PreviewInfo;
 import org.naturenet.data.model.Comment;
-import org.naturenet.data.model.Data;
 import org.naturenet.data.model.Observation;
-import org.naturenet.data.model.ObserverInfo;
-import org.naturenet.data.model.PreviewInfo;
 import org.naturenet.data.model.Project;
 import org.naturenet.data.model.Site;
 import org.naturenet.data.model.Users;
+import org.naturenet.util.CroppedCircleTransformation;
 
 import java.io.File;
 import java.io.Serializable;

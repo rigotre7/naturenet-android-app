@@ -1,11 +1,6 @@
 package org.naturenet.ui;
 
 import android.app.Fragment;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Path;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +18,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
-import org.naturenet.CroppedCircleTransformation;
+import org.naturenet.util.CroppedCircleTransformation;
 import org.naturenet.R;
 
 import java.text.SimpleDateFormat;

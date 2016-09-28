@@ -39,6 +39,7 @@
         android:padding="@dimen/join_user_details_padding"
         android:minWidth="@dimen/join_user_details_min_width"
         android:inputType="textPersonName"
+        android:imeOptions="actionNext"
         android:hint="@string/join_et_user_name"
         style="@style/join_et_user_details" />
 
@@ -52,6 +53,7 @@
         android:padding="@dimen/join_user_details_padding"
         android:minWidth="@dimen/join_user_details_min_width"
         android:inputType="textPassword"
+        android:imeOptions="actionNext"
         android:hint="@string/join_et_password"
         style="@style/join_et_user_details" />
 
@@ -65,6 +67,7 @@
         android:padding="@dimen/join_user_details_padding"
         android:minWidth="@dimen/join_user_details_min_width"
         android:inputType="textPersonName"
+        android:imeOptions="actionNext"
         android:hint="@string/join_et_name"
         style="@style/join_et_user_details" />
 
@@ -78,6 +81,7 @@
         android:padding="@dimen/join_user_details_padding"
         android:minWidth="@dimen/join_user_details_min_width"
         android:inputType="textEmailAddress"
+        android:imeOptions="actionDone"
         android:hint="@string/join_et_email_address"
         style="@style/join_et_user_details" />
 
@@ -92,6 +96,7 @@
         android:minWidth="@dimen/join_user_details_min_width"
         android:hint="@string/join_et_affiliation"
         android:focusable="false"
+        android:imeOptions="actionNone"
         style="@style/join_et_user_details" />
 
     <Button

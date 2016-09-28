@@ -8,11 +8,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -31,11 +32,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -48,19 +52,22 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.squareup.picasso.Transformation;
 
+import org.naturenet.util.CroppedCircleTransformation;
 import org.naturenet.R;
-import org.naturenet.data.ObserverInfo;
-import org.naturenet.data.PreviewInfo;
 import org.naturenet.data.model.Comment;
 import org.naturenet.data.model.Observation;
+import org.naturenet.data.ObserverInfo;
+import org.naturenet.data.PreviewInfo;
 import org.naturenet.data.model.Project;
 import org.naturenet.data.model.Site;
 import org.naturenet.data.model.Users;
-import org.naturenet.util.CroppedCircleTransformation;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     final static int REQUEST_CODE_PROJECT_ACTIVITY = 4;
     final static int REQUEST_CODE_OBSERVATION_ACTIVITY = 5;
     final static int NUM_OF_OBSERVATIONS = 20;
+    final static int MAX_IMAGE_DIMENSION = 1920;
     static String FRAGMENT_TAG_LAUNCH = "launch_fragment";
     static String FRAGMENT_TAG_EXPLORE = "explore_fragment";
     static String FRAGMENT_TAG_PROJECTS = "projects_fragment";
@@ -508,61 +516,123 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         return listOfAllImages;
     }
-    public void uploadObservation() {
-        if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+
+    private void uploadObservation() {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             pd.setMessage(SUBMITTING);
             pd.setCancelable(false);
             pd.show();
-            StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("photos").child(UUID.randomUUID().toString());
-            UploadTask uploadTask = storageRef.putFile(observationPath);
-            uploadTask.addOnFailureListener(new OnFailureListener() {
+
+            Timber.d("Preparing image for upload");
+            Toast.makeText(this, "Your observation is being submitted.", Toast.LENGTH_SHORT).show();
+
+            AsyncTask<Uri, Void, Map> uploader = new AsyncTask<Uri, Void, Map>() {
                 @Override
-                public void onFailure(@NonNull Exception exception) {
-                    pd.dismiss();
-                    Toast.makeText(MainActivity.this, "Failed to upload image to Firebase", Toast.LENGTH_SHORT).show();
+                protected Map doInBackground(Uri... uris) {
+                    final Uri observationPath = uris[0];
+                    final Map<String, String> config = Maps.newHashMap();
+                    config.put("cloud_name", "university-of-colorado");
+                    Cloudinary cloudinary = new Cloudinary(config);
+
+                    try {
+                        return cloudinary.uploader().unsignedUpload(new File(observationPath.getPath()), "android-preset", ObjectUtils.emptyMap());
+                    } catch (IOException ex) {
+                        Timber.w(ex, "Failed to upload image to Cloudinary");
+                        return null;
+                    }
                 }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
                 @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    final Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                        final String id = mFirebase.child(OBSERVATIONS).push().getKey();
-                        newObservation.id = id;
-                        newObservation.data.image = downloadUrl.toString();
-                        mFirebase.child(newObservation.NODE_NAME).child(id).setValue(newObservation, new DatabaseReference.CompletionListener() {
-                            @Override
-                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                pd.dismiss();
-                                if(databaseError != null) {
-                                    Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_error), Toast.LENGTH_SHORT).show();
-                                }
-                                mFirebase.child(Users.NODE_NAME).child(signed_user.id).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
-                                mFirebase.child(Project.NODE_NAME).child(newObservation.projectId).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
-                            }
-                        });
-                        Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_success), Toast.LENGTH_SHORT).show();
+                protected void onPostExecute(Map results) {
+                    super.onPostExecute(results);
+                    if (results == null) {
+                        uploadImageWithFirebase();
+                    } else {
+                        continueWithCloudinaryUpload(results);
+                    }
                 }
-            });
-        } else {
-            Toast.makeText(this, "Please sign in to create an observation.", Toast.LENGTH_LONG).show();
+            };
+
+            uploader.execute(observationPath);
         }
     }
-    public Bitmap decodeURI(String filePath) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filePath, options);
-        // Only scale if we need to
-        // (16384 buffer for img processing)
-        Boolean scaleByHeight = Math.abs(options.outHeight - 100) >= Math.abs(options.outWidth - 100);
-        if (options.outHeight * options.outWidth * 2 >= 16384) {
-            // Load, scaling to smallest power of 2 that'll get it <= desired dimensions
-            double sampleSize = scaleByHeight ? options.outHeight / 100 : options.outWidth / 100;
-            options.inSampleSize = (int) Math.pow(2d, Math.floor(Math.log(sampleSize)/Math.log(2d)));
-        }
-        // Do the actual decoding
-        options.inJustDecodeBounds = false;
-        options.inTempStorage = new byte[512];
-        Bitmap output = BitmapFactory.decodeFile(filePath, options);
-        return output;
+
+    private void continueWithCloudinaryUpload(Map results) {
+        Timber.i("Image uploaded to Cloudinary as %s", results.get("public_id"));
+        writeObservationToFirebase((String)results.get("secure_url"));
+    }
+
+    private void uploadImageWithFirebase() {
+        Timber.i("Attempting upload to Firebase");
+        Picasso.with(this).load(observationPath).resize(1920, 1920).centerInside().onlyScaleDown().into(new Target() {
+
+            final StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("photos").child(UUID.randomUUID().toString());
+
+            @Override
+            public int hashCode() {
+                return observationPath.hashCode();
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                return observationPath.equals(obj);
+            }
+
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                Timber.d("Bitmap loaded; uploading data stream to Firebase");
+                final ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+                byte[] data = stream.toByteArray();
+                continueWithFirebaseUpload(storageRef.putBytes(data));
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+                Timber.e("Could not load bitmap; uploading original file to Firebase");
+                continueWithFirebaseUpload(storageRef.putFile(observationPath));
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                Timber.d("Loading raw bitmap data from %s", observationPath.getPath());
+            }
+        });
+    }
+
+    private void continueWithFirebaseUpload(UploadTask uploadTask) {
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                writeObservationToFirebase(taskSnapshot.getDownloadUrl().toString());
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception ex) {
+                pd.dismiss();
+                Timber.w(ex, "Image upload task failed: %s", ex.getMessage());
+                Toast.makeText(MainActivity.this, "Your photo could not be uploaded.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void writeObservationToFirebase(String imageUrl) {
+        final String id = mFirebase.child(OBSERVATIONS).push().getKey();
+        newObservation.id = id;
+        newObservation.data.image = imageUrl;
+        mFirebase.child(Observation.NODE_NAME).child(id).setValue(newObservation, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                pd.dismiss();
+                if (databaseError != null) {
+                    Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_error), Toast.LENGTH_SHORT).show();
+                } else {
+                    mFirebase.child(Users.NODE_NAME).child(signed_user.id).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
+                    mFirebase.child(Project.NODE_NAME).child(newObservation.projectId).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
+                    Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_success), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

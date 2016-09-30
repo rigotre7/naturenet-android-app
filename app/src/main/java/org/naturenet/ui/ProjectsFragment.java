@@ -47,6 +47,7 @@ import org.naturenet.data.model.Site;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -351,6 +352,8 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
                     Project project = child.getValue(Project.class);
                     mProjects.add(project);
                 }
+                // Timestamps sort in ascending order
+                Collections.reverse(mProjects);
                 if (mProjects.size() != 0) {
                     mProjectsListView.setAdapter(new ProjectAdapter(main, mProjects));
                 }

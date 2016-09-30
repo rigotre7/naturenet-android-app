@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,6 +24,7 @@ import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Project;
 import org.naturenet.data.model.Users;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -93,6 +95,8 @@ public class AddObservationActivity extends AppCompatActivity {
                             mProjects.add(project);
                         //}
                     }
+                    // Timestamps sort in ascending order
+                    Collections.reverse(mProjects);
                     if (mProjects.size() != 0) {
                         getFragmentManager().
                                 beginTransaction().

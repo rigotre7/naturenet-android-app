@@ -545,6 +545,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 @Override
                 protected void onPostExecute(Map results) {
                     super.onPostExecute(results);
+                    pd.dismiss();
                     if (results == null) {
                         uploadImageWithFirebase();
                     } else {
@@ -609,7 +610,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception ex) {
-                pd.dismiss();
                 Timber.w(ex, "Image upload task failed: %s", ex.getMessage());
                 Toast.makeText(MainActivity.this, "Your photo could not be uploaded.", Toast.LENGTH_SHORT).show();
             }
@@ -623,7 +623,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mFirebase.child(Observation.NODE_NAME).child(id).setValue(newObservation, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                pd.dismiss();
                 if (databaseError != null) {
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_error), Toast.LENGTH_SHORT).show();
                 } else {

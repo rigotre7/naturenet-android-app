@@ -140,7 +140,7 @@
                 android:hint="Write a comment..."
                 android:textSize="@dimen/font_size_12"
                 android:scrollHorizontally="false"
-                android:inputType="textCapSentences|textImeMultiLine"
+                android:inputType="textCapSentences|textAutoCorrect|textImeMultiLine"
                 android:imeOptions="actionDone"
                 android:lines="2"
                 android:maxLines="5"

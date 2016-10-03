@@ -74,6 +74,7 @@
         <activity android:name=".ui.ObservationActivity"
                   android:screenOrientation="portrait"/>
         <activity android:name=".ui.AddObservationActivity"
+                  android:windowSoftInputMode="adjustResize"
                   android:screenOrientation="portrait"/>
         <activity android:name=".ui.ProjectActivity"
                   android:screenOrientation="portrait"/>

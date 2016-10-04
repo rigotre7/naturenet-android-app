@@ -288,11 +288,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     public void goToLaunchFragment() {
         toolbar_title.setText(R.string.launch_title);
-        getFragmentManager().
-                beginTransaction().
-                replace(R.id.fragment_container, new LaunchFragment(), FRAGMENT_TAG_LAUNCH).
-                addToBackStack(null).
-                commit();
+        getFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new LaunchFragment(), FRAGMENT_TAG_LAUNCH)
+                .addToBackStack(FRAGMENT_TAG_LAUNCH)
+                .commit();
     }
     public void goToExploreFragment() {
         if (haveNetworkConnection()) {
@@ -363,7 +362,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                                     getFragmentManager().
                                                             beginTransaction().
                                                             replace(R.id.fragment_container, new ExploreFragment(), FRAGMENT_TAG_EXPLORE).
-                                                            addToBackStack(null).
+                                                            addToBackStack(FRAGMENT_TAG_EXPLORE).
                                                             commit();
                                                 }
                                             }
@@ -389,7 +388,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 getFragmentManager().
                         beginTransaction().
                         replace(R.id.fragment_container, new ExploreFragment(), FRAGMENT_TAG_EXPLORE).
-                        addToBackStack(null).
+                        addToBackStack(FRAGMENT_TAG_EXPLORE).
                         commit();
             }
         } else {
@@ -401,7 +400,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getFragmentManager().
                 beginTransaction().
                 replace(R.id.fragment_container, new ProjectsFragment(), FRAGMENT_TAG_PROJECTS).
-                addToBackStack(null).
+                addToBackStack(FRAGMENT_TAG_PROJECTS).
                 commit();
     }
     public void goToDesignIdeasFragment() {
@@ -409,7 +408,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getFragmentManager().
                 beginTransaction().
                 replace(R.id.fragment_container, new IdeasFragment(), FRAGMENT_TAG_DESIGNIDEAS).
-                addToBackStack(null).
+                addToBackStack(FRAGMENT_TAG_DESIGNIDEAS).
                 commit();
     }
     public void goToCommunitiesFragment() {
@@ -417,7 +416,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getFragmentManager().
                 beginTransaction().
                 replace(R.id.fragment_container, new CommunitiesFragment(), FRAGMENT_TAG_COMMUNITIES).
-                addToBackStack(null).
+                addToBackStack(FRAGMENT_TAG_COMMUNITIES).
                 commit();
     }
     public void logout() {
@@ -435,9 +434,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         display_name.setVisibility(View.GONE);
         affiliation.setVisibility(View.GONE);
     }
-    public void closeCurrent() {
-        getFragmentManager().popBackStack();
-    }
+
     public void goToJoinActivity() {
         ids = new ArrayList<String>();
         names = new ArrayList<String>();

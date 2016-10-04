@@ -321,6 +321,8 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
         preview_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                main.selectedObservation = null;
+                main.selectedObserverInfo = null;
                 floating_buttons.setVisibility(View.VISIBLE);
                 explore.setVisibility(View.VISIBLE);
                 dialog_preview.setVisibility(View.GONE);

@@ -145,11 +145,9 @@ public class ProjectActivity extends AppCompatActivity {
                                                         observers.add(observer);
                                                         if (finalMyCount == observations.size()) {
                                                             pd.dismiss();
-                                                            getFragmentManager().
-                                                                    beginTransaction().
-                                                                    replace(R.id.fragment_container, new ProjectDetailFragment(), FRAGMENT_TAG_PROJECT_DETAIL).
-                                                                    addToBackStack(null).
-                                                                    commit();
+                                                            getFragmentManager().beginTransaction()
+                                                                    .replace(R.id.fragment_container, new ProjectDetailFragment(), FRAGMENT_TAG_PROJECT_DETAIL)
+                                                                    .commit();
                                                         }
                                                     }
                                                     @Override
@@ -226,7 +224,6 @@ public class ProjectActivity extends AppCompatActivity {
         getFragmentManager().
                 beginTransaction().
                 replace(R.id.fragment_container, new ProjectDetailFragment(), FRAGMENT_TAG_PROJECT_DETAIL).
-                addToBackStack(null).
                 commit();
     }
     public boolean haveNetworkConnection() {

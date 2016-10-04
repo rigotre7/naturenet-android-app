@@ -50,8 +50,7 @@ public class ObservationActivity extends AppCompatActivity {
     List<Comment> comments;
     Users signed_user;
     Boolean like;
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {}
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,17 +68,6 @@ public class ObservationActivity extends AppCompatActivity {
         selectedObservation = null;
         selectedObserverInfo = null;
         comments = null;
-        if (getIntent().getSerializableExtra(OBSERVATION) != null) {
-            selectedObservation = (Observation) getIntent().getSerializableExtra(OBSERVATION);
-            for (int i=0; i<observers.size(); i++) {
-                if (observers.get(i).getObserverId().equals(selectedObservation.userId)) {
-                    selectedObserverInfo = observers.get(i);
-                    break;
-                }
-            }
-            goToSelectedObservationFragment();
-        } else
-            goToObservationGalleryFragment();
         explore_tv_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,7 +80,28 @@ public class ObservationActivity extends AppCompatActivity {
                 goBackToExploreFragment();
             }
         });
+
+        goToObservationGalleryFragment();
+        if (getIntent().getSerializableExtra(OBSERVATION) != null) {
+            selectedObservation = (Observation) getIntent().getSerializableExtra(OBSERVATION);
+            for (ObserverInfo observer : observers) {
+                if (observer.getObserverId().equals(selectedObservation.userId)) {
+                    selectedObserverInfo = observer;
+                    break;
+                }
+            }
+            goToSelectedObservationFragment();
+        }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        selectedObservation = null;
+        selectedObserverInfo = null;
+        comments = null;
+    }
+
     public void goBackToExploreFragment() {
         observations = null;
         observers = null;
@@ -113,7 +122,6 @@ public class ObservationActivity extends AppCompatActivity {
         getFragmentManager().
                 beginTransaction().
                 replace(R.id.fragment_container, new ObservationGalleryFragment(), FRAGMENT_TAG_OBSERVATION_GALLERY).
-                addToBackStack(null).
                 commit();
     }
     public void goToSelectedObservationFragment() {
@@ -128,11 +136,9 @@ public class ObservationActivity extends AppCompatActivity {
         if (signed_user != null) {
             like = (selectedObservation.likes != null) && selectedObservation.likes.keySet().contains(signed_user.id);
         }
-        getFragmentManager().
-                beginTransaction().
-                replace(R.id.fragment_container, new ObservationFragment(), FRAGMENT_TAG_OBSERVATION).
-                addToBackStack(null).
-                commit();
+        getFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new ObservationFragment(), FRAGMENT_TAG_OBSERVATION)
+                .addToBackStack(FRAGMENT_TAG_OBSERVATION).commit();
     }
     private void getCommentsFor(final String parent) {
         comments = Lists.newArrayList();

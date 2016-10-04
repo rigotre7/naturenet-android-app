@@ -101,7 +101,6 @@ public class AddObservationActivity extends AppCompatActivity {
                         getFragmentManager().
                                 beginTransaction().
                                 replace(R.id.fragment_container, new AddObservationFragment(), FRAGMENT_TAG_ADD_OBSERVATION).
-                                addToBackStack(null).
                                 commit();
                     }
                     pd.dismiss();

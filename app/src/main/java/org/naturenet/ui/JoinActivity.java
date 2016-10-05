@@ -141,7 +141,9 @@ public class JoinActivity extends AppCompatActivity {
         });
     }
     private boolean is_any_field_empty() {
-        if(userName.isEmpty() || password.isEmpty() || name.isEmpty() || emailAddress.isEmpty() || affiliation.isEmpty()) {
+        if(userName == null || userName.isEmpty() || password == null || password.isEmpty() ||
+                name == null || name.isEmpty() || emailAddress == null || emailAddress.isEmpty() ||
+                affiliation == null || affiliation.isEmpty()) {
             error = getResources().getString(R.string.join_error_message_empty);
             return true;
         }

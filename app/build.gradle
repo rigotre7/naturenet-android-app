@@ -19,12 +19,12 @@ dependencies {
     compile 'com.google.firebase:firebase-database:9.6.1'
     compile 'com.google.firebase:firebase-storage:9.6.1'
     compile 'com.google.firebase:firebase-auth:9.6.1'
+    compile 'com.google.firebase:firebase-crash:9.6.1'
     compile 'com.google.guava:guava:19.0'
     compile 'pub.devrel:easypermissions:0.1.5'
     compile 'com.cloudinary:cloudinary-android:1.4.5'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.jakewharton.timber:timber:4.3.0'
-    compile 'com.google.firebase:firebase-crash:9.0.2'
 }
 
 android {

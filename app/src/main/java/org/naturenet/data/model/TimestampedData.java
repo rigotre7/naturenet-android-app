@@ -24,12 +24,14 @@ public abstract class TimestampedData implements Serializable {
     protected TimestampedData() {}
 
     @Exclude
-    @Nullable public Long getCreatedAtMillis() {
+    @Nullable
+    public Long getCreatedAtMillis() {
         return createdAt instanceof Long ? (Long)createdAt : null;
     }
 
     @Exclude
-    @Nullable public Long getUpdatedAtMillis() {
-        return createdAt instanceof Long ? (Long)updatedAt : null;
+    @Nullable
+    public Long getUpdatedAtMillis() {
+        return updatedAt instanceof Long ? (Long)updatedAt : null;
     }
 }

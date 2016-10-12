@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Logger;
 import com.squareup.picasso.Picasso;
 
 import org.naturenet.BuildConfig;
@@ -19,6 +22,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         Picasso.with(this).setIndicatorsEnabled(BuildConfig.DEBUG);
+        FirebaseDatabase.getInstance().setLogLevel(BuildConfig.DEBUG ? Logger.Level.DEBUG : Logger.Level.NONE);
         Timber.plant(new ForestFire());
         new Handler().postDelayed(new Runnable() {
             @Override

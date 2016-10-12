@@ -32,10 +32,10 @@ public class UsersPrivate implements Serializable {
      * Remove and inherit from TimestampedData when Firebase inheritance bug is fixed.
      */
     @PropertyName("created_at")
-    protected Object createdAt = ServerValue.TIMESTAMP;
+    public Object createdAt = ServerValue.TIMESTAMP;
 
     @PropertyName("updated_at")
-    protected Object updatedAt = ServerValue.TIMESTAMP;
+    public Object updatedAt = ServerValue.TIMESTAMP;
 
     @Exclude
     @Nullable
@@ -44,7 +44,8 @@ public class UsersPrivate implements Serializable {
     }
 
     @Exclude
-    @Nullable public Long getUpdatedAtMillis() {
-        return createdAt instanceof Long ? (Long)updatedAt : null;
+    @Nullable
+    public Long getUpdatedAtMillis() {
+        return updatedAt instanceof Long ? (Long)updatedAt : null;
     }
 }

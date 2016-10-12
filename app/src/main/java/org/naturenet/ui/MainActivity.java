@@ -621,6 +621,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if (databaseError != null) {
+                    Timber.w(databaseError.toException(), "Failed to write observation to database: %s", databaseError.getMessage());
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_error), Toast.LENGTH_SHORT).show();
                 } else {
                     mFirebase.child(Users.NODE_NAME).child(signed_user.id).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);

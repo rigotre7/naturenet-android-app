@@ -29,6 +29,8 @@ import org.naturenet.R;
 import org.naturenet.data.model.Users;
 import org.naturenet.data.model.UsersPrivate;
 
+import timber.log.Timber;
+
 public class JoinActivity extends AppCompatActivity {
     static String JOIN = "join";
     static String IDS = "ids";
@@ -104,17 +106,20 @@ public class JoinActivity extends AppCompatActivity {
                     pd.show();
                     fbRef = FirebaseDatabase.getInstance().getReference();
                     final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                    Timber.i("Creating new user account for %s", emailAddress);
                     mAuth.createUserWithEmailAndPassword(emailAddress, password)
                             .continueWithTask(new Continuation<AuthResult, Task<Void>>() {
                                 @Override
-                                public Task<Void> then(@NonNull Task<AuthResult> taskCreate) throws Exception {
+                                public Task<Void> then(@NonNull final Task<AuthResult> taskCreate) throws Exception {
                                     if (taskCreate.isSuccessful()) {
                                         final String id = taskCreate.getResult().getUser().getUid();
+                                        Timber.i("Account creation successful for user %s, signing in...", id);
                                         mAuth.signInWithEmailAndPassword(emailAddress, password)
                                                 .addOnCompleteListener(JoinActivity.this, new OnCompleteListener<AuthResult>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                                         if (task.isSuccessful()) {
+                                                            Timber.i("Successful authentication, writing new user data...");
                                                             String default_avatar = getResources().getString(R.string.join_default_avatar);
                                                             final Users user = new Users(id, userName, affiliation, default_avatar);
                                                             final UsersPrivate userPrivate = new UsersPrivate(id, name);
@@ -124,12 +129,14 @@ public class JoinActivity extends AppCompatActivity {
                                                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.join_success_message), Toast.LENGTH_SHORT).show();
                                                             continueAsSignedUser(user);
                                                         } else {
+                                                            Timber.e(task.getException(), "Failed to authenticate with new account for %s", id);
                                                             pd.dismiss();
                                                             Toast.makeText(JoinActivity.this, getResources().getString(R.string.login_error_message_firebase_login) + task.getException(), Toast.LENGTH_SHORT).show();
                                                         }
                                                     }
                                                 });
                                     } else {
+                                        Timber.e(taskCreate.getException(), "Failed to create account for %s", emailAddress);
                                         pd.dismiss();
                                         Toast.makeText(JoinActivity.this, getResources().getString(R.string.join_error_message_firebase_create) + taskCreate.getException(), Toast.LENGTH_SHORT).show();
                                     }

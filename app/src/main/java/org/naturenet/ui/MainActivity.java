@@ -164,7 +164,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
-        FirebaseAuth.getInstance().addAuthStateListener(this);
         licenses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -225,6 +224,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .create().show();
         }
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        FirebaseAuth.getInstance().addAuthStateListener(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FirebaseAuth.getInstance().removeAuthStateListener(this);
+    }
+
     @Override
     public void onBackPressed() {
 //        if(getFragmentManager().findFragmentByTag(FRAGMENT_TAG_LAUNCH).isVisible()) {
@@ -679,10 +691,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         goToJoinActivity();
                     } else if (data.getStringExtra(LOGIN).equals(GUEST)) {
                         drawer.openDrawer(GravityCompat.START);
-                    } else if (data.getStringExtra(LOGIN).equals(LOGIN)) {
-                        signed_user = (Users) data.getSerializableExtra(SIGNED_USER);
-                        updateUINoUser();
-                        updateUIUser(signed_user);
                     }
                 }
                 break;

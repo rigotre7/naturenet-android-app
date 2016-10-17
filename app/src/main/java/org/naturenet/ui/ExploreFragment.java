@@ -71,7 +71,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
     static String MY_LOCATION = "My Location";
     ImageButton add_observation, add_design_idea;
     Button explore, camera, gallery, design_ideas, design_challenges;
-    TextView preview_observer_user_name, preview_observer_affiliation, preview_observation_text, preview_likes_count, preview_comments_count, select, add_observation_cancel, add_design_idea_cancel;
+    TextView toolbar_title, preview_observer_user_name, preview_observer_affiliation, preview_observation_text, preview_likes_count, preview_comments_count, select, add_observation_cancel, add_design_idea_cancel;
     LinearLayout dialog_preview, dialog_add_observation, dialog_add_design_idea;
     FrameLayout floating_buttons;
     GridView gridview;
@@ -90,13 +90,14 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
     Transformation mAvatarTransform = new CroppedCircleTransformation();
     private Map<Marker, PreviewInfo> allMarkersMap = new HashMap<Marker, PreviewInfo>();
 
-    public ExploreFragment() {
-    }
+    public ExploreFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         main = ((MainActivity) this.getActivity());
+        toolbar_title = (TextView) main.findViewById(R.id.app_bar_main_tv);
+        toolbar_title.setText(R.string.explore_title);
         Site home = main.user_home_site;
         if(home != null) {
             latValue = home.location.get(0);

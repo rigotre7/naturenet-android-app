@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NavigationView navigationView;
     View header;
     Button sign_in, join;
-    TextView toolbar_title, display_name, affiliation, licenses;
+    TextView display_name, affiliation, licenses;
     ImageView nav_iv;
     MenuItem logout;
     ProgressDialog pd;
@@ -148,7 +148,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentManager = getSupportFragmentManager();
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar_title = (TextView) findViewById(R.id.app_bar_main_tv);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         logout = navigationView.getMenu().findItem(R.id.nav_logout);
         header = navigationView.getHeaderView(0);
@@ -182,7 +181,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         sign_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToLoginActivity();
+                if (haveNetworkConnection()) {
+                    goToLoginActivity();
+                } else {
+                    Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         join.setOnClickListener(new View.OnClickListener() {
@@ -251,10 +254,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //
 //        } else
 //            super.onBackPressed();
-        if(getFragmentManager().getBackStackEntryCount() > 0)
-            getFragmentManager().popBackStack();
-        else
-            super.onBackPressed();
+//        if(getFragmentManager().getBackStackEntryCount() > 0)
+//            getFragmentManager().popBackStack();
+//        else
+//            super.onBackPressed();
     }
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -299,7 +302,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
     public void goToLaunchFragment() {
-        toolbar_title.setText(R.string.launch_title);
         getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new LaunchFragment(), FRAGMENT_TAG_LAUNCH)
                 .addToBackStack(FRAGMENT_TAG_LAUNCH)
@@ -370,7 +372,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                                 previews.put(observation, preview);
                                                 if (observations.size() >= NUM_OF_OBSERVATIONS) {
                                                     pd.dismiss();
-                                                    toolbar_title.setText(R.string.explore_title);
                                                     getFragmentManager().
                                                             beginTransaction().
                                                             replace(R.id.fragment_container, new ExploreFragment(), FRAGMENT_TAG_EXPLORE).
@@ -396,7 +397,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
             } else {
                 pd.dismiss();
-                toolbar_title.setText(R.string.explore_title);
                 getFragmentManager().
                         beginTransaction().
                         replace(R.id.fragment_container, new ExploreFragment(), FRAGMENT_TAG_EXPLORE).
@@ -408,7 +408,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
     public void goToProjectsFragment() {
-        toolbar_title.setText(R.string.projects_title);
         getFragmentManager().
                 beginTransaction().
                 replace(R.id.fragment_container, new ProjectsFragment(), FRAGMENT_TAG_PROJECTS).
@@ -416,7 +415,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 commit();
     }
     public void goToDesignIdeasFragment() {
-        toolbar_title.setText(R.string.design_ideas_title_design_ideas);
         getFragmentManager().
                 beginTransaction().
                 replace(R.id.fragment_container, new IdeasFragment(), FRAGMENT_TAG_DESIGNIDEAS).
@@ -424,7 +422,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 commit();
     }
     public void goToCommunitiesFragment() {
-        toolbar_title.setText(R.string.communities_title);
         getFragmentManager().
                 beginTransaction().
                 replace(R.id.fragment_container, new CommunitiesFragment(), FRAGMENT_TAG_COMMUNITIES).

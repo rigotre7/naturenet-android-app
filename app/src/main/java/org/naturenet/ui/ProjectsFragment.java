@@ -68,7 +68,7 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
     private DatabaseReference mFirebase = FirebaseDatabase.getInstance().getReference();
     ImageButton add_observation, add_design_idea;
     Button camera, gallery, design_ideas, design_challenges;
-    TextView select, add_observation_cancel, add_design_idea_cancel;
+    TextView toolbar_title, select, add_observation_cancel, add_design_idea_cancel;
     LinearLayout dialog_add_observation, dialog_add_design_idea;
     FrameLayout floating_buttons;
     GridView gridview;
@@ -89,6 +89,8 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_projects, container, false);
         main = ((MainActivity) getActivity());
+        toolbar_title = (TextView) main.findViewById(R.id.app_bar_main_tv);
+        toolbar_title.setText(R.string.projects_title);
         Site home = main.user_home_site;
         if(home != null) {
             latValue = home.location.get(0);

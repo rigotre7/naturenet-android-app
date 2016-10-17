@@ -55,7 +55,6 @@ public class AddObservationActivity extends AppCompatActivity {
     Observation newObservation;
     Project defaultProject;
     Users signedUser;
-    TextView toolbar_title;
     List<Project> mProjects = Lists.newArrayList();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +63,6 @@ public class AddObservationActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(EMPTY);
         setSupportActionBar(toolbar);
-        toolbar_title = (TextView) findViewById(R.id.toolbar_title);
         newObservation = (Observation) getIntent().getSerializableExtra(OBSERVATION);
         observationPath = getIntent().getParcelableExtra(OBSERVATION_PATH);
         signedUser = (Users) getIntent().getSerializableExtra(SIGNED_USER);
@@ -75,7 +73,6 @@ public class AddObservationActivity extends AppCompatActivity {
         goToAddObservationFragment();
     }
     public void goToAddObservationFragment() {
-        toolbar_title.setText(R.string.add_observation_title);
         if (signedUser != null) {
             fbRef = FirebaseDatabase.getInstance().getReference();
             pd.setMessage(LOADING);
@@ -112,6 +109,7 @@ public class AddObservationActivity extends AppCompatActivity {
                 }
             });
         } else {
+            pd.dismiss();
             getFragmentManager().
                     beginTransaction().
                     replace(R.id.fragment_container, new AddObservationFragment(), FRAGMENT_TAG_ADD_OBSERVATION).

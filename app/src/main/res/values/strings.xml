@@ -12,7 +12,7 @@
     <string name="join_title">Join NatureNet</string>
     <string name="join_tv_back">&#60;&#60; Back</string>
     <string name="join_tv_create">Create New Account</string>
-    <string name="join_et_user_name">User Name</string>
+    <string name="join_et_user_name">Display Name</string>
     <string name="join_et_password">Password</string>
     <string name="join_et_name">Name</string>
     <string name="join_et_email_address">Email Address</string>

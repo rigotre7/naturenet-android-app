@@ -30,50 +30,8 @@
         style="@style/join_iv"/>
 
     <EditText
-        android:id="@+id/join_et_user_name"
-        android:layout_below="@+id/join_iv"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/join_margin_bottom"
-        android:padding="@dimen/join_user_details_padding"
-        android:minWidth="@dimen/join_user_details_min_width"
-        android:inputType="textPersonName"
-        android:imeOptions="actionNext"
-        android:hint="@string/join_et_user_name"
-        style="@style/join_et_user_details" />
-
-    <EditText
-        android:id="@+id/join_et_password"
-        android:layout_below="@+id/join_et_user_name"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/join_margin_bottom"
-        android:padding="@dimen/join_user_details_padding"
-        android:minWidth="@dimen/join_user_details_min_width"
-        android:inputType="textPassword"
-        android:imeOptions="actionNext"
-        android:hint="@string/join_et_password"
-        style="@style/join_et_user_details" />
-
-    <EditText
-        android:id="@+id/join_et_name"
-        android:layout_below="@+id/join_et_password"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/join_margin_bottom"
-        android:padding="@dimen/join_user_details_padding"
-        android:minWidth="@dimen/join_user_details_min_width"
-        android:inputType="textPersonName"
-        android:imeOptions="actionNext"
-        android:hint="@string/join_et_name"
-        style="@style/join_et_user_details" />
-
-    <EditText
         android:id="@+id/join_et_email_address"
-        android:layout_below="@+id/join_et_name"
+        android:layout_below="@+id/join_iv"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -86,8 +44,50 @@
         style="@style/join_et_user_details" />
 
     <EditText
-        android:id="@+id/join_et_affiliation"
+        android:id="@+id/join_et_password"
         android:layout_below="@+id/join_et_email_address"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/join_margin_bottom"
+        android:padding="@dimen/join_user_details_padding"
+        android:minWidth="@dimen/join_user_details_min_width"
+        android:inputType="textPassword"
+        android:imeOptions="actionNext"
+        android:hint="@string/join_et_password"
+        style="@style/join_et_user_details" />
+
+    <EditText
+        android:id="@+id/join_et_user_name"
+        android:layout_below="@+id/join_et_password"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/join_margin_bottom"
+        android:padding="@dimen/join_user_details_padding"
+        android:minWidth="@dimen/join_user_details_min_width"
+        android:inputType="textPersonName"
+        android:imeOptions="actionNext"
+        android:hint="@string/join_et_user_name"
+        style="@style/join_et_user_details" />
+
+    <EditText
+        android:id="@+id/join_et_name"
+        android:layout_below="@+id/join_et_user_name"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/join_margin_bottom"
+        android:padding="@dimen/join_user_details_padding"
+        android:minWidth="@dimen/join_user_details_min_width"
+        android:inputType="textPersonName"
+        android:imeOptions="actionNext"
+        android:hint="@string/join_et_name"
+        style="@style/join_et_user_details" />
+
+    <EditText
+        android:id="@+id/join_et_affiliation"
+        android:layout_below="@+id/join_et_name"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

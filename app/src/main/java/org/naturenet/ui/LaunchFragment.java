@@ -15,7 +15,7 @@ public class LaunchFragment extends Fragment {
 
     ImageButton join_ib;
     MainActivity main;
-    TextView toolbar_title;
+    TextView toolbar_title, sign_in;
 
     public LaunchFragment() {}
 
@@ -29,6 +29,7 @@ public class LaunchFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         main = ((MainActivity)  this.getActivity());
         toolbar_title = (TextView) main.findViewById(R.id.app_bar_main_tv);
+        sign_in = (TextView) main.findViewById(R.id.launch_tv_sign_in);
         toolbar_title.setText(R.string.launch_title);
         join_ib = (ImageButton) main.findViewById(R.id.launch_ib_join);
         join_ib.setOnClickListener(new View.OnClickListener() {
@@ -36,6 +37,16 @@ public class LaunchFragment extends Fragment {
             public void onClick(View v) {
                 if (main.haveNetworkConnection()) {
                     main.goToJoinActivity();
+                } else {
+                    Toast.makeText(main, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        sign_in.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (main.haveNetworkConnection()) {
+                    main.goToLoginActivity();
                 } else {
                     Toast.makeText(main, "No Internet Connection", Toast.LENGTH_SHORT).show();
                 }

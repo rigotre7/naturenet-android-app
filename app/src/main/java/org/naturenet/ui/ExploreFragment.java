@@ -40,6 +40,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -151,9 +152,11 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40, -96), 3));
                 for (int i = 0; i < main.observations.size(); i++) {
                     final Observation observation = main.observations.get(i);
+                    BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.marker_observation);
                     Marker marker = googleMap.addMarker(new MarkerOptions()
                             .position(new LatLng(observation.location.get(0), observation.location.get(1)))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+//                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)))
+                            .icon(icon));
                     allMarkersMap.put(marker, main.previews.get(observation));
                 }
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {

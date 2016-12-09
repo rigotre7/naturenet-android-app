@@ -40,6 +40,8 @@ public class Observation implements Serializable {
 
     public Map<String, Boolean> likes = null;
 
+    public String source;
+
     public Observation() {}
 
     public Observation(String id, String observer, String projectId, String siteId, String where, List<Double> location, PhotoCaptionContent data) {
@@ -50,6 +52,7 @@ public class Observation implements Serializable {
         this.where = where;
         this.location = location;
         this.data = data;
+        this.source = "android";
     }
 
     /**

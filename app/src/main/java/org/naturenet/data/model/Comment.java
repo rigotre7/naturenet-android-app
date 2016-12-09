@@ -24,6 +24,8 @@ public class Comment implements Serializable {
 
     public String context;
 
+    public String source;
+
     private Comment() {}
 
     public Comment(String id, String comment, String commenter, String parent, String context) {
@@ -32,6 +34,7 @@ public class Comment implements Serializable {
         this.commenter = commenter;
         this.parent = parent;
         this.context = context;
+        this.source = "android";
     }
 
     /**

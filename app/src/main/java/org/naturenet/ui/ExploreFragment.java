@@ -71,7 +71,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
     final private static int GALLERY_REQUEST = 2;
     static String MY_LOCATION = "My Location";
     ImageButton add_observation, add_design_idea;
-    Button explore, camera, gallery, design_ideas, design_challenges;
+    Button camera, gallery, design_ideas, design_challenges;
     TextView toolbar_title, preview_observer_user_name, preview_observer_affiliation, preview_observation_text, preview_likes_count, preview_comments_count, select;
     LinearLayout dialog_preview, dialog_add_observation, dialog_add_design_idea;
     FrameLayout floating_buttons;
@@ -155,7 +155,6 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                     BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.marker_observation);
                     Marker marker = googleMap.addMarker(new MarkerOptions()
                             .position(new LatLng(observation.location.get(0), observation.location.get(1)))
-//                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)))
                             .icon(icon));
                     allMarkersMap.put(marker, main.previews.get(observation));
                 }
@@ -179,12 +178,12 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                             preview_likes_count.setText(preview.likesCount);
                             preview_comments_count.setText(preview.commentsCount);
                             floating_buttons.setVisibility(View.GONE);
-                            explore.setVisibility(View.GONE);
+//                            explore.setVisibility(View.GONE);
                             dialog_preview.setVisibility(View.VISIBLE);
                         } else {
                             if (dialog_preview.getVisibility() == View.VISIBLE) {
                                 floating_buttons.setVisibility(View.VISIBLE);
-                                explore.setVisibility(View.VISIBLE);
+//                                explore.setVisibility(View.VISIBLE);
                                 dialog_preview.setVisibility(View.GONE);
                             }
                         }
@@ -207,12 +206,10 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
-    }
+    public void onConnectionSuspended(int i) {}
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-    }
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
 
     @Override
     public void onLocationChanged(Location location) {
@@ -283,7 +280,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        explore = (Button) main.findViewById(R.id.explore_b_explore);
+//        explore = (Button) main.findViewById(R.id.explore_b_explore);
         floating_buttons = (FrameLayout) main.findViewById(R.id.fl_floating_buttons);
         add_observation = (ImageButton) main.findViewById(R.id.floating_buttons_ib_add_observation);
         add_design_idea = (ImageButton) main.findViewById(R.id.floating_buttons_ib_add_design_idea);
@@ -309,12 +306,12 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
         design_challenges = (Button) main.findViewById(R.id.dialog_add_design_idea_b_design_challenges);
         cameraPhoto = new CameraPhoto(main);
         galleryPhoto = new GalleryPhoto(main);
-        explore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                main.goToObservationActivity();
-            }
-        });
+//        explore.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                main.goToObservationActivity();
+//            }
+//        });
         preview_observation_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -328,7 +325,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                 main.selectedObservation = null;
                 main.selectedObserverInfo = null;
                 floating_buttons.setVisibility(View.VISIBLE);
-                explore.setVisibility(View.VISIBLE);
+//                explore.setVisibility(View.VISIBLE);
                 dialog_preview.setVisibility(View.GONE);
             }
         });
@@ -341,7 +338,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                     setGallery();
                 select.setVisibility(View.GONE);
                 floating_buttons.setVisibility(View.GONE);
-                explore.setVisibility(View.GONE);
+//                explore.setVisibility(View.GONE);
                 dialog_add_observation.setVisibility(View.VISIBLE);
             }
         });
@@ -349,7 +346,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
             @Override
             public void onClick(View v) {
                 floating_buttons.setVisibility(View.GONE);
-                explore.setVisibility(View.GONE);
+//                explore.setVisibility(View.GONE);
                 dialog_add_design_idea.setVisibility(View.VISIBLE);
             }
         });
@@ -365,7 +362,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                 selectedImage = null;
                 select.setVisibility(View.GONE);
                 floating_buttons.setVisibility(View.VISIBLE);
-                explore.setVisibility(View.VISIBLE);
+//                explore.setVisibility(View.VISIBLE);
                 dialog_add_observation.setVisibility(View.GONE);
             }
         });
@@ -403,7 +400,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
             @Override
             public void onClick(View v) {
                 floating_buttons.setVisibility(View.VISIBLE);
-                explore.setVisibility(View.VISIBLE);
+//                explore.setVisibility(View.VISIBLE);
                 dialog_add_design_idea.setVisibility(View.GONE);
             }
         });
@@ -418,7 +415,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
             }
         });
         floating_buttons.setVisibility(View.VISIBLE);
-        explore.setVisibility(View.VISIBLE);
+//        explore.setVisibility(View.VISIBLE);
         dialog_add_observation.setVisibility(View.GONE);
         dialog_add_design_idea.setVisibility(View.GONE);
         dialog_preview.setVisibility(View.GONE);

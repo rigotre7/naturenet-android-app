@@ -86,6 +86,7 @@
     <string name="nav_b_sign_in">Sign In</string>
     <string name="nav_b_join">Join NatureNet</string>
     <string name="nav_explore">Explore</string>
+    <string name="nav_gallery">Gallery</string>
     <string name="nav_projects">Projects</string>
     <string name="nav_design_ideas">Design Ideas</string>
     <string name="nav_communities">Communities</string>

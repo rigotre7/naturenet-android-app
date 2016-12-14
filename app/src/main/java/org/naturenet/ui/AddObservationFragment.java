@@ -67,8 +67,8 @@ public class AddObservationFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (add.signedUser != null) {
+                    send.setVisibility(View.GONE);
                     fbRef = FirebaseDatabase.getInstance().getReference();
-
                     PhotoCaptionContent data = new PhotoCaptionContent();
                     data.text = description.getText().toString();
                     String where = whereIsIt.getText().toString().trim();

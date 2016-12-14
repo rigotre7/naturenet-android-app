@@ -36,6 +36,7 @@ public class LaunchFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (main.haveNetworkConnection()) {
+                    join_ib.setVisibility(View.GONE);
                     main.goToJoinActivity();
                 } else {
                     Toast.makeText(main, "No Internet Connection", Toast.LENGTH_SHORT).show();
@@ -46,6 +47,7 @@ public class LaunchFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (main.haveNetworkConnection()) {
+                    sign_in.setVisibility(View.GONE);
                     main.goToLoginActivity();
                 } else {
                     Toast.makeText(main, "No Internet Connection", Toast.LENGTH_SHORT).show();

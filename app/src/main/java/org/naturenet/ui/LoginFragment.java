@@ -7,7 +7,9 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -41,6 +43,8 @@ public class LoginFragment extends Fragment {
     DatabaseReference fbRef;
     String email, password;
     LoginActivity log;
+    Button signIn;
+    TextView join, forgotPassword;
     ProgressDialog pd;
     public LoginFragment() {}
     @Override
@@ -51,9 +55,12 @@ public class LoginFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         log = ((LoginActivity) this.getActivity());
+        signIn = (Button) log.findViewById(R.id.login_b_sign_in);
+        join = (TextView) log.findViewById(R.id.login_tv_join);
+        forgotPassword = (TextView) log.findViewById(R.id.login_tv_forgot);
         pd = new ProgressDialog(log);
         pd.setMessage(SIGNING_IN);
-        log.findViewById(R.id.login_b_sign_in).setOnClickListener(new View.OnClickListener() {
+        signIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 email = ((EditText) log.findViewById(R.id.login_et_email_address)).getText().toString();
@@ -63,6 +70,7 @@ public class LoginFragment extends Fragment {
                 } else if (password.equals("")) {
                     Toast.makeText(log, getResources().getString(R.string.login_error_message_empty_password), Toast.LENGTH_SHORT).show();
                 } else if (log.haveNetworkConnection()) {
+                    signIn.setVisibility(View.GONE);
                     pd.setCancelable(false);
                     pd.show();
                     mFirebaseAuth = FirebaseAuth.getInstance();
@@ -80,16 +88,19 @@ public class LoginFragment extends Fragment {
                                                 log.signed_user_email = email;
                                                 log.signed_user_password = password;
                                                 pd.dismiss();
+                                                signIn.setVisibility(View.GONE);
                                                 log.continueAsSignedUser(loggedUser);
                                             }
                                             @Override
                                             public void onCancelled(DatabaseError databaseError) {
                                                 pd.dismiss();
+                                                signIn.setVisibility(View.GONE);
                                                 Toast.makeText(log, getResources().getString(R.string.login_error_message_firebase_read) + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                                             }
                                         });
                                     } else {
                                         pd.dismiss();
+                                        signIn.setVisibility(View.GONE);
                                         Toast.makeText(log, getResources().getString(R.string.login_error_message_firebase_login) + task.getException(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
@@ -99,17 +110,18 @@ public class LoginFragment extends Fragment {
                 }
             }
         });
-        log.findViewById(R.id.login_tv_join).setOnClickListener(new View.OnClickListener() {
+        join.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (log.haveNetworkConnection()) {
+                    join.setVisibility(View.GONE);
                     log.goToJoinActivity();
                 } else {
                     Toast.makeText(log, "No Internet Connection", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-        log.findViewById(R.id.login_tv_forgot).setOnClickListener(new View.OnClickListener() {
+        forgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 email = ((EditText) log.findViewById(R.id.login_et_email_address)).getText().toString();

@@ -80,7 +80,6 @@ public class ObservationActivity extends AppCompatActivity {
                 goBackToExploreFragment();
             }
         });
-
         goToObservationGalleryFragment();
         if (getIntent().getSerializableExtra(OBSERVATION) != null) {
             selectedObservation = (Observation) getIntent().getSerializableExtra(OBSERVATION);
@@ -114,6 +113,7 @@ public class ObservationActivity extends AppCompatActivity {
         finish();
         overridePendingTransition(R.anim.stay, R.anim.slide_down);
     }
+
     public void goToObservationGalleryFragment() {
         toolbar_title.setVisibility(View.VISIBLE);
         toolbar_title.setText(TITLE);
@@ -124,6 +124,7 @@ public class ObservationActivity extends AppCompatActivity {
                 replace(R.id.fragment_container, new ObservationGalleryFragment(), FRAGMENT_TAG_OBSERVATION_GALLERY).
                 commit();
     }
+
     public void goToSelectedObservationFragment() {
         toolbar_title.setVisibility(View.GONE);
         back.setVisibility(View.GONE);
@@ -140,6 +141,7 @@ public class ObservationActivity extends AppCompatActivity {
                 .replace(R.id.fragment_container, new ObservationFragment(), FRAGMENT_TAG_OBSERVATION)
                 .addToBackStack(FRAGMENT_TAG_OBSERVATION).commit();
     }
+
     private void getCommentsFor(final String parent) {
         comments = Lists.newArrayList();
         mFirebase = FirebaseDatabase.getInstance().getReference();
@@ -157,10 +159,12 @@ public class ObservationActivity extends AppCompatActivity {
             }
         });
     }
+
     public void goBackToObservationGalleryFragment() {
         selectedObservation = null;
         selectedObserverInfo = null;
         comments = null;
         goToObservationGalleryFragment();
     }
+
 }

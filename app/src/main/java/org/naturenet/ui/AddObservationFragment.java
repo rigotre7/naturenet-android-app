@@ -24,7 +24,7 @@ import org.naturenet.data.model.PhotoCaptionContent;
 import org.naturenet.data.model.Project;
 
 public class AddObservationFragment extends Fragment {
-    TextView send, project;
+    TextView toolbar_title, send, project;
     EditText description, whereIsIt;
     ImageView image;
     ImageButton back;
@@ -44,6 +44,8 @@ public class AddObservationFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         add = ((AddObservationActivity) getActivity());
+        toolbar_title = (TextView) add.findViewById(R.id.toolbar_title);
+        toolbar_title.setText(R.string.add_observation_title);
         back = (ImageButton) add.findViewById(R.id.toolbar_back);
         send = (TextView) add.findViewById(R.id.toolbar_send);
         project = (TextView) add.findViewById(R.id.add_observation_tv_project);
@@ -65,8 +67,8 @@ public class AddObservationFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (add.signedUser != null) {
+                    send.setVisibility(View.GONE);
                     fbRef = FirebaseDatabase.getInstance().getReference();
-
                     PhotoCaptionContent data = new PhotoCaptionContent();
                     data.text = description.getText().toString();
                     String where = whereIsIt.getText().toString().trim();

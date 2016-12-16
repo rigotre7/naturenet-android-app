@@ -86,6 +86,7 @@
     <string name="nav_b_sign_in">Sign In</string>
     <string name="nav_b_join">Join NatureNet</string>
     <string name="nav_explore">Explore</string>
+    <string name="nav_gallery">Gallery</string>
     <string name="nav_projects">Projects</string>
     <string name="nav_design_ideas">Design Ideas</string>
     <string name="nav_communities">Communities</string>
@@ -106,6 +107,8 @@
     <string name="launch_tv_design">DESIGN this nature technology with your community</string>
     <string name="launch_tv_why">Why join NatureNet?</string>
     <string name="launch_tv_para">Do you want to participate in a biodiversity-preserving project in your area? Or do you have an idea for a new project and want to get a community behind you? Join NatureNet today, and don’t just be a voice in the crowd: be part of a crowd with a voice!</string>
+    <string name="launch_tv_already">Already a Member?</string>
+    <string name="launch_tv_sign_in">Sign In</string>
     <!-- Layout -->
     <!-- Launch Fragment -->
 

@@ -33,6 +33,7 @@ import java.util.List;
 import timber.log.Timber;
 
 public class ProjectActivity extends AppCompatActivity {
+
     static String FRAGMENT_TAG_PROJECT_DETAIL = "project_detail_fragment";
     static String FRAGMENT_TAG_SELECTED_OBSERVATION = "selected_observation_fragment";
     static String SIGNED_USER = "signed_user";
@@ -54,6 +55,7 @@ public class ProjectActivity extends AppCompatActivity {
     ObserverInfo selectedObserverInfo;
     Users signed_user;
     TextView project_back, toolbar_title;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +84,7 @@ public class ProjectActivity extends AppCompatActivity {
         pd.setCancelable(false);
         goToProjectDetailFragment();
     }
+
     public void goBackToProjectsFragment() {
         project = null;
         selectedObservation = null;
@@ -92,6 +95,7 @@ public class ProjectActivity extends AppCompatActivity {
         finish();
         overridePendingTransition(R.anim.stay, R.anim.slide_down);
     }
+
     public void goToProjectDetailFragment() {
         toolbar_title.setText(project.name);
         if (haveNetworkConnection()) {
@@ -180,6 +184,7 @@ public class ProjectActivity extends AppCompatActivity {
             Toast.makeText(ProjectActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
         }
     }
+
     public void goToSelectedObservationFragment() {
         toolbar_title.setVisibility(View.GONE);
         project_back.setText(leftArrows+" "+project.name);
@@ -197,6 +202,7 @@ public class ProjectActivity extends AppCompatActivity {
                 addToBackStack(null).
                 commit();
     }
+
     private void getCommentsFor(final String parent) {
         comments = Lists.newArrayList();
         mFirebase = FirebaseDatabase.getInstance().getReference();
@@ -214,6 +220,7 @@ public class ProjectActivity extends AppCompatActivity {
             }
         });
     }
+
     public void goBackToProjectDetailFragment() {
         selectedObservation = null;
         selectedObserverInfo = null;
@@ -226,6 +233,7 @@ public class ProjectActivity extends AppCompatActivity {
                 replace(R.id.fragment_container, new ProjectDetailFragment(), FRAGMENT_TAG_PROJECT_DETAIL).
                 commit();
     }
+
     public boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
@@ -241,9 +249,11 @@ public class ProjectActivity extends AppCompatActivity {
         }
         return haveConnectedWifi || haveConnectedMobile;
     }
+
     private void showDetailFragment() {
         getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new ProjectDetailFragment(), FRAGMENT_TAG_PROJECT_DETAIL)
                 .addToBackStack(null).commit();
     }
+
 }

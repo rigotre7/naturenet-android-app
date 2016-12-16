@@ -78,6 +78,7 @@ import java.util.UUID;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FirebaseAuth.AuthStateListener {
+
     final static int REQUEST_CODE_JOIN = 1;
     final static int REQUEST_CODE_LOGIN = 2;
     final static int REQUEST_CODE_ADD_OBSERVATION = 3;
@@ -87,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     final static int MAX_IMAGE_DIMENSION = 1920;
     static String FRAGMENT_TAG_LAUNCH = "launch_fragment";
     static String FRAGMENT_TAG_EXPLORE = "explore_fragment";
+    static String FRAGMENT_TAG_GALLERY = "gallery_fragment";
     static String FRAGMENT_TAG_PROJECTS = "projects_fragment";
     static String FRAGMENT_TAG_DESIGNIDEAS = "designideas_fragment";
     static String FRAGMENT_TAG_COMMUNITIES = "communities_fragment";
@@ -112,24 +114,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     static String SIGNING_OUT = "Signing Out...";
     static String OBSERVERS = "observers";
     static String OBSERVATIONS = "observations";
-    Observation selectedObservation, previewSelectedObservation;
+    String[] affiliation_ids, affiliation_names;
+    Observation newObservation, selectedObservation, previewSelectedObservation;
     ObserverInfo selectedObserverInfo;
     List<Observation> observations;
     List<ObserverInfo> observers;
     List<Comment> comments;
-    String[] affiliation_ids, affiliation_names;
     List<String> ids, names;
     DatabaseReference mFirebase;
     Users signed_user;
     Site user_home_site;
-    Observation newObservation;
     Uri observationPath;
     DrawerLayout drawer;
     Toolbar toolbar;
     NavigationView navigationView;
     View header;
     Button sign_in, join;
-    TextView toolbar_title, display_name, affiliation, licenses;
+    TextView display_name, affiliation, licenses;
     ImageView nav_iv;
     MenuItem logout;
     ProgressDialog pd;
@@ -148,7 +149,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentManager = getSupportFragmentManager();
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar_title = (TextView) findViewById(R.id.app_bar_main_tv);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         logout = navigationView.getMenu().findItem(R.id.nav_logout);
         header = navigationView.getHeaderView(0);
@@ -182,7 +182,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         sign_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToLoginActivity();
+                if (haveNetworkConnection()) {
+                    goToLoginActivity();
+                } else {
+                    Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         join.setOnClickListener(new View.OnClickListener() {
@@ -195,11 +199,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
-
         mFirebase = FirebaseDatabase.getInstance().getReference();
         mFirebase.child(Site.NODE_NAME).keepSynced(true);
         mFirebase.child(Project.NODE_NAME).keepSynced(true);
-
         updateUINoUser();
         observations = null;
         observers = null;
@@ -238,7 +240,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed() {}
+
+//    @Override
+//    public void onBackPressed() {
 //        if(getFragmentManager().findFragmentByTag(FRAGMENT_TAG_LAUNCH).isVisible()) {
 //
 //        } else if(getFragmentManager().findFragmentByTag(FRAGMENT_TAG_EXPLORE).isVisible()) {
@@ -251,11 +256,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //
 //        } else
 //            super.onBackPressed();
-        if(getFragmentManager().getBackStackEntryCount() > 0)
-            getFragmentManager().popBackStack();
-        else
-            super.onBackPressed();
-    }
+//        if(getFragmentManager().getBackStackEntryCount() > 0)
+//            getFragmentManager().popBackStack();
+//        else
+//            super.onBackPressed();
+//    }
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         if (haveNetworkConnection()) {
@@ -263,6 +269,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             switch(id) {
                 case R.id.nav_explore:
                     goToExploreFragment();
+                    drawer.closeDrawer(GravityCompat.START);
+                    break;
+                case R.id.nav_gallery:
+                    goToGalleryFragment();
                     drawer.closeDrawer(GravityCompat.START);
                     break;
                 case R.id.nav_projects:
@@ -298,13 +308,107 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         return true;
     }
+
     public void goToLaunchFragment() {
-        toolbar_title.setText(R.string.launch_title);
         getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new LaunchFragment(), FRAGMENT_TAG_LAUNCH)
                 .addToBackStack(FRAGMENT_TAG_LAUNCH)
                 .commit();
     }
+
+    public void goToGalleryFragment() {
+        if (haveNetworkConnection()) {
+            pd.setMessage(LOADING_OBSERVATIONS);
+            pd.setCancelable(false);
+            pd.show();
+            if (observations == null) {
+                observations = Lists.newArrayList();
+                observers = Lists.newArrayList();
+                mFirebase = FirebaseDatabase.getInstance().getReference();
+                mFirebase.child(Observation.NODE_NAME).orderByChild(UPDATED_AT).limitToLast(NUM_OF_OBSERVATIONS).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        for(DataSnapshot child : snapshot.getChildren()) {
+                            final Observation observation = child.getValue(Observation.class);
+                            observations.add(observation);
+                            final PreviewInfo preview = new PreviewInfo();
+                            preview.observationImageUrl = observation.data.image;
+                            if (observation.data.text != null) {
+                                preview.observationText = observation.data.text;
+                            } else {
+                                preview.observationText = "No Description";
+                            }
+                            if (observation.comments != null) {
+                                preview.commentsCount = Integer.toString(observation.comments.size());
+                            } else {
+                                preview.commentsCount = "0";
+                            }
+                            if (observation.likes != null) {
+                                preview.likesCount = String.valueOf(HashMultiset.create(observation.likes.values()).count(new Boolean(true)));
+                            } else {
+                                preview.likesCount = "0";
+                            }
+                            boolean contains = false;
+                            for (int i=0; i<observers.size(); i++) {
+                                contains = observers.get(i).getObserverId().equals(observation.userId);
+                                if (contains) {
+                                    preview.observerAvatarUrl = observers.get(i).getObserverAvatar();
+                                    preview.observerName = observers.get(i).getObserverName();
+                                    preview.affiliation = observers.get(i).getObserverAffiliation();
+                                    break;
+                                }
+                            }
+                            if (!contains) {
+                                final ObserverInfo observer = new ObserverInfo();
+                                observer.setObserverId(observation.userId);
+                                DatabaseReference f = FirebaseDatabase.getInstance().getReference();
+                                f.child(Users.NODE_NAME).child(observation.userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot snapshot) {
+                                        Users user = snapshot.getValue(Users.class);
+                                        observer.setObserverName(user.displayName);
+                                        observer.setObserverAvatar(user.avatar);
+                                        DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
+                                        fb.child(Site.NODE_NAME).child(user.affiliation).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot snapshot) {
+                                                Site site =  snapshot.getValue(Site.class);
+                                                observer.setObserverAffiliation(site.name);
+                                                preview.observerAvatarUrl = observer.getObserverAvatar();
+                                                preview.observerName = observer.getObserverName();
+                                                preview.affiliation = observer.getObserverAffiliation();
+                                                observers.add(observer);
+                                                previews.put(observation, preview);
+                                                if (observations.size() >= NUM_OF_OBSERVATIONS) {
+                                                    pd.dismiss();
+                                                    goToObservationActivity();
+                                                }
+                                            }
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {}
+                                        });
+                                    }
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {}
+                                });
+                            }
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        pd.dismiss();
+                        Toast.makeText(MainActivity.this, "Could not get observations: "+ databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                pd.dismiss();
+                goToObservationActivity();
+            }
+        } else {
+            Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public void goToExploreFragment() {
         if (haveNetworkConnection()) {
             pd.setMessage(LOADING_OBSERVATIONS);
@@ -370,7 +474,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                                 previews.put(observation, preview);
                                                 if (observations.size() >= NUM_OF_OBSERVATIONS) {
                                                     pd.dismiss();
-                                                    toolbar_title.setText(R.string.explore_title);
                                                     getFragmentManager().
                                                             beginTransaction().
                                                             replace(R.id.fragment_container, new ExploreFragment(), FRAGMENT_TAG_EXPLORE).
@@ -396,7 +499,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
             } else {
                 pd.dismiss();
-                toolbar_title.setText(R.string.explore_title);
                 getFragmentManager().
                         beginTransaction().
                         replace(R.id.fragment_container, new ExploreFragment(), FRAGMENT_TAG_EXPLORE).
@@ -407,30 +509,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
         }
     }
+
     public void goToProjectsFragment() {
-        toolbar_title.setText(R.string.projects_title);
         getFragmentManager().
                 beginTransaction().
                 replace(R.id.fragment_container, new ProjectsFragment(), FRAGMENT_TAG_PROJECTS).
                 addToBackStack(FRAGMENT_TAG_PROJECTS).
                 commit();
     }
+
     public void goToDesignIdeasFragment() {
-        toolbar_title.setText(R.string.design_ideas_title_design_ideas);
         getFragmentManager().
                 beginTransaction().
                 replace(R.id.fragment_container, new IdeasFragment(), FRAGMENT_TAG_DESIGNIDEAS).
                 addToBackStack(FRAGMENT_TAG_DESIGNIDEAS).
                 commit();
     }
+
     public void goToCommunitiesFragment() {
-        toolbar_title.setText(R.string.communities_title);
         getFragmentManager().
                 beginTransaction().
                 replace(R.id.fragment_container, new CommunitiesFragment(), FRAGMENT_TAG_COMMUNITIES).
                 addToBackStack(FRAGMENT_TAG_COMMUNITIES).
                 commit();
     }
+
     public void logout() {
         Toast.makeText(this, "You have been logged out.", Toast.LENGTH_SHORT).show();
         signed_user = null;
@@ -474,10 +577,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
     }
+
     public void goToLoginActivity() {
         Intent login = new Intent(this, LoginActivity.class);
         startActivityForResult(login, REQUEST_CODE_LOGIN);
     }
+
     public void goToAddObservationActivity() {
         Intent addObservation = new Intent(this, AddObservationActivity.class);
         addObservation.putExtra(OBSERVATION_PATH, observationPath);
@@ -486,6 +591,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivityForResult(addObservation, REQUEST_CODE_ADD_OBSERVATION);
         overridePendingTransition(R.anim.slide_up, R.anim.stay);
     }
+
     public void goToProjectActivity(Project p) {
         Intent project = new Intent(this, ProjectActivity.class);
         project.putExtra(PROJECT, p);
@@ -502,6 +608,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivityForResult(observation, REQUEST_CODE_OBSERVATION_ACTIVITY);
         overridePendingTransition(R.anim.slide_up, R.anim.stay);
     }
+
     public List<Uri> getRecentImagesUris() {
         Uri uri;
         Cursor cursor;
@@ -803,4 +910,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             goToLaunchFragment();
         }
     }
+
 }

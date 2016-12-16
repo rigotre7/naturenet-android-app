@@ -68,11 +68,11 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
     private DatabaseReference mFirebase = FirebaseDatabase.getInstance().getReference();
     ImageButton add_observation, add_design_idea;
     Button camera, gallery, design_ideas, design_challenges;
-    TextView select, add_observation_cancel, add_design_idea_cancel;
+    TextView toolbar_title, select;
     LinearLayout dialog_add_observation, dialog_add_design_idea;
     FrameLayout floating_buttons;
     GridView gridview;
-    ImageView gallery_item;
+    ImageView add_observation_cancel, add_design_idea_cancel, gallery_item;
     List<Uri> recentImageGallery;
     Uri selectedImage;
     double latValue, longValue;
@@ -89,6 +89,8 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_projects, container, false);
         main = ((MainActivity) getActivity());
+        toolbar_title = (TextView) main.findViewById(R.id.app_bar_main_tv);
+        toolbar_title.setText(R.string.projects_title);
         Site home = main.user_home_site;
         if(home != null) {
             latValue = home.location.get(0);
@@ -167,14 +169,14 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
         add_observation = (ImageButton) main.findViewById(R.id.floating_buttons_ib_add_observation);
         add_design_idea = (ImageButton) main.findViewById(R.id.floating_buttons_ib_add_design_idea);
         dialog_add_observation = (LinearLayout) main.findViewById(R.id.ll_dialog_add_observation);
-        add_observation_cancel = (TextView) main.findViewById(R.id.dialog_add_observation_tv_cancel);
+        add_observation_cancel = (ImageView) main.findViewById(R.id.dialog_add_observation_iv_cancel);
         camera = (Button) main.findViewById(R.id.dialog_add_observation_b_camera);
         gallery = (Button) main.findViewById(R.id.dialog_add_observation_b_gallery);
         select = (TextView) main.findViewById(R.id.dialog_add_observation_tv_select);
         gridview = (GridView) main.findViewById(R.id.dialog_add_observation_gv);
         gallery_item = (ImageView) main.findViewById(R.id.gallery_iv);
         dialog_add_design_idea = (LinearLayout) main.findViewById(R.id.ll_dialog_add_design_idea);
-        add_design_idea_cancel = (TextView) main.findViewById(R.id.dialog_add_design_idea_tv_cancel);
+        add_design_idea_cancel = (ImageView) main.findViewById(R.id.dialog_add_design_idea_iv_cancel);
         design_ideas = (Button) main.findViewById(R.id.dialog_add_design_idea_b_design_ideas);
         design_challenges = (Button) main.findViewById(R.id.dialog_add_design_idea_b_design_challenges);
         cameraPhoto = new CameraPhoto(main);

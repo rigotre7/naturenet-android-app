@@ -115,6 +115,30 @@
             android:layout_centerHorizontal="true"
             style="@style/launch_ib_join" />
 
+        <LinearLayout
+            android:layout_below="@+id/launch_ib_join"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/launch_why_margin_bottom"
+            android:layout_marginBottom="@dimen/launch_para_margin_bottom">
+
+            <TextView
+                android:id="@+id/launch_tv_already"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="15dp"
+                style="@style/launch_tv_already"/>
+
+            <TextView
+                android:id="@+id/launch_tv_sign_in"
+                android:layout_toRightOf="@+id/launch_tv_already"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/launch_tv_sign_in" />
+
+        </LinearLayout>
+
     </RelativeLayout>
 
 </FrameLayout>

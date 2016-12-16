@@ -101,6 +101,7 @@ public class JoinActivity extends AppCompatActivity {
                 if (is_any_field_empty() || is_email_address_invalid() || is_password_invalid()) {
                     Toast.makeText(JoinActivity.this, error, Toast.LENGTH_SHORT).show();
                 } else {
+                    join.setVisibility(View.GONE);
                     pd.setMessage(JOINING);
                     pd.setCancelable(false);
                     pd.show();
@@ -126,11 +127,13 @@ public class JoinActivity extends AppCompatActivity {
                                                             fbRef.child(USERS).child(id).setValue(user);
                                                             fbRef.child(USERS_PRIVATE).child(id).setValue(userPrivate);
                                                             pd.dismiss();
+                                                            join.setVisibility(View.VISIBLE);
                                                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.join_success_message), Toast.LENGTH_SHORT).show();
                                                             continueAsSignedUser(user);
                                                         } else {
                                                             Timber.e(task.getException(), "Failed to authenticate with new account for %s", id);
                                                             pd.dismiss();
+                                                            join.setVisibility(View.VISIBLE);
                                                             Toast.makeText(JoinActivity.this, getResources().getString(R.string.login_error_message_firebase_login) + task.getException(), Toast.LENGTH_SHORT).show();
                                                         }
                                                     }
@@ -138,6 +141,7 @@ public class JoinActivity extends AppCompatActivity {
                                     } else {
                                         Timber.e(taskCreate.getException(), "Failed to create account for %s", emailAddress);
                                         pd.dismiss();
+                                        join.setVisibility(View.VISIBLE);
                                         Toast.makeText(JoinActivity.this, getResources().getString(R.string.join_error_message_firebase_create) + taskCreate.getException(), Toast.LENGTH_SHORT).show();
                                     }
                                     return null;

@@ -28,10 +28,16 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/join_title_margin_bottom"
         style="@style/join_iv"/>
-
+<ScrollView
+    android:layout_below="@id/join_iv"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <EditText
         android:id="@+id/join_et_email_address"
-        android:layout_below="@+id/join_iv"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -39,7 +45,7 @@
         android:padding="@dimen/join_user_details_padding"
         android:minWidth="@dimen/join_user_details_min_width"
         android:inputType="textEmailAddress"
-        android:imeOptions="actionDone"
+        android:imeOptions="actionNext"
         android:hint="@string/join_et_email_address"
         style="@style/join_et_user_details" />
 
@@ -81,7 +87,7 @@
         android:padding="@dimen/join_user_details_padding"
         android:minWidth="@dimen/join_user_details_min_width"
         android:inputType="textPersonName"
-        android:imeOptions="actionNext"
+        android:imeOptions="actionDone"
         android:hint="@string/join_et_name"
         style="@style/join_et_user_details" />
 
@@ -107,5 +113,6 @@
         android:layout_height="@dimen/join_b_height"
         android:padding="@dimen/join_b_padding"
         style="@style/join_b_join" />
-
+    </RelativeLayout>
+</ScrollView>
 </RelativeLayout>

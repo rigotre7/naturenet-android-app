@@ -42,7 +42,6 @@ public class ObservationActivity extends AppCompatActivity {
     Observation selectedObservation;
     ObserverInfo selectedObserverInfo;
     TextView explore_tv_back, toolbar_title;
-    ImageButton back;
     GridView gridView;
     DatabaseReference mFirebase;
     List<Observation> observations;
@@ -58,7 +57,6 @@ public class ObservationActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar_title = (TextView) findViewById(R.id.app_bar_explore_tv);
         explore_tv_back = (TextView) findViewById(R.id.explore_tv_back);
-        back = (ImageButton) findViewById(R.id.explore_b_back);
         gridView = (GridView) findViewById(R.id.observation_gallery);
         signed_user = (Users) getIntent().getSerializableExtra(SIGNED_USER);
         observations = (ArrayList<Observation>) getIntent().getSerializableExtra(OBSERVATIONS);
@@ -69,12 +67,6 @@ public class ObservationActivity extends AppCompatActivity {
         selectedObserverInfo = null;
         comments = null;
         explore_tv_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goBackToObservationGalleryFragment();
-            }
-        });
-        back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 goBackToExploreFragment();
@@ -117,8 +109,6 @@ public class ObservationActivity extends AppCompatActivity {
     public void goToObservationGalleryFragment() {
         toolbar_title.setVisibility(View.VISIBLE);
         toolbar_title.setText(TITLE);
-        back.setVisibility(View.VISIBLE);
-        explore_tv_back.setVisibility(View.GONE);
         getFragmentManager().
                 beginTransaction().
                 replace(R.id.fragment_container, new ObservationGalleryFragment(), FRAGMENT_TAG_OBSERVATION_GALLERY).
@@ -127,8 +117,6 @@ public class ObservationActivity extends AppCompatActivity {
 
     public void goToSelectedObservationFragment() {
         toolbar_title.setVisibility(View.GONE);
-        back.setVisibility(View.GONE);
-        explore_tv_back.setVisibility(View.VISIBLE);
         comments = null;
         like = null;
         if (selectedObservation.comments != null) {

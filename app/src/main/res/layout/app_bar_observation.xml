@@ -25,21 +25,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <android.support.design.widget.VisibilityAwareImageButton
-                    android:id="@+id/explore_b_back"
-                    android:layout_width="@dimen/btn_collapse_size"
-                    android:layout_height="@dimen/btn_collapse_size"
-                    android:padding="@dimen/btn_collapse_padding"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:clickable="true"
-                    style="@style/explore_b_back"/>
-
                 <TextView
                     android:id="@+id/explore_tv_back"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:clickable="true"
                     style="@style/explore_tv_back"/>

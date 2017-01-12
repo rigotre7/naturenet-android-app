@@ -3,7 +3,6 @@ package org.naturenet.ui;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
@@ -19,6 +18,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -34,14 +34,11 @@ import android.widget.Toast;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -55,6 +52,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.squareup.picasso.Transformation;
 
+import org.naturenet.NatureNetApplication;
 import org.naturenet.util.CroppedCircleTransformation;
 import org.naturenet.R;
 import org.naturenet.data.model.Comment;
@@ -77,7 +75,7 @@ import java.util.UUID;
 
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FirebaseAuth.AuthStateListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     final static int REQUEST_CODE_JOIN = 1;
     final static int REQUEST_CODE_LOGIN = 2;
@@ -88,7 +86,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     final static int MAX_IMAGE_DIMENSION = 1920;
     static String FRAGMENT_TAG_LAUNCH = "launch_fragment";
     static String FRAGMENT_TAG_EXPLORE = "explore_fragment";
-    static String FRAGMENT_TAG_GALLERY = "gallery_fragment";
     static String FRAGMENT_TAG_PROJECTS = "projects_fragment";
     static String FRAGMENT_TAG_DESIGNIDEAS = "designideas_fragment";
     static String FRAGMENT_TAG_COMMUNITIES = "communities_fragment";
@@ -134,9 +131,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ImageView nav_iv;
     MenuItem logout;
     ProgressDialog pd;
-    private FirebaseUser mFirebaseUser;
     public static FragmentManager fragmentManager;
-    Map<Observation, PreviewInfo> previews = new HashMap<Observation, PreviewInfo>();
+    Map<Observation, PreviewInfo> previews = new HashMap<>();
     private Transformation mAvatarTransform = new CroppedCircleTransformation();
 
     @Override
@@ -164,44 +160,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
-        licenses.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new AlertDialog.Builder(v.getContext())
-                        .setView(getLayoutInflater().inflate(R.layout.about, null))
-                        .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {}
-                        })
-                        .setCancelable(false)
-                        .show();
-            }
-        });
+        licenses.setOnClickListener(v ->
+            new AlertDialog.Builder(v.getContext())
+                    .setView(View.inflate(this, R.layout.about, null))
+                    .setNegativeButton("Dismiss", null)
+                    .setCancelable(false)
+                    .show()
+        );
         this.invalidateOptionsMenu();
         pd = new ProgressDialog(this);
         pd.setCancelable(false);
-        sign_in.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (haveNetworkConnection()) {
-                    goToLoginActivity();
-                } else {
-                    Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
-                }
+        sign_in.setOnClickListener(v -> {
+            if (haveNetworkConnection()) {
+                goToLoginActivity();
+            } else {
+                Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
             }
         });
-        join.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (haveNetworkConnection()) {
-                    goToJoinActivity();
-                } else {
-                    Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
-                }
+        join.setOnClickListener(v -> {
+            if (haveNetworkConnection()) {
+                goToJoinActivity();
+            } else {
+                Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
             }
         });
         mFirebase = FirebaseDatabase.getInstance().getReference();
-        mFirebase.child(Site.NODE_NAME).keepSynced(true);
-        mFirebase.child(Project.NODE_NAME).keepSynced(true);
         updateUINoUser();
         observations = null;
         observers = null;
@@ -213,16 +196,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             new android.app.AlertDialog.Builder(this)
                 .setMessage("Your GPS seems to be disabled, do you want to enable it?")
                 .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        dialog.cancel();
-                    }
-                })
+                .setPositiveButton("Yes", (dialog, id) -> startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
+                .setNegativeButton("No", (dialog, id) -> dialog.cancel())
                 .create().show();
         }
     }
@@ -230,40 +205,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onStart() {
         super.onStart();
-        FirebaseAuth.getInstance().addAuthStateListener(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        FirebaseAuth.getInstance().removeAuthStateListener(this);
+        ((NatureNetApplication)getApplication()).getCurrentUserObservable().subscribe(user -> {
+            if (user.isPresent()) {
+                onUserSignIn(user.get());
+            } else {
+                if (signed_user != null) {
+                    mFirebase.child(Users.NODE_NAME).child(signed_user.id).keepSynced(false);
+                    onUserSignOut();
+                }
+                updateUINoUser();
+                goToLaunchFragment();
+            }
+        });
     }
 
     @Override
     public void onBackPressed() {}
 
-//    @Override
-//    public void onBackPressed() {
-//        if(getFragmentManager().findFragmentByTag(FRAGMENT_TAG_LAUNCH).isVisible()) {
-//
-//        } else if(getFragmentManager().findFragmentByTag(FRAGMENT_TAG_EXPLORE).isVisible()) {
-//
-//        } else if(getFragmentManager().findFragmentByTag(FRAGMENT_TAG_PROJECTS).isVisible()) {
-//
-//        } else if(getFragmentManager().findFragmentByTag(FRAGMENT_TAG_DESIGNIDEAS).isVisible()) {
-//
-//        } else if(getFragmentManager().findFragmentByTag(FRAGMENT_TAG_COMMUNITIES).isVisible()) {
-//
-//        } else
-//            super.onBackPressed();
-//        if(getFragmentManager().getBackStackEntryCount() > 0)
-//            getFragmentManager().popBackStack();
-//        else
-//            super.onBackPressed();
-//    }
-
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if (haveNetworkConnection()) {
             int id = item.getItemId();
             switch(id) {
@@ -344,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 preview.commentsCount = "0";
                             }
                             if (observation.likes != null) {
-                                preview.likesCount = String.valueOf(HashMultiset.create(observation.likes.values()).count(new Boolean(true)));
+                                preview.likesCount = String.valueOf(HashMultiset.create(observation.likes.values()).count(true));
                             } else {
                                 preview.likesCount = "0";
                             }
@@ -437,12 +397,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 preview.commentsCount = "0";
                             }
                             if (observation.likes != null) {
-                                preview.likesCount = String.valueOf(HashMultiset.create(observation.likes.values()).count(new Boolean(true)));
+                                preview.likesCount = String.valueOf(HashMultiset.create(observation.likes.values()).count(true));
                             } else {
                                 preview.likesCount = "0";
                             }
                             boolean contains = false;
-                            for (int i=0; i<observers.size(); i++) {
+                            for (int i = 0; i < observers.size(); i++) {
                                 contains = observers.get(i).getObserverId().equals(observation.userId);
                                 if (contains) {
                                     preview.observerAvatarUrl = observers.get(i).getObserverAvatar();
@@ -465,7 +425,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                         fb.child(Site.NODE_NAME).child(user.affiliation).addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(DataSnapshot snapshot) {
-                                                Site site =  snapshot.getValue(Site.class);
+                                                Site site = snapshot.getValue(Site.class);
                                                 observer.setObserverAffiliation(site.name);
                                                 preview.observerAvatarUrl = observer.getObserverAvatar();
                                                 preview.observerName = observer.getObserverName();
@@ -481,12 +441,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                                             commit();
                                                 }
                                             }
+
                                             @Override
-                                            public void onCancelled(DatabaseError databaseError) {}
+                                            public void onCancelled(DatabaseError databaseError) {
+                                            }
                                         });
                                     }
+
                                     @Override
-                                    public void onCancelled(DatabaseError databaseError) {}
+                                    public void onCancelled(DatabaseError databaseError) {
+                                    }
                                 });
                             }
                         }
@@ -534,7 +498,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 commit();
     }
 
-    public void logout() {
+    public void onUserSignOut() {
         Toast.makeText(this, "You have been logged out.", Toast.LENGTH_SHORT).show();
         signed_user = null;
         user_home_site = null;
@@ -551,8 +515,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void goToJoinActivity() {
-        ids = new ArrayList<String>();
-        names = new ArrayList<String>();
+        ids = new ArrayList<>();
+        names = new ArrayList<>();
         mFirebase.child(Site.NODE_NAME).orderByKey().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -620,7 +584,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             cursor.moveToFirst();
             try {
                 do {
-                    listOfAllImages.add(Uri.fromFile(new File(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)))));
+                    listOfAllImages.add(FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider",
+                            new File(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)))));
                 } while (cursor.moveToNext() && listOfAllImages.size() < 8);
             } catch (CursorIndexOutOfBoundsException ex) {
                 Timber.e(ex, "Could not read data from MediaStore, image gallery may be empty");
@@ -681,7 +646,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void uploadImageWithFirebase() {
         Timber.i("Attempting upload to Firebase");
-        Picasso.with(this).load(observationPath).resize(1920, 1920).centerInside().onlyScaleDown().into(new Target() {
+        Picasso.with(this).load(observationPath).resize(MAX_IMAGE_DIMENSION, MAX_IMAGE_DIMENSION).centerInside().onlyScaleDown().into(new Target() {
 
             final StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("photos").child(UUID.randomUUID().toString());
 
@@ -692,7 +657,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public boolean equals(Object obj) {
-                return observationPath.equals(obj);
+                return (obj != null) && (obj instanceof Target) && observationPath.equals(obj);
             }
 
             @Override
@@ -718,35 +683,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void continueWithFirebaseUpload(UploadTask uploadTask) {
-        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                writeObservationToFirebase(taskSnapshot.getDownloadUrl().toString());
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception ex) {
+        uploadTask.addOnSuccessListener(taskSnapshot -> writeObservationToFirebase(taskSnapshot.getDownloadUrl().toString()))
+            .addOnFailureListener(ex -> {
                 Timber.w(ex, "Image upload task failed: %s", ex.getMessage());
                 Toast.makeText(MainActivity.this, "Your photo could not be uploaded.", Toast.LENGTH_SHORT).show();
-            }
-        });
+            });
     }
 
     private void writeObservationToFirebase(String imageUrl) {
         final String id = mFirebase.child(OBSERVATIONS).push().getKey();
         newObservation.id = id;
         newObservation.data.image = imageUrl;
-        mFirebase.child(Observation.NODE_NAME).child(id).setValue(newObservation, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                if (databaseError != null) {
-                    Timber.w(databaseError.toException(), "Failed to write observation to database: %s", databaseError.getMessage());
-                    Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_error), Toast.LENGTH_SHORT).show();
-                } else {
-                    mFirebase.child(Users.NODE_NAME).child(signed_user.id).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
-                    mFirebase.child(Project.NODE_NAME).child(newObservation.projectId).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
-                    Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_success), Toast.LENGTH_SHORT).show();
-                }
+        mFirebase.child(Observation.NODE_NAME).child(id).setValue(newObservation,(databaseError, databaseReference) -> {
+            if (databaseError != null) {
+                Timber.w(databaseError.toException(), "Failed to write observation to database: %s", databaseError.getMessage());
+                Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_error), Toast.LENGTH_SHORT).show();
+            } else {
+                mFirebase.child(Users.NODE_NAME).child(signed_user.id).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
+                mFirebase.child(Project.NODE_NAME).child(newObservation.projectId).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
+                Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_success), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -826,30 +781,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
     }
-    public void getSignedUser() {
-        mFirebase.child(Users.NODE_NAME).child(mFirebaseUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+    public void onUserSignIn(@NonNull Users user) {
+        signed_user = user;
+        mFirebase.child(Site.NODE_NAME).child(signed_user.affiliation).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                signed_user = snapshot.getValue(Users.class);
-                mFirebase.child(Site.NODE_NAME).child(signed_user.affiliation).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        user_home_site = dataSnapshot.getValue(Site.class);
-                        updateUIUser(signed_user);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Toast.makeText(MainActivity.this, getString(R.string.login_error_message_firebase_read), Toast.LENGTH_SHORT).show();
-                    }
-                });
-                Toast.makeText(MainActivity.this, String.format("Welcome, %s!", signed_user.displayName), Toast.LENGTH_SHORT).show();
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                user_home_site = dataSnapshot.getValue(Site.class);
+                updateUIUser(signed_user);
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(MainActivity.this, getResources().getString(R.string.login_error_message_firebase_read) + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getString(R.string.login_error_message_firebase_read), Toast.LENGTH_SHORT).show();
             }
         });
+        Toast.makeText(MainActivity.this, String.format("Welcome, %s!", signed_user.displayName), Toast.LENGTH_SHORT).show();
     }
 
     public void updateUINoUser() {
@@ -893,22 +839,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     haveConnectedMobile = true;
         }
         return haveConnectedWifi || haveConnectedMobile;
-    }
-
-    @Override
-    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-        mFirebaseUser = firebaseAuth.getCurrentUser();
-        if (mFirebaseUser != null) {
-            mFirebase.child(Users.NODE_NAME).child(mFirebaseUser.getUid()).keepSynced(true);
-            getSignedUser();
-        } else {
-            if (signed_user != null) {
-                mFirebase.child(Users.NODE_NAME).child(signed_user.id).keepSynced(false);
-                logout();
-            }
-            updateUINoUser();
-            goToLaunchFragment();
-        }
     }
 
 }

@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     static String SIGNING_OUT = "Signing Out...";
     static String OBSERVERS = "observers";
     static String OBSERVATIONS = "observations";
+
     String[] affiliation_ids, affiliation_names;
     Observation newObservation, selectedObservation, previewSelectedObservation;
     ObserverInfo selectedObserverInfo;
@@ -136,11 +137,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Transformation mAvatarTransform = new CroppedCircleTransformation();
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {}
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         fragmentManager = getSupportFragmentManager();
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -160,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+
         licenses.setOnClickListener(v ->
             new AlertDialog.Builder(v.getContext())
                     .setView(View.inflate(this, R.layout.about, null))
@@ -167,9 +167,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .setCancelable(false)
                     .show()
         );
+
         this.invalidateOptionsMenu();
         pd = new ProgressDialog(this);
         pd.setCancelable(false);
+
         sign_in.setOnClickListener(v -> {
             if (haveNetworkConnection()) {
                 goToLoginActivity();
@@ -177,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
             }
         });
+
         join.setOnClickListener(v -> {
             if (haveNetworkConnection()) {
                 goToJoinActivity();
@@ -184,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
             }
         });
+
         mFirebase = FirebaseDatabase.getInstance().getReference();
         updateUINoUser();
         observations = null;
@@ -192,6 +196,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         selectedObserverInfo = null;
         comments = null;
         final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             new android.app.AlertDialog.Builder(this)
                 .setMessage("Your GPS seems to be disabled, do you want to enable it?")
@@ -205,6 +210,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onStart() {
         super.onStart();
+
         ((NatureNetApplication)getApplication()).getCurrentUserObservable().subscribe(user -> {
             if (user.isPresent()) {
                 onUserSignIn(user.get());
@@ -218,9 +224,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
     }
-
-    @Override
-    public void onBackPressed() {}
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -281,10 +284,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             pd.setMessage(LOADING_OBSERVATIONS);
             pd.setCancelable(false);
             pd.show();
+
             if (observations == null) {
                 observations = Lists.newArrayList();
                 observers = Lists.newArrayList();
                 mFirebase = FirebaseDatabase.getInstance().getReference();
+
                 mFirebase.child(Observation.NODE_NAME).orderByChild(UPDATED_AT).limitToLast(NUM_OF_OBSERVATIONS).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
@@ -293,21 +298,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             observations.add(observation);
                             final PreviewInfo preview = new PreviewInfo();
                             preview.observationImageUrl = observation.data.image;
+
                             if (observation.data.text != null) {
                                 preview.observationText = observation.data.text;
                             } else {
                                 preview.observationText = "No Description";
                             }
+
                             if (observation.comments != null) {
                                 preview.commentsCount = Integer.toString(observation.comments.size());
                             } else {
                                 preview.commentsCount = "0";
                             }
+
                             if (observation.likes != null) {
                                 preview.likesCount = String.valueOf(HashMultiset.create(observation.likes.values()).count(true));
                             } else {
                                 preview.likesCount = "0";
                             }
+
                             boolean contains = false;
                             for (int i=0; i<observers.size(); i++) {
                                 contains = observers.get(i).getObserverId().equals(observation.userId);
@@ -318,6 +327,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     break;
                                 }
                             }
+
                             if (!contains) {
                                 final ObserverInfo observer = new ObserverInfo();
                                 observer.setObserverId(observation.userId);
@@ -344,16 +354,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                                     goToObservationActivity();
                                                 }
                                             }
+
                                             @Override
                                             public void onCancelled(DatabaseError databaseError) {}
                                         });
                                     }
+
                                     @Override
                                     public void onCancelled(DatabaseError databaseError) {}
                                 });
                             }
                         }
                     }
+
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         pd.dismiss();

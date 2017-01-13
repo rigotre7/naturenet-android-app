@@ -14,8 +14,6 @@ public class IdeasFragment extends Fragment {
     MainActivity main;
     TextView toolbar_title;
 
-    public IdeasFragment() {}
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_ideas, container, false);

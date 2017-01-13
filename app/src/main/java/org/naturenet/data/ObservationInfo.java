@@ -5,17 +5,19 @@ import org.naturenet.data.model.Observation;
 import java.io.Serializable;
 
 public class ObservationInfo implements Serializable {
+
     Observation observation;
     String observerAvatar;
     String observerName;
     String observerAffiliation;
-    public ObservationInfo() {}
+
     public ObservationInfo(Observation observation, ObserverInfo observer) {
         this.observation = observation;
         this.observerAvatar = observer.getObserverAvatar();
         this.observerName = observer.getObserverName();
         this.observerAffiliation = observer.getObserverAffiliation();
     }
+
     public Observation getObservation() {
         return observation;
     }

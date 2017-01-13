@@ -3,17 +3,21 @@ package org.naturenet.data;
 import java.io.Serializable;
 
 public class ObserverInfo implements Serializable {
+
     String observerId;
     String observerAvatar;
     String observerName;
     String observerAffiliation;
-    public void ObserverInfo() {}
+
+    public ObserverInfo() {}
+
     public void ObserverInfo(String observerId, String observerAvatar, String observerName, String observerAffiliation) {
         this.observerId = observerId;
         this.observerAvatar = observerAvatar;
         this.observerName = observerName;
         this.observerAffiliation = observerAffiliation;
     }
+
     public String getObserverId() {
         return observerId;
     }

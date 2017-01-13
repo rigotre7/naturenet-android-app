@@ -11,21 +11,23 @@ import org.naturenet.data.model.Users;
 import org.naturenet.R;
 
 public class LoginActivity extends AppCompatActivity {
+
     static String FRAGMENT_TAG_LOGIN = "login_fragment";
-    static String FRAGMENT_TAG_FORGOT = "forgot_fragment";
     static String LOGIN = "login";
-    static String GUEST = "guest";
     static String JOIN = "join";
     static String SIGNED_USER = "signed_user";
     static String EMAIL = "email";
     static String PASSWORD = "password";
+
     String signed_user_email, signed_user_password;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         goToLoginFragment();
     }
+
     public void continueAsSignedUser(Users signed_user) {
         Intent resultIntent = new Intent(this, MainActivity.class);
         resultIntent.putExtra(LOGIN, LOGIN);
@@ -35,6 +37,7 @@ public class LoginActivity extends AppCompatActivity {
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
     }
+
     public void goToLoginFragment() {
         getFragmentManager().
                 beginTransaction().
@@ -49,9 +52,7 @@ public class LoginActivity extends AppCompatActivity {
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
     }
-    public void closeCurrent() {
-        getFragmentManager().popBackStack();
-    }
+
     public boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;

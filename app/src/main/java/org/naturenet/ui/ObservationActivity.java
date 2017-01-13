@@ -2,12 +2,11 @@ package org.naturenet.ui;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,9 +18,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import org.naturenet.R;
+import org.naturenet.data.ObserverInfo;
 import org.naturenet.data.model.Comment;
 import org.naturenet.data.model.Observation;
-import org.naturenet.data.ObserverInfo;
 import org.naturenet.data.model.Users;
 
 import java.util.ArrayList;
@@ -30,6 +29,7 @@ import java.util.List;
 import timber.log.Timber;
 
 public class ObservationActivity extends AppCompatActivity {
+
     static String FRAGMENT_TAG_OBSERVATION_GALLERY = "observation_gallery_fragment";
     static String FRAGMENT_TAG_OBSERVATION = "observation_fragment";
     static String TITLE = "EXPLORE";
@@ -38,6 +38,7 @@ public class ObservationActivity extends AppCompatActivity {
     static String OBSERVATION = "observation";
     static String OBSERVATIONS = "observations";
     static String EMPTY = "";
+
     Toolbar toolbar;
     Observation selectedObservation;
     ObserverInfo selectedObserverInfo;
@@ -53,6 +54,7 @@ public class ObservationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_observation);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar_title = (TextView) findViewById(R.id.app_bar_explore_tv);
@@ -66,13 +68,11 @@ public class ObservationActivity extends AppCompatActivity {
         selectedObservation = null;
         selectedObserverInfo = null;
         comments = null;
-        explore_tv_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goBackToExploreFragment();
-            }
-        });
+
+        explore_tv_back.setOnClickListener(v -> goBackToExploreFragment());
+
         goToObservationGalleryFragment();
+
         if (getIntent().getSerializableExtra(OBSERVATION) != null) {
             selectedObservation = (Observation) getIntent().getSerializableExtra(OBSERVATION);
             for (ObserverInfo observer : observers) {
@@ -100,6 +100,7 @@ public class ObservationActivity extends AppCompatActivity {
         selectedObserverInfo = null;
         comments = null;
         gridView = null;
+
         Intent resultIntent = new Intent(this, MainActivity.class);
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
@@ -109,6 +110,7 @@ public class ObservationActivity extends AppCompatActivity {
     public void goToObservationGalleryFragment() {
         toolbar_title.setVisibility(View.VISIBLE);
         toolbar_title.setText(TITLE);
+
         getFragmentManager().
                 beginTransaction().
                 replace(R.id.fragment_container, new ObservationGalleryFragment(), FRAGMENT_TAG_OBSERVATION_GALLERY).
@@ -119,12 +121,13 @@ public class ObservationActivity extends AppCompatActivity {
         toolbar_title.setVisibility(View.GONE);
         comments = null;
         like = null;
-        if (selectedObservation.comments != null) {
-            getCommentsFor(selectedObservation.id);
-        }
+
+        if (selectedObservation.comments != null) { getCommentsFor(selectedObservation.id); }
+
         if (signed_user != null) {
             like = (selectedObservation.likes != null) && selectedObservation.likes.keySet().contains(signed_user.id);
         }
+
         getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new ObservationFragment(), FRAGMENT_TAG_OBSERVATION)
                 .addToBackStack(FRAGMENT_TAG_OBSERVATION).commit();
@@ -140,6 +143,7 @@ public class ObservationActivity extends AppCompatActivity {
                     comments.add(child.getValue(Comment.class));
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Timber.w("Could not load comments for record %s, query canceled: %s", parent, databaseError.getDetails());
@@ -147,12 +151,4 @@ public class ObservationActivity extends AppCompatActivity {
             }
         });
     }
-
-    public void goBackToObservationGalleryFragment() {
-        selectedObservation = null;
-        selectedObserverInfo = null;
-        comments = null;
-        goToObservationGalleryFragment();
-    }
-
 }

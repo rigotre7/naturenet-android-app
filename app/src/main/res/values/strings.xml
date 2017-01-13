@@ -10,7 +10,6 @@
     <!-- Join Activity -->
     <!-- Layout -->
     <string name="join_title">Join NatureNet</string>
-    <string name="join_tv_back">&#60;&#60; Back</string>
     <string name="join_tv_create">Create New Account</string>
     <string name="join_et_user_name">Display Name</string>
     <string name="join_et_password">Password</string>
@@ -18,8 +17,7 @@
     <string name="join_et_email_address">Email Address</string>
     <string name="join_et_affiliation">Affiliation</string>
     <string name="join_b_join">Join</string>
-    <!-- Layout -->
-    <!-- Java -->
+    <!-- Messages -->
     <string name="join_default_avatar">http://res.cloudinary.com/university-of-colorado/image/upload/v1467309210/v1jhqk1aobxi1y3gglv0.jpg</string>
     <string name="join_success_message">Account Created Successfully</string>
     <string name="join_error_message_firebase_read">@string/error_message_firebase_read</string>
@@ -27,7 +25,6 @@
     <string name="join_error_message_empty">Enter all the details</string>
     <string name="join_error_message_email_address">Invalid Email Address</string>
     <string name="join_error_message_password">Password should be atleast 6 characters long</string>
-    <!-- Java -->
     <!-- Join Activity -->
 
     <!-- Login Activity -->
@@ -35,19 +32,16 @@
 
     <!-- Login Fragment -->
     <!-- Layout -->
-    <string name="login_title">Sign In</string>
     <string name="login_et_email_address">Email</string>
     <string name="login_et_password">Password</string>
     <string name="login_b_sign_in">Sign In</string>
     <string name="login_tv_forgot">Forgot your password?</string>
     <string name="login_tv_join">Join NatureNet</string>
-    <!-- Layout -->
-    <!-- Java -->
+    <!-- Messages -->
     <string name="login_error_message_empty_email">Email can not be empty!</string>
     <string name="login_error_message_empty_password">Password can not be empty!</string>
     <string name="login_error_message_firebase_read">@string/error_message_firebase_read</string>
     <string name="login_error_message_firebase_login">@string/error_message_firebase_login</string>
-    <!-- Java -->
     <!-- Login Fragment -->
 
     <!-- Forgot Fragment -->
@@ -58,17 +52,17 @@
 
     <!-- Add Observation Fragment -->
     <string name="add_observation_title">Observation</string>
-    <string name="add_observation_tv_back">&#60;&#60; Back</string>
     <string name="add_observation_tv_send">Send</string>
     <string name="add_observation_tv_description">Description</string>
     <string name="add_observation_tv_where">Where is it?</string>
     <string name="add_observation_tv_project_label">Project</string>
     <string name="add_observation_b_project">Choose a Project</string>
+    <string name="add_observation_default_project">%1$s (Default)</string>
     <!-- Add Observation Fragment -->
 
     <!-- Project Activity -->
     <string name="project_back">&#60;&#60; PROJECTS</string>
-    <string name="project_back_left_arrows">&#60;&#60; </string>
+    <string name="project_back_left_arrows">&#60;&#60; %1$s</string>
     <string name="project_tv_no_recent_contributions">No Recent Contributions</string>
     <string name="project_tv_recent_contributions">Recent Contributions</string>
     <!-- Project Activity -->
@@ -93,7 +87,6 @@
     <string name="nav_logout">Logout</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <!-- Layout -->
     <!-- Navigation Panel -->
 
     <!-- Launch Fragment -->
@@ -109,17 +102,17 @@
     <string name="launch_tv_para">Do you want to participate in a biodiversity-preserving project in your area? Or do you have an idea for a new project and want to get a community behind you? Join NatureNet today, and don’t just be a voice in the crowd: be part of a crowd with a voice!</string>
     <string name="launch_tv_already">Already a Member?</string>
     <string name="launch_tv_sign_in">Sign In</string>
-    <!-- Layout -->
     <!-- Launch Fragment -->
 
     <!-- Explore Fragment -->
     <!-- Layout -->
     <string name="explore_title">NatureNet</string>
-    <string name="explore_b_explore">EXPLORE</string>
-    <string name="explore_menu_standard_view">Standard View</string>
-    <string name="explore_menu_satellite_view">Satellite View</string>
-    <!-- Layout -->
+    <string name="explore_b_explore">Explore</string>
+    <string name="explore_my_location">My Location</string>
     <!-- Explore Fragment -->
+
+    <!-- Gallery Fragment -->
+    <string name="gallery_loading_observations">Displaying Observations…</string>
 
     <!-- Add Observation Dialog -->
     <string name="dialog_add_observation_tv_cancel">Cancel</string>
@@ -142,89 +135,28 @@
 
     <!-- Projects Fragment -->
     <!-- Layout -->
-    <string name="projects_title">PROJECTS</string>
-    <!-- Layout -->
+    <string name="projects_title">Projects</string>
     <!-- Projects Fragment -->
 
     <!-- Design Ideas Fragment -->
     <!-- Layout -->
-    <string name="design_ideas_title_design_ideas">DESIGN IDEAS</string>
-    <string name="design_ideas_title_design_challenges">DESIGN CHALLENGES</string>
-    <string name="design_ideas_tab_design_ideas">Design Ideas</string>
-    <string name="design_ideas_tab_design_challenges">Design Challenges</string>
-    <string name="design_ideas_para_design_ideas">Your design ideas can be a new way of using NatureNet in your community, and new mobile technology for learning about sustainability or changes in the environment, or a new feature for the app.</string>
-    <string name="design_ideas_para_design_challenges">A design challenge is a question - for example: Hoe can the NatureNet app collect temperature data?</string>
-    <string name="design_ideas_recent_contributions">Recent Contributions</string>
-    <string name="design_ideas_no_recent_contributions">No Recent Contributions</string>
-    <!-- Layout -->
+    <string name="design_ideas_title_design_ideas">Design Ideas</string>
     <!-- Design Ideas Fragment -->
 
     <!-- Communities Fragment -->
     <!-- Layout -->
-    <string name="communities_title">COMMUNITIES</string>
-    <!-- Layout -->
+    <string name="communities_title">Communities</string>
     <!-- Communities Fragment -->
 
+    <!-- General -->
+    <!-- Layout -->
+    <string name="no_description">No Description</string>
+    <string name="no_timestamp">No Timestamp</string>
+    <string name="unknown_user">A NatureNet User</string>
+    <!-- Messages -->
     <string name="error_message_firebase_read">The read failed: </string>
     <string name="error_message_firebase_create">Failed to create: </string>
     <string name="error_message_firebase_login">Login Unsuccessful: </string>
-
-    <string name="naturenet_prefs">NatureNetPreferences</string>
-    <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
-    <string name="loading">Loading...</string>
-    <string name="could_not_register_user">Couldn\'t register user</string>
-    <string name="registering">Joining NatureNet...</string>
-    <string name="not_connected">Oops! There seems to be a problem with your Internet connection.</string>
-    <string name="login_error">Invalid username or password.</string>
-    <string name="logging_in">Signing in...</string>
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_settings">Settings</string>
-    <string name="pref_header_general">General</string>
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact based on your message history</string>
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
-    <string-array name="pref_example_list_titles">
-        <item>Always</item>
-        <item>When possible</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_example_list_values">
-        <item>1</item>
-        <item>0</item>
-        <item>-1</item>
-    </string-array>
-    <string name="pref_header_data_sync">Data &amp; sync</string>
-    <string name="pref_title_sync_frequency">Sync frequency</string>
-    <string-array name="pref_sync_frequency_titles">
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_sync_frequency_values">
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
-        <item>180</item>
-        <item>360</item>
-        <item>-1</item>
-    </string-array>
-    <string name="pref_title_system_sync_settings">System sync settings</string>
-    <string name="pref_header_notifications">Notifications</string>
-    <string name="pref_title_new_message_notifications">New message notifications</string>
-    <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
-    <string name="pref_title_vibrate">Vibrate</string>
-    <string name="timestamp_default">just now</string>
-    <string name="anon_user">Anonymous user</string>
-    <string name="comment">Comment</string>
-    <string name="like">Like</string>
-    <string name="share">Share</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- General -->
 
 </resources>

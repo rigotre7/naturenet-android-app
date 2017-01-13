@@ -45,7 +45,6 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/add_observation_tv_description"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/add_observation_tv_height"
                 android:gravity="left|center_vertical"
@@ -70,7 +69,6 @@
                 style="@style/add_observation_et_description" />
 
             <TextView
-                android:id="@+id/add_observation_tv_where"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/add_observation_tv_height"
                 android:gravity="left|center_vertical"
@@ -103,7 +101,6 @@
                 android:layout_marginBottom="@dimen/add_observation_margin_bottom">
 
                 <TextView
-                    android:id="@+id/add_observation_tv_project_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"

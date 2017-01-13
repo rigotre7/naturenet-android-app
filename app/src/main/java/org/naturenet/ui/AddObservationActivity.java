@@ -4,14 +4,12 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,28 +24,20 @@ import org.naturenet.data.model.Users;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class AddObservationActivity extends AppCompatActivity {
+
     static String FRAGMENT_TAG_ADD_OBSERVATION = "add_observation_fragment";
     static String OBSERVATION = "observation";
     static String OBSERVATION_PATH = "observation_path";
-    static String OBSERVATION_BITMAP = "observation_bitmap";
     static String SIGNED_USER = "signed_user";
     static String EMAIL = "email";
     static String PASSWORD = "password";
-    static String ID = "id";
-    static String ICON_URL = "icon_url";
-    static String DESCRIPTION = "description";
-    static String NAME = "name";
-    static String STATUS = "status";
     static String LATEST_CONTRIBUTION = "latest_contribution";
-    static String CREATED_AT = "created_at";
-    static String UPDATED_AT = "updated_at";
-    static String SITES = "sites";
     static String LOADING = "Loading...";
     static String DEFAULT_PROJECT_ID = "-ACES_a38";
     static String EMPTY = "";
+
     DatabaseReference fbRef;
     ProgressDialog pd;
     String signed_user_email, signed_user_password;
@@ -56,6 +46,7 @@ public class AddObservationActivity extends AppCompatActivity {
     Project defaultProject;
     Users signedUser;
     List<Project> mProjects = Lists.newArrayList();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +63,7 @@ public class AddObservationActivity extends AppCompatActivity {
         defaultProject = null;
         goToAddObservationFragment();
     }
+
     public void goToAddObservationFragment() {
         if (signedUser != null) {
             fbRef = FirebaseDatabase.getInstance().getReference();
@@ -81,25 +73,30 @@ public class AddObservationActivity extends AppCompatActivity {
             fbRef.child(Project.NODE_NAME).orderByChild(LATEST_CONTRIBUTION).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
+
                     for (DataSnapshot child : snapshot.getChildren()) {
                         Project project = child.getValue(Project.class);
                         if (project.id.equals(DEFAULT_PROJECT_ID)) {
                             defaultProject = project;
                         }
+
                         // TODO: decide on site-project submission rule
                         //Map<String, Object> sites = (Map<String, Object>) map.get(SITES);
                         //if (sites.containsKey(signedUser.affiliation)) {
                             mProjects.add(project);
                         //}
                     }
+
                     // Timestamps sort in ascending order
                     Collections.reverse(mProjects);
+
                     if (mProjects.size() != 0) {
                         getFragmentManager().
                                 beginTransaction().
                                 replace(R.id.fragment_container, new AddObservationFragment(), FRAGMENT_TAG_ADD_OBSERVATION).
                                 commit();
                     }
+
                     pd.dismiss();
                 }
                 @Override
@@ -117,6 +114,7 @@ public class AddObservationActivity extends AppCompatActivity {
                     commit();
         }
     }
+
     public void goBackToMainActivity() {
         findViewById(R.id.toolbar_send).setVisibility(View.GONE);
         findViewById(R.id.toolbar_busy).setVisibility(View.VISIBLE);

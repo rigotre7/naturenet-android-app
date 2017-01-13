@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -24,6 +23,7 @@ import org.naturenet.data.model.PhotoCaptionContent;
 import org.naturenet.data.model.Project;
 
 public class AddObservationFragment extends Fragment {
+
     TextView toolbar_title, send, project;
     EditText description, whereIsIt;
     ImageView image;
@@ -35,14 +35,16 @@ public class AddObservationFragment extends Fragment {
     AddObservationActivity add;
     DatabaseReference fbRef;
     Project selectedProject;
-    public AddObservationFragment() {}
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_add_observation, container, false);
     }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         add = ((AddObservationActivity) getActivity());
         toolbar_title = (TextView) add.findViewById(R.id.toolbar_title);
         toolbar_title.setText(R.string.add_observation_title);
@@ -57,63 +59,58 @@ public class AddObservationFragment extends Fragment {
         add_observation_ll = (LinearLayout) add.findViewById(R.id.add_observation_ll);
         noProjects = (TextView) add.findViewById(R.id.projecs_tv);
         mProjectsListView.setAdapter(new ProjectAdapter(add, add.mProjects));
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                add.onBackPressed();
-            }
-        });
-        send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (add.signedUser != null) {
-                    send.setVisibility(View.GONE);
-                    fbRef = FirebaseDatabase.getInstance().getReference();
-                    PhotoCaptionContent data = new PhotoCaptionContent();
-                    data.text = description.getText().toString();
-                    String where = whereIsIt.getText().toString().trim();
-                    if(!where.isEmpty()) {
-                        add.newObservation.where = where;
-                    }
-                    add.newObservation.data = data;
-                    add.newObservation.projectId = selectedProject.id;
-                    add.newObservation.siteId = add.signedUser.affiliation;
-                    add.goBackToMainActivity();
-                } else {
-                    Toast.makeText(add, "Please login to add an observation.", Toast.LENGTH_SHORT).show();
+        back.setOnClickListener(v -> add.onBackPressed());
+        send.setOnClickListener(v -> {
+            if (add.signedUser != null) {
+                send.setVisibility(View.GONE);
+                fbRef = FirebaseDatabase.getInstance().getReference();
+                PhotoCaptionContent data = new PhotoCaptionContent();
+                data.text = description.getText().toString();
+                String where = whereIsIt.getText().toString().trim();
+
+                if(!where.isEmpty()) {
+                    add.newObservation.where = where;
                 }
+
+                add.newObservation.data = data;
+                add.newObservation.projectId = selectedProject.id;
+                add.newObservation.siteId = add.signedUser.affiliation;
+
+                add.goBackToMainActivity();
+            } else {
+                Toast.makeText(add, "Please login to add an observation.", Toast.LENGTH_SHORT).show();
             }
         });
-        mProjectsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                project.setText(add.mProjects.get(position).name);
-                selectedProject = add.mProjects.get(position);
-                add_observation_ll.setVisibility(View.VISIBLE);
-                mProjectsListView.setVisibility(View.GONE);
-            }
+
+        mProjectsListView.setOnItemClickListener((parent, view, position, id) -> {
+            project.setText(add.mProjects.get(position).name);
+            selectedProject = add.mProjects.get(position);
+            add_observation_ll.setVisibility(View.VISIBLE);
+            mProjectsListView.setVisibility(View.GONE);
         });
+
         Picasso.with(AddObservationFragment.this.getActivity()).load(add.observationPath)
                 .placeholder(R.drawable.no_image).error(R.drawable.no_image).fit().centerInside().into(image);
-        choose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                add_observation_ll.setVisibility(View.GONE);
-                if (add.signedUser != null) {
-                    mProjectsListView.setVisibility(View.VISIBLE);
-                    noProjects.setVisibility(View.GONE);
-                } else {
-                    mProjectsListView.setVisibility(View.GONE);
-                    noProjects.setVisibility(View.VISIBLE);
-                }
+
+        choose.setOnClickListener(v -> {
+            add_observation_ll.setVisibility(View.GONE);
+
+            if (add.signedUser != null) {
+                mProjectsListView.setVisibility(View.VISIBLE);
+                noProjects.setVisibility(View.GONE);
+            } else {
+                mProjectsListView.setVisibility(View.GONE);
+                noProjects.setVisibility(View.VISIBLE);
             }
         });
+
         if (add.defaultProject != null) {
             selectedProject = add.defaultProject;
-            project.setText(selectedProject.name+" (Default)");
+            project.setText(String.format(getString(R.string.add_observation_default_project), selectedProject.name));
         } else {
-            project.setText("Free Observation (Default)");
+            project.setText(null);
         }
+
         add_observation_ll.setVisibility(View.VISIBLE);
         mProjectsListView.setVisibility(View.GONE);
         noProjects.setVisibility(View.GONE);

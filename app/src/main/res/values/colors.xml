@@ -3,15 +3,7 @@
     <color name="colorPrimary">#4DB26A</color>
     <color name="colorPrimaryDark">#30AB5F</color>
     <color name="colorAccent">#F5C431</color>
-    <color name="colorAccentDark">#F49B29</color>
-    <color name="colorHighlight">#E94839</color>
-    <color name="colorHighlightDark">#C93525</color>
-    <color name="colorDisabled">#BA761B</color>
-    <color name="colorDisabledDark">#915B13</color>
     <color name="colorBackground">#4D6786</color>
-    <color name="colorBackgroundDark">#354A5F</color>
-    <color name="colorBackgroundAccent">#42BDCE</color>
-    <color name="colorBackgroundAccentDark">#129DB9</color>
     <color name="colorTheme">#1FCD6C</color>
     <color name="colorButton">#263B50</color>
     <color name="colorImageButton">#00000000</color>

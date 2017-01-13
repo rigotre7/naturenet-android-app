@@ -1,16 +1,10 @@
 <resources>
 
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
-
     <!-- Font Size -->
     <dimen name="font_size_9">9dp</dimen>
-    <dimen name="font_size_10">10dp</dimen>
     <dimen name="font_size_11">11dp</dimen>
     <dimen name="font_size_12">12dp</dimen>
-    <dimen name="font_size_13">13dp</dimen>
     <dimen name="font_size_14">14dp</dimen>
-    <dimen name="font_size_15">15dp</dimen>
     <dimen name="font_size_16">16dp</dimen>
     <dimen name="font_size_20">20dp</dimen>
     <!-- Font Size -->
@@ -67,18 +61,13 @@
     <dimen name="add_observation_margin_bottom">5dp</dimen>
     <dimen name="add_observation_iv_margin_bottom">10dp</dimen>
     <dimen name="add_observation_tv_height">30dp</dimen>
-    <dimen name="add_observation_et_height">100dp</dimen>
     <dimen name="add_observation_b_height">50dp</dimen>
     <!-- Add Observation Fragment -->
 
     <!-- Project Activity -->
     <dimen name="project_margin">10dp</dimen>
-    <dimen name="project_margin_top">5dp</dimen>
     <dimen name="project_margin_left">10dp</dimen>
     <dimen name="project_margin_right">10dp</dimen>
-    <dimen name="project_rl_margin_top">10dp</dimen>
-    <dimen name="project_rl_margin_left">5dp</dimen>
-    <dimen name="project_rl_margin_right">5dp</dimen>
     <dimen name="project_iv_status_width">20dp</dimen>
     <dimen name="project_iv_status_height">20dp</dimen>
     <dimen name="project_iv_icon_width">40dp</dimen>
@@ -92,7 +81,6 @@
     <!-- Main Activity -->
 
     <!-- Navigation Panel -->
-    <dimen name="nav_header_vertical_spacing">16dp</dimen>
     <dimen name="nav_header_height">200dp</dimen>
     <dimen name="nav_margin_bottom">5dp</dimen>
     <dimen name="nav_b_width">120dp</dimen>
@@ -107,14 +95,11 @@
     <dimen name="launch_why_margin_bottom">10dp</dimen>
     <dimen name="launch_para_margin_bottom">25dp</dimen>
     <dimen name="image_min_height">96dp</dimen>
-    <dimen name="join_ib_width">333dp</dimen>
-    <dimen name="join_ib_height">50dp</dimen>
     <!-- Launch Fragment -->
 
     <!-- Floating Buttons -->
     <dimen name="floating_buttons_margin">6dp</dimen>
     <dimen name="floating_buttons_width">48dp</dimen>
-    <dimen name="floating_buttons_height">48dp</dimen>
     <!-- Floating Buttons -->
 
     <!-- Add Observation Dialog -->
@@ -125,7 +110,6 @@
     <dimen name="dialog_add_observation_b_height">30dp</dimen>
     <dimen name="dialog_add_observation_gv_vertical_spacing">0dp</dimen>
     <dimen name="dialog_add_observation_gv_horizontal_spacing">0dp</dimen>
-    <dimen name="dialog_add_observation_gv_col_width">100dp</dimen>
     <!-- Add Observation Dialog -->
 
     <!-- Add Design Idea Dialog -->

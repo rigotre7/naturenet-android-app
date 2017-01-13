@@ -14,7 +14,6 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.GridView;
@@ -27,7 +26,6 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -39,7 +37,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -52,11 +49,11 @@ import com.kosalgeek.android.photoutil.GalleryPhoto;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
-import org.naturenet.util.CroppedCircleTransformation;
 import org.naturenet.R;
-import org.naturenet.data.model.Observation;
 import org.naturenet.data.PreviewInfo;
+import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Site;
+import org.naturenet.util.CroppedCircleTransformation;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,9 +64,10 @@ import java.util.Map;
 import timber.log.Timber;
 
 public class ExploreFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
-    final private static int CAMERA_REQUEST = 1;
-    final private static int GALLERY_REQUEST = 2;
-    static String MY_LOCATION = "My Location";
+
+    static final private int CAMERA_REQUEST = 1;
+    static final private int GALLERY_REQUEST = 2;
+
     ImageButton add_observation, add_design_idea;
     Button camera, gallery, design_ideas, design_challenges;
     TextView toolbar_title, preview_observer_user_name, preview_observer_affiliation, preview_observation_text, preview_likes_count, preview_comments_count, select;
@@ -89,17 +87,17 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
     LocationRequest locationRequest;
     Observation previewSelectedObservation;
     Transformation mAvatarTransform = new CroppedCircleTransformation();
-    private Map<Marker, PreviewInfo> allMarkersMap = new HashMap<Marker, PreviewInfo>();
-
-    public ExploreFragment() {}
+    private Map<Marker, PreviewInfo> allMarkersMap = new HashMap<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         main = ((MainActivity) this.getActivity());
         toolbar_title = (TextView) main.findViewById(R.id.app_bar_main_tv);
         toolbar_title.setText(R.string.explore_title);
         Site home = main.user_home_site;
+
         if(home != null) {
             latValue = home.location.get(0);
             longValue = home.location.get(1);
@@ -107,26 +105,26 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
             latValue = 0;
             longValue = 0;
         }
+
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(main)
                     .addApi(LocationServices.API)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .build();
+
             locationRequest = new LocationRequest();
             locationRequest.setInterval(10 * 1000);
             locationRequest.setFastestInterval(1 * 1000);
             locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
             LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
+
             PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi
                     .checkLocationSettings(mGoogleApiClient, builder.build());
-            result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-                @Override
-                public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
-                    final Status status = locationSettingsResult.getStatus();
-                    if (status.getStatusCode() != LocationSettingsStatusCodes.SUCCESS) {
-                        zoomToUser();
-                    }
+            result.setResultCallback(locationSettingsResult -> {
+                final Status status = locationSettingsResult.getStatus();
+                if (status.getStatusCode() != LocationSettingsStatusCodes.SUCCESS) {
+                    zoomToUser();
                 }
             });
         }
@@ -138,60 +136,61 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
         mMapView = (MapView) v.findViewById(R.id.map_view);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
+
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        mMapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap map) {
-                googleMap = map;
-                googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                // Default to CONUS until we get location info
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40, -96), 3));
-                for (int i = 0; i < main.observations.size(); i++) {
-                    final Observation observation = main.observations.get(i);
-                    BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.marker_observation);
-                    Marker marker = googleMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(observation.location.get(0), observation.location.get(1)))
-                            .icon(icon));
-                    allMarkersMap.put(marker, main.previews.get(observation));
-                }
-                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(Marker marker) {
-                        if (!MY_LOCATION.equals(marker.getTitle())) {
-                            PreviewInfo preview = allMarkersMap.get(marker);
-                            for (Observation observation : main.previews.keySet()) {
-                                if (main.previews.get(observation).equals(preview)) {
-                                    previewSelectedObservation = observation;
-                                    break;
-                                }
-                            }
-                            Picasso.with(main).load(Strings.emptyToNull(preview.observationImageUrl)).fit().centerCrop().into(preview_observation_image);
-                            Picasso.with(main).load(Strings.emptyToNull(preview.observerAvatarUrl))
-                                    .transform(mAvatarTransform).fit().into(preview_observer_avatar);
-                            preview_observer_user_name.setText(preview.observerName);
-                            preview_observer_affiliation.setText(preview.affiliation);
-                            preview_observation_text.setText(preview.observationText);
-                            preview_likes_count.setText(preview.likesCount);
-                            preview_comments_count.setText(preview.commentsCount);
-                            floating_buttons.setVisibility(View.GONE);
-//                            explore.setVisibility(View.GONE);
-                            dialog_preview.setVisibility(View.VISIBLE);
-                        } else {
-                            if (dialog_preview.getVisibility() == View.VISIBLE) {
-                                floating_buttons.setVisibility(View.VISIBLE);
-//                                explore.setVisibility(View.VISIBLE);
-                                dialog_preview.setVisibility(View.GONE);
-                            }
-                        }
-                        return false;
-                    }
-                });
+
+        mMapView.getMapAsync(map -> {
+            googleMap = map;
+            googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+            // Default to CONUS until we get location info
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40, -96), 3));
+
+            for (int i = 0; i < main.observations.size(); i++) {
+                final Observation observation = main.observations.get(i);
+                BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.marker_observation);
+                Marker marker = googleMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(observation.location.get(0), observation.location.get(1)))
+                        .icon(icon));
+                allMarkersMap.put(marker, main.previews.get(observation));
             }
+
+            googleMap.setOnMarkerClickListener(marker -> {
+                if (!getString(R.string.explore_my_location).equals(marker.getTitle())) {
+                    PreviewInfo preview = allMarkersMap.get(marker);
+
+                    for (Observation observation : main.previews.keySet()) {
+                        if (main.previews.get(observation).equals(preview)) {
+                            previewSelectedObservation = observation;
+                            break;
+                        }
+                    }
+
+                    Picasso.with(main).load(Strings.emptyToNull(preview.observationImageUrl)).fit().centerCrop().into(preview_observation_image);
+                    Picasso.with(main).load(Strings.emptyToNull(preview.observerAvatarUrl))
+                            .transform(mAvatarTransform).fit().into(preview_observer_avatar);
+
+                    preview_observer_user_name.setText(preview.observerName);
+                    preview_observer_affiliation.setText(preview.affiliation);
+                    preview_observation_text.setText(preview.observationText);
+                    preview_likes_count.setText(preview.likesCount);
+                    preview_comments_count.setText(preview.commentsCount);
+                    floating_buttons.setVisibility(View.GONE);
+                    dialog_preview.setVisibility(View.VISIBLE);
+                } else {
+                    if (dialog_preview.getVisibility() == View.VISIBLE) {
+                        floating_buttons.setVisibility(View.VISIBLE);
+                        dialog_preview.setVisibility(View.GONE);
+                    }
+                }
+
+                return false;
+            });
         });
+
         return v;
     }
 
@@ -221,7 +220,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
             googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(location.getLatitude(), location.getLongitude()))
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE))
-                    .title(MY_LOCATION));
+                    .title(getString(R.string.explore_my_location)));
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 12.0f));
         }
         latValue = location.getLatitude();
@@ -249,16 +248,16 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
     @Override
     public void onResume() {
         mMapView.onResume();
-        if (mGoogleApiClient.isConnected())
-            requestLocationUpdates();
+        if (mGoogleApiClient.isConnected()) { requestLocationUpdates(); }
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        if (mGoogleApiClient.isConnected())
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         super.onPause();
+        if (mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        }
         mMapView.onPause();
     }
 
@@ -266,9 +265,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
     public void onDestroy() {
         super.onDestroy();
         mMapView.onDestroy();
-        if (dialog_preview != null) {
-            dialog_preview = null;
-        }
+        dialog_preview = null;
     }
 
     @Override
@@ -280,7 +277,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-//        explore = (Button) main.findViewById(R.id.explore_b_explore);
+
         floating_buttons = (FrameLayout) main.findViewById(R.id.fl_floating_buttons);
         add_observation = (ImageButton) main.findViewById(R.id.floating_buttons_ib_add_observation);
         add_design_idea = (ImageButton) main.findViewById(R.id.floating_buttons_ib_add_design_idea);
@@ -306,116 +303,79 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
         design_challenges = (Button) main.findViewById(R.id.dialog_add_design_idea_b_design_challenges);
         cameraPhoto = new CameraPhoto(main);
         galleryPhoto = new GalleryPhoto(main);
-//        explore.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                main.goToObservationActivity();
-//            }
-//        });
-        preview_observation_image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                main.previewSelectedObservation = previewSelectedObservation;
-                main.goToObservationActivity();
-            }
+
+        preview_observation_image.setOnClickListener(v -> {
+            main.previewSelectedObservation = previewSelectedObservation;
+            main.goToObservationActivity();
         });
-        preview_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                main.selectedObservation = null;
-                main.selectedObserverInfo = null;
-                floating_buttons.setVisibility(View.VISIBLE);
-//                explore.setVisibility(View.VISIBLE);
-                dialog_preview.setVisibility(View.GONE);
-            }
+
+        preview_cancel.setOnClickListener(v -> {
+            main.selectedObservation = null;
+            main.selectedObserverInfo = null;
+            floating_buttons.setVisibility(View.VISIBLE);
+            dialog_preview.setVisibility(View.GONE);
         });
-        add_observation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(main, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-                    ActivityCompat.requestPermissions(main, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, GALLERY_REQUEST);
-                else
-                    setGallery();
+
+        add_observation.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(main, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(main, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, GALLERY_REQUEST);
+            } else {
+                setGallery();
                 select.setVisibility(View.GONE);
                 floating_buttons.setVisibility(View.GONE);
-//                explore.setVisibility(View.GONE);
                 dialog_add_observation.setVisibility(View.VISIBLE);
             }
         });
-        add_design_idea.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                floating_buttons.setVisibility(View.GONE);
-//                explore.setVisibility(View.GONE);
-                dialog_add_design_idea.setVisibility(View.VISIBLE);
-            }
+
+        add_design_idea.setOnClickListener(v -> {
+            floating_buttons.setVisibility(View.GONE);
+            dialog_add_design_idea.setVisibility(View.VISIBLE);
         });
-        add_observation_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (recentImageGallery != null) {
-                    int index = recentImageGallery.indexOf(selectedImage);
-                    if (index >= 0) {
-                        gridview.getChildAt(index).findViewById(R.id.gallery_iv).setBackgroundResource(0);
-                    }
-                }
-                selectedImage = null;
-                select.setVisibility(View.GONE);
-                floating_buttons.setVisibility(View.VISIBLE);
-//                explore.setVisibility(View.VISIBLE);
-                dialog_add_observation.setVisibility(View.GONE);
-            }
-        });
-        select.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                main.observationPath = selectedImage;
-                main.newObservation = new Observation();
-                main.newObservation.location = Lists.newArrayList(latValue, longValue);
-                setGallery();
-                main.goToAddObservationActivity();
-            }
-        });
-        camera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setGallery();
-                select.setVisibility(View.GONE);
-                try {
-                    startActivityForResult(cameraPhoto.takePhotoIntent(), CAMERA_REQUEST);
-                } catch (IOException e) {
-                    Toast.makeText(main, "Something Wrong while taking photo", Toast.LENGTH_SHORT).show();
+
+        add_observation_cancel.setOnClickListener(v -> {
+            if (recentImageGallery != null) {
+                int index = recentImageGallery.indexOf(selectedImage);
+                if (index >= 0) {
+                    gridview.getChildAt(index).findViewById(R.id.gallery_iv).setBackgroundResource(0);
                 }
             }
+
+            selectedImage = null;
+            select.setVisibility(View.GONE);
+            floating_buttons.setVisibility(View.VISIBLE);
+            dialog_add_observation.setVisibility(View.GONE);
         });
-        gallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setGallery();
-                select.setVisibility(View.GONE);
-                startActivityForResult(galleryPhoto.openGalleryIntent(), GALLERY_REQUEST);
+
+        select.setOnClickListener(v -> {
+            main.observationPath = selectedImage;
+            main.newObservation = new Observation();
+            main.newObservation.location = Lists.newArrayList(latValue, longValue);
+            setGallery();
+            main.goToAddObservationActivity();
+        });
+
+        camera.setOnClickListener(v -> {
+            setGallery();
+            select.setVisibility(View.GONE);
+            try {
+                startActivityForResult(cameraPhoto.takePhotoIntent(), CAMERA_REQUEST);
+            } catch (IOException e) {
+                Toast.makeText(main, "Something Wrong while taking photo", Toast.LENGTH_SHORT).show();
             }
         });
-        add_design_idea_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                floating_buttons.setVisibility(View.VISIBLE);
-//                explore.setVisibility(View.VISIBLE);
-                dialog_add_design_idea.setVisibility(View.GONE);
-            }
+
+        gallery.setOnClickListener(v -> {
+            setGallery();
+            select.setVisibility(View.GONE);
+            startActivityForResult(galleryPhoto.openGalleryIntent(), GALLERY_REQUEST);
         });
-        design_ideas.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
+
+        add_design_idea_cancel.setOnClickListener(v -> {
+            floating_buttons.setVisibility(View.VISIBLE);
+            dialog_add_design_idea.setVisibility(View.GONE);
         });
-        design_challenges.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
+
         floating_buttons.setVisibility(View.VISIBLE);
-//        explore.setVisibility(View.VISIBLE);
         dialog_add_observation.setVisibility(View.GONE);
         dialog_add_design_idea.setVisibility(View.GONE);
         dialog_preview.setVisibility(View.GONE);
@@ -423,28 +383,26 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
 
     public void setGallery() {
         recentImageGallery = main.getRecentImagesUris();
+
         if (recentImageGallery.size() != 0) {
             gridview.setAdapter(new ImageGalleryAdapter(main, recentImageGallery));
-            gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                    ImageView iv = (ImageView) v.findViewById(R.id.gallery_iv);
-                    if (selectedImage == null) {
-                        selectedImage = recentImageGallery.get(position);
-                        iv.setBackground(getResources().getDrawable(R.drawable.border_selected_image));
-                        select.setVisibility(View.VISIBLE);
-                    } else if (selectedImage.equals(recentImageGallery.get(position))) {
-                        selectedImage = null;
-                        iv.setBackgroundResource(0);
-                        select.setVisibility(View.GONE);
-                    } else {
-                        int index = recentImageGallery.indexOf(selectedImage);
-                        if (index >= 0) {
-                            gridview.getChildAt(index).findViewById(R.id.gallery_iv).setBackgroundResource(0);
-                        }
-                        selectedImage = recentImageGallery.get(position);
-                        iv.setBackground(getResources().getDrawable(R.drawable.border_selected_image));
-                        select.setVisibility(View.VISIBLE);
-                    }
+            gridview.setOnItemClickListener((parent, v, position, id) -> {
+                ImageView iv = (ImageView) v.findViewById(R.id.gallery_iv);
+
+                if (selectedImage == null) {
+                    selectedImage = recentImageGallery.get(position);
+                    iv.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.border_selected_image));
+                    select.setVisibility(View.VISIBLE);
+                } else if (selectedImage.equals(recentImageGallery.get(position))) {
+                    selectedImage = null;
+                    iv.setBackgroundResource(0);
+                    select.setVisibility(View.GONE);
+                } else {
+                    int index = recentImageGallery.indexOf(selectedImage);
+                    if (index >= 0) { gridview.getChildAt(index).findViewById(R.id.gallery_iv).setBackgroundResource(0); }
+                    selectedImage = recentImageGallery.get(position);
+                    iv.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.border_selected_image));
+                    select.setVisibility(View.VISIBLE);
                 }
             });
         }
@@ -463,6 +421,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                 Timber.d("Gallery Path: %s", galleryPhoto.getPath());
                 main.observationPath = Uri.fromFile(new File(galleryPhoto.getPath()));
             }
+
             main.newObservation = new Observation();
             main.newObservation.location = Lists.newArrayList(latValue, longValue);
             setGallery();

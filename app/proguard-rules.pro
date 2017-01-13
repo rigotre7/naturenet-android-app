@@ -21,4 +21,4 @@
 -keepattributes EnclosingMethod
 -keepattributes InnerClasses
 
--keep class org.naturenet.data.model.* { *; }
+-keepclassmembers class org.naturenet.data.model.** { *; }

@@ -5,15 +5,23 @@ import android.support.annotation.Nullable;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
-import com.google.firebase.database.ServerValue;
 
-import java.io.Serializable;
 import java.util.Map;
 
 @IgnoreExtraProperties
-public class Users implements Serializable {
+public class Users extends TimestampedData {
 
+    @Exclude
     public static final String NODE_NAME = "users";
+
+    public static Users createNew(String id, String displayName, String affiliation, String avatar) {
+        Users u = new Users();
+        u.id = id;
+        u.displayName = displayName;
+        u.affiliation = affiliation;
+        u.avatar = avatar;
+        return u;
+    }
 
     public String id;
 
@@ -36,32 +44,4 @@ public class Users implements Serializable {
     public Long latestContribution;
 
     private Users() {}
-
-    public Users(String id, String displayName, String affiliation, String avatar) {
-        this.id = id;
-        this.displayName = displayName;
-        this.affiliation = affiliation;
-        this.avatar = avatar;
-    }
-
-    /**
-     * Remove and inherit from TimestampedData when Firebase inheritance bug is fixed.
-     */
-    @PropertyName("created_at")
-    public Object createdAt = ServerValue.TIMESTAMP;
-
-    @PropertyName("updated_at")
-    public Object updatedAt = ServerValue.TIMESTAMP;
-
-    @Exclude
-    @Nullable
-    public Long getCreatedAtMillis() {
-        return createdAt instanceof Long ? (Long)createdAt : null;
-    }
-
-    @Exclude
-    @Nullable
-    public Long getUpdatedAtMillis() {
-        return updatedAt instanceof Long ? (Long)updatedAt : null;
-    }
 }

@@ -127,7 +127,7 @@ public class SelectedObservationFragment extends Fragment {
                         send.setEnabled(false);
                         comment.setEnabled(false);
                         final DatabaseReference commentRef = FirebaseDatabase.getInstance().getReference().child(Comment.NODE_NAME).push();
-                        Comment newComment = new Comment(commentRef.getKey(), commentText, o.signed_user.id, o.selectedObservation.id, Observation.NODE_NAME);
+                        Comment newComment = Comment.createNew(commentRef.getKey(), commentText, o.signed_user.id, o.selectedObservation.id, Observation.NODE_NAME);
                         commentRef.setValue(newComment, new DatabaseReference.CompletionListener() {
                             @Override
                             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {

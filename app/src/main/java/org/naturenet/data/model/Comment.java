@@ -4,15 +4,23 @@ import android.support.annotation.Nullable;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
-import com.google.firebase.database.PropertyName;
-import com.google.firebase.database.ServerValue;
-
-import java.io.Serializable;
 
 @IgnoreExtraProperties
-public class Comment implements Serializable {
+public class Comment extends TimestampedData {
 
+    @Exclude
     public static final String NODE_NAME = "comments";
+
+    public static Comment createNew(String id, String comment, String commenter, String parent, String context) {
+        Comment c = new Comment();
+        c.id = id;
+        c.comment = comment;
+        c.commenter = commenter;
+        c.parent = parent;
+        c.context = context;
+        c.source = "android";
+        return c;
+    }
 
     public String id;
 
@@ -24,37 +32,17 @@ public class Comment implements Serializable {
 
     public String context;
 
+    @Nullable
     public String source;
+
+    @Nullable
+    public String status;
 
     private Comment() {}
 
-    public Comment(String id, String comment, String commenter, String parent, String context) {
-        this.id = id;
-        this.comment = comment;
-        this.commenter = commenter;
-        this.parent = parent;
-        this.context = context;
-        this.source = "android";
-    }
-
-    /**
-     * Remove and inherit from TimestampedData when Firebase inheritance bug is fixed.
-     */
-    @PropertyName("created_at")
-    public Object createdAt = ServerValue.TIMESTAMP;
-
-    @PropertyName("updated_at")
-    public Object updatedAt = ServerValue.TIMESTAMP;
-
     @Exclude
-    @Nullable
-    public Long getCreatedAtMillis() {
-        return createdAt instanceof Long ? (Long)createdAt : null;
+    public boolean isValid() {
+        return !"deleted".equalsIgnoreCase(status);
     }
 
-    @Exclude
-    @Nullable
-    public Long getUpdatedAtMillis() {
-        return updatedAt instanceof Long ? (Long)updatedAt : null;
-    }
 }

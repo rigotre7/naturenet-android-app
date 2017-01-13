@@ -8,18 +8,13 @@ import com.google.firebase.database.ServerValue;
 
 import java.io.Serializable;
 
-/**
- * NOTE: Firebase as of 9.4.0 does not use inherited fields when reading/writing classes due to a bug.
- * When this bug is fixed, all classes with timestamps should inherit from TimestampedData.
- * https://stackoverflow.com/questions/37547399/
- */
 public abstract class TimestampedData implements Serializable {
 
     @PropertyName("created_at")
-    protected Object createdAt = ServerValue.TIMESTAMP;
+    public Object createdAt = ServerValue.TIMESTAMP;
 
     @PropertyName("updated_at")
-    protected Object updatedAt = ServerValue.TIMESTAMP;
+    public Object updatedAt = ServerValue.TIMESTAMP;
 
     protected TimestampedData() {}
 

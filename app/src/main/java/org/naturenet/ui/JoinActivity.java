@@ -122,8 +122,8 @@ public class JoinActivity extends AppCompatActivity {
                                                         if (task.isSuccessful()) {
                                                             Timber.i("Successful authentication, writing new user data...");
                                                             String default_avatar = getResources().getString(R.string.join_default_avatar);
-                                                            final Users user = new Users(id, userName, affiliation, default_avatar);
-                                                            final UsersPrivate userPrivate = new UsersPrivate(id, name);
+                                                            final Users user = Users.createNew(id, userName, affiliation, default_avatar);
+                                                            final UsersPrivate userPrivate = UsersPrivate.createNew(id, name);
                                                             fbRef.child(USERS).child(id).setValue(user);
                                                             fbRef.child(USERS_PRIVATE).child(id).setValue(userPrivate);
                                                             pd.dismiss();

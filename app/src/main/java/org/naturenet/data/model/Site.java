@@ -4,10 +4,11 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 @IgnoreExtraProperties
-public class Site {
+public class Site implements Serializable {
 
     @Exclude
     public static final String NODE_NAME = "sites";

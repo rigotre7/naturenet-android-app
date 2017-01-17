@@ -118,7 +118,20 @@
                 android:layout_height="wrap_content"
                 android:text="@string/license_content_picasso"/>
 
-            <!-- SLF4J -->
+            <!-- Rx -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/license_rxandroid"
+                android:textColor="@color/colorTheme"
+                android:layout_margin="10dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/license_content_rxandroid"/>
+
+            <!-- Timber -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

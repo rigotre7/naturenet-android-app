@@ -1,5 +1,6 @@
 package org.naturenet.data.model;
 
+import android.os.Parcel;
 import android.support.annotation.Nullable;
 
 import com.google.firebase.database.Exclude;
@@ -64,6 +65,51 @@ public class Observation extends TimestampedData {
 
     public Observation() {}
 
+    private Observation(Parcel in) {
+        super(in);
+        this.id = in.readString();
+        this.userId = in.readString();
+        this.projectId = in.readString();
+        this.siteId = in.readString();
+        this.geohash = in.readString();
+        in.readList(this.location, null);
+        this.data = in.readParcelable(PhotoCaptionContent.class.getClassLoader());
+        this.where = in.readString();
+        this.status = in.readString();
+        this.source = in.readString();
+        in.readMap(this.comments, null);
+        in.readMap(this.likes, null);
+    }
+
     @Exclude
     public boolean isValid() { return !"deleted".equalsIgnoreCase(status); }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        super.writeToParcel(parcel, flags);
+        parcel.writeString(id);
+        parcel.writeString(userId);
+        parcel.writeString(projectId);
+        parcel.writeString(siteId);
+        parcel.writeString(geohash);
+        parcel.writeList(location);
+        parcel.writeParcelable(data, flags);
+        parcel.writeString(where);
+        parcel.writeString(status);
+        parcel.writeString(source);
+        parcel.writeMap(comments);
+        parcel.writeMap(likes);
+    }
+
+    public static final Creator<Observation> CREATOR = new Creator<Observation>() {
+        @Override
+        public Observation createFromParcel(Parcel in) {
+            return new Observation(in);
+        }
+
+        @Override
+        public Observation[] newArray(int size) {
+            return new Observation[size];
+        }
+    };
 }

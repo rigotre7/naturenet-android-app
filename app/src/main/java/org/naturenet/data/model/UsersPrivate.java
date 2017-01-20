@@ -1,5 +1,6 @@
 package org.naturenet.data.model;
 
+import android.os.Parcel;
 import android.support.annotation.Nullable;
 
 import com.google.firebase.database.Exclude;
@@ -26,4 +27,31 @@ public class UsersPrivate extends TimestampedData {
     public Map<String, Boolean> demographics;
 
     private UsersPrivate() {}
+
+    private UsersPrivate(Parcel in) {
+        super(in);
+        this.id = in.readString();
+        this.name = in.readString();
+        in.readMap(this.demographics, null);
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        super.writeToParcel(parcel, flags);
+        parcel.writeString(id);
+        parcel.writeString(name);
+        parcel.writeMap(demographics);
+    }
+
+    public static final Creator<UsersPrivate> CREATOR = new Creator<UsersPrivate>() {
+        @Override
+        public UsersPrivate createFromParcel(Parcel in) {
+            return new UsersPrivate(in);
+        }
+
+        @Override
+        public UsersPrivate[] newArray(int size) {
+            return new UsersPrivate[size];
+        }
+    };
 }

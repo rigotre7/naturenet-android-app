@@ -15,6 +15,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.GridView;
@@ -192,72 +193,98 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
         cameraPhoto = new CameraPhoto(main);
         galleryPhoto = new GalleryPhoto(main);
 
-        add_observation.setOnClickListener(v -> {
-            if (ContextCompat.checkSelfPermission(main, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(main, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, GALLERY_REQUEST);
-            } else {
-                setGallery();
+        add_observation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ContextCompat.checkSelfPermission(main, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(main, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, GALLERY_REQUEST);
+                } else {
+                    ProjectsFragment.this.setGallery();
+                }
+
+                select.setVisibility(View.GONE);
+                floating_buttons.setVisibility(View.GONE);
+                dialog_add_observation.setVisibility(View.VISIBLE);
             }
-
-            select.setVisibility(View.GONE);
-            floating_buttons.setVisibility(View.GONE);
-            dialog_add_observation.setVisibility(View.VISIBLE);
         });
 
-        add_design_idea.setOnClickListener(v -> {
-            floating_buttons.setVisibility(View.GONE);
-            dialog_add_design_idea.setVisibility(View.VISIBLE);
+        add_design_idea.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                floating_buttons.setVisibility(View.GONE);
+                dialog_add_design_idea.setVisibility(View.VISIBLE);
+            }
         });
 
-        add_observation_cancel.setOnClickListener(v -> {
+        add_observation_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-            if (recentImageGallery != null) {
-                int index = recentImageGallery.indexOf(selectedImage);
-                if (index >= 0) {
-                    gridview.getChildAt(index).findViewById(R.id.gallery_iv).setBackgroundResource(0);
+                if (recentImageGallery != null) {
+                    int index = recentImageGallery.indexOf(selectedImage);
+                    if (index >= 0) {
+                        gridview.getChildAt(index).findViewById(R.id.gallery_iv).setBackgroundResource(0);
+                    }
+                }
+
+                selectedImage = null;
+                select.setVisibility(View.GONE);
+                floating_buttons.setVisibility(View.VISIBLE);
+                dialog_add_observation.setVisibility(View.GONE);
+            }
+        });
+
+        select.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                main.observationPath = selectedImage;
+                main.newObservation = new Observation();
+                main.newObservation.location = Lists.newArrayList(latValue, longValue);
+                ProjectsFragment.this.setGallery();
+                main.goToAddObservationActivity();
+            }
+        });
+
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProjectsFragment.this.setGallery();
+                select.setVisibility(View.GONE);
+
+                try {
+                    ProjectsFragment.this.startActivityForResult(cameraPhoto.takePhotoIntent(), CAMERA_REQUEST);
+                } catch (IOException e) {
+                    Toast.makeText(main, "Something Wrong while taking photo", Toast.LENGTH_SHORT).show();
                 }
             }
-
-            selectedImage = null;
-            select.setVisibility(View.GONE);
-            floating_buttons.setVisibility(View.VISIBLE);
-            dialog_add_observation.setVisibility(View.GONE);
         });
 
-        select.setOnClickListener(v -> {
-            main.observationPath = selectedImage;
-            main.newObservation = new Observation();
-            main.newObservation.location = Lists.newArrayList(latValue, longValue);
-            setGallery();
-            main.goToAddObservationActivity();
-        });
-
-        camera.setOnClickListener(v -> {
-            setGallery();
-            select.setVisibility(View.GONE);
-
-            try {
-                startActivityForResult(cameraPhoto.takePhotoIntent(), CAMERA_REQUEST);
-            } catch (IOException e) {
-                Toast.makeText(main, "Something Wrong while taking photo", Toast.LENGTH_SHORT).show();
+        gallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProjectsFragment.this.setGallery();
+                select.setVisibility(View.GONE);
+                ProjectsFragment.this.startActivityForResult(galleryPhoto.openGalleryIntent(), GALLERY_REQUEST);
             }
         });
 
-        gallery.setOnClickListener(v -> {
-            setGallery();
-            select.setVisibility(View.GONE);
-            startActivityForResult(galleryPhoto.openGalleryIntent(), GALLERY_REQUEST);
-        });
-
-        add_design_idea_cancel.setOnClickListener(v -> {
-            floating_buttons.setVisibility(View.VISIBLE);
-            dialog_add_design_idea.setVisibility(View.GONE);
+        add_design_idea_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                floating_buttons.setVisibility(View.VISIBLE);
+                dialog_add_design_idea.setVisibility(View.GONE);
+            }
         });
 
         floating_buttons.setVisibility(View.VISIBLE);
         dialog_add_observation.setVisibility(View.GONE);
         dialog_add_design_idea.setVisibility(View.GONE);
-        mProjectsListView.setOnItemClickListener((parent, view, position, id) -> main.goToProjectActivity(mProjects.get(position)));
+        mProjectsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                main.goToProjectActivity(mProjects.get(position));
+            }
+        });
     }
 
     public void setGallery() {
@@ -266,27 +293,30 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
         if (recentImageGallery.size() != 0) {
             gridview.setAdapter(new ImageGalleryAdapter(main, recentImageGallery));
 
-            gridview.setOnItemClickListener((parent, v, position, id) -> {
-                ImageView iv = (ImageView) v.findViewById(R.id.gallery_iv);
+            gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                    ImageView iv = (ImageView) v.findViewById(R.id.gallery_iv);
 
-                if (selectedImage == null) {
-                    selectedImage = recentImageGallery.get(position);
-                    iv.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.border_selected_image));
-                    select.setVisibility(View.VISIBLE);
-                } else if (selectedImage.equals(recentImageGallery.get(position))) {
-                    selectedImage = null;
-                    iv.setBackgroundResource(0);
-                    select.setVisibility(View.GONE);
-                } else {
-                    int index = recentImageGallery.indexOf(selectedImage);
+                    if (selectedImage == null) {
+                        selectedImage = recentImageGallery.get(position);
+                        iv.setBackground(ContextCompat.getDrawable(ProjectsFragment.this.getActivity(), R.drawable.border_selected_image));
+                        select.setVisibility(View.VISIBLE);
+                    } else if (selectedImage.equals(recentImageGallery.get(position))) {
+                        selectedImage = null;
+                        iv.setBackgroundResource(0);
+                        select.setVisibility(View.GONE);
+                    } else {
+                        int index = recentImageGallery.indexOf(selectedImage);
 
-                    if (index >= 0) {
-                        gridview.getChildAt(index).findViewById(R.id.gallery_iv).setBackgroundResource(0);
+                        if (index >= 0) {
+                            gridview.getChildAt(index).findViewById(R.id.gallery_iv).setBackgroundResource(0);
+                        }
+
+                        selectedImage = recentImageGallery.get(position);
+                        iv.setBackground(ContextCompat.getDrawable(ProjectsFragment.this.getActivity(), R.drawable.border_selected_image));
+                        select.setVisibility(View.VISIBLE);
                     }
-
-                    selectedImage = recentImageGallery.get(position);
-                    iv.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.border_selected_image));
-                    select.setVisibility(View.VISIBLE);
                 }
             });
         }

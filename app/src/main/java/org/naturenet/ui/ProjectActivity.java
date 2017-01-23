@@ -70,11 +70,14 @@ public class ProjectActivity extends AppCompatActivity {
         toolbar.setTitle(EMPTY);
         toolbar_title.setVisibility(View.VISIBLE);
 
-        project_back.setOnClickListener(v -> {
-            if (selectedObservation != null) {
-                goBackToProjectDetailFragment();
-            } else {
-                goBackToProjectsFragment();
+        project_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (selectedObservation != null) {
+                    ProjectActivity.this.goBackToProjectDetailFragment();
+                } else {
+                    ProjectActivity.this.goBackToProjectsFragment();
+                }
             }
         });
 

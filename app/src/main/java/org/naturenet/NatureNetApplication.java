@@ -1,6 +1,7 @@
 package org.naturenet;
 
-import android.app.Application;
+import android.support.annotation.NonNull;
+import android.support.multidex.MultiDexApplication;
 import android.widget.Toast;
 
 import com.google.common.base.Optional;
@@ -21,7 +22,7 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import timber.log.Timber;
 
-public class NatureNetApplication extends Application {
+public class NatureNetApplication extends MultiDexApplication {
 
     private final BehaviorSubject<Optional<Users>>  usersBehaviorSubject = BehaviorSubject.create();
 
@@ -29,28 +30,31 @@ public class NatureNetApplication extends Application {
         return usersBehaviorSubject;
     }
 
-    private FirebaseAuth.AuthStateListener mAuthStateListener = firebaseAuth -> {
-        if(firebaseAuth.getCurrentUser() != null) {
-            final String uid = firebaseAuth.getCurrentUser().getUid();
-            Timber.i("User logged in: %s", uid);
-            FirebaseDatabase.getInstance().getReference(Users.NODE_NAME).child(uid).keepSynced(true);
-            FirebaseDatabase.getInstance().getReference(Users.NODE_NAME).child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Timber.d("Loaded profile data for %s" + uid);
-                    usersBehaviorSubject.onNext(Optional.fromNullable(dataSnapshot.getValue(Users.class)));
-                }
+    private FirebaseAuth.AuthStateListener mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+        @Override
+        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+            if (firebaseAuth.getCurrentUser() != null) {
+                final String uid = firebaseAuth.getCurrentUser().getUid();
+                Timber.i("User logged in: %s", uid);
+                FirebaseDatabase.getInstance().getReference(Users.NODE_NAME).child(uid).keepSynced(true);
+                FirebaseDatabase.getInstance().getReference(Users.NODE_NAME).child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Timber.d("Loaded profile data for %s" + uid);
+                        usersBehaviorSubject.onNext(Optional.fromNullable(dataSnapshot.getValue(Users.class)));
+                    }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Timber.e("Could not load user data for %s: %s", uid);
-                    usersBehaviorSubject.onNext(Optional.absent());
-                    Toast.makeText(NatureNetApplication.this, getString(R.string.login_error_message_firebase_read), Toast.LENGTH_SHORT).show();
-                }
-            });
-        } else {
-            Timber.i("User logged out");
-            usersBehaviorSubject.onNext(Optional.absent());
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Timber.e("Could not load user data for %s: %s", uid);
+                        usersBehaviorSubject.onNext(Optional.<Users>absent());
+                        Toast.makeText(NatureNetApplication.this, getString(R.string.login_error_message_firebase_read), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Timber.i("User logged out");
+                usersBehaviorSubject.onNext(Optional.<Users>absent());
+            }
         }
     };
 

@@ -3,6 +3,7 @@ package org.naturenet.ui;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
@@ -34,6 +35,9 @@ import android.widget.Toast;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
@@ -73,6 +77,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import io.reactivex.functions.Consumer;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -160,31 +165,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-        licenses.setOnClickListener(v ->
-            new AlertDialog.Builder(v.getContext())
-                    .setView(View.inflate(this, R.layout.about, null))
-                    .setNegativeButton("Dismiss", null)
-                    .setCancelable(false)
-                    .show()
+        licenses.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new AlertDialog.Builder(v.getContext())
+                            .setView(View.inflate(MainActivity.this, R.layout.about, null))
+                            .setNegativeButton("Dismiss", null)
+                            .setCancelable(false)
+                            .show();
+                }
+            }
         );
 
         this.invalidateOptionsMenu();
         pd = new ProgressDialog(this);
         pd.setCancelable(false);
 
-        sign_in.setOnClickListener(v -> {
-            if (haveNetworkConnection()) {
-                goToLoginActivity();
-            } else {
-                Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+        sign_in.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (MainActivity.this.haveNetworkConnection()) {
+                    MainActivity.this.goToLoginActivity();
+                } else {
+                    Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
-        join.setOnClickListener(v -> {
-            if (haveNetworkConnection()) {
-                goToJoinActivity();
-            } else {
-                Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+        join.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (MainActivity.this.haveNetworkConnection()) {
+                    MainActivity.this.goToJoinActivity();
+                } else {
+                    Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -201,8 +216,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             new android.app.AlertDialog.Builder(this)
                 .setMessage("Your GPS seems to be disabled, do you want to enable it?")
                 .setCancelable(false)
-                .setPositiveButton("Yes", (dialog, id) -> startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
-                .setNegativeButton("No", (dialog, id) -> dialog.cancel())
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        MainActivity.this.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                })
                 .create().show();
         }
     }
@@ -211,16 +236,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onStart() {
         super.onStart();
 
-        ((NatureNetApplication)getApplication()).getCurrentUserObservable().subscribe(user -> {
-            if (user.isPresent()) {
-                onUserSignIn(user.get());
-            } else {
-                if (signed_user != null) {
-                    mFirebase.child(Users.NODE_NAME).child(signed_user.id).keepSynced(false);
-                    onUserSignOut();
+        ((NatureNetApplication)getApplication()).getCurrentUserObservable().subscribe(new Consumer<Optional<Users>>() {
+            @Override
+            public void accept(Optional<Users> user) throws Exception {
+                if (user.isPresent()) {
+                    MainActivity.this.onUserSignIn(user.get());
+                } else {
+                    if (signed_user != null) {
+                        mFirebase.child(Users.NODE_NAME).child(signed_user.id).keepSynced(false);
+                        MainActivity.this.onUserSignOut();
+                    }
+                    MainActivity.this.updateUINoUser();
+                    MainActivity.this.goToLaunchFragment();
                 }
-                updateUINoUser();
-                goToLaunchFragment();
             }
         });
     }
@@ -696,10 +724,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void continueWithFirebaseUpload(UploadTask uploadTask) {
-        uploadTask.addOnSuccessListener(taskSnapshot -> writeObservationToFirebase(taskSnapshot.getDownloadUrl().toString()))
-            .addOnFailureListener(ex -> {
-                Timber.w(ex, "Image upload task failed: %s", ex.getMessage());
-                Toast.makeText(MainActivity.this, "Your photo could not be uploaded.", Toast.LENGTH_SHORT).show();
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                MainActivity.this.writeObservationToFirebase(taskSnapshot.getDownloadUrl().toString());
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception ex) {
+                    Timber.w(ex, "Image upload task failed: %s", ex.getMessage());
+                    Toast.makeText(MainActivity.this, "Your photo could not be uploaded.", Toast.LENGTH_SHORT).show();
+                }
             });
     }
 
@@ -707,14 +743,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         final String id = mFirebase.child(OBSERVATIONS).push().getKey();
         newObservation.id = id;
         newObservation.data.image = imageUrl;
-        mFirebase.child(Observation.NODE_NAME).child(id).setValue(newObservation,(databaseError, databaseReference) -> {
-            if (databaseError != null) {
-                Timber.w(databaseError.toException(), "Failed to write observation to database: %s", databaseError.getMessage());
-                Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_error), Toast.LENGTH_SHORT).show();
-            } else {
-                mFirebase.child(Users.NODE_NAME).child(signed_user.id).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
-                mFirebase.child(Project.NODE_NAME).child(newObservation.projectId).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
-                Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_success), Toast.LENGTH_SHORT).show();
+        mFirebase.child(Observation.NODE_NAME).child(id).setValue(newObservation, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    Timber.w(databaseError.toException(), "Failed to write observation to database: %s", databaseError.getMessage());
+                    Toast.makeText(MainActivity.this, MainActivity.this.getResources().getString(R.string.dialog_add_observation_error), Toast.LENGTH_SHORT).show();
+                } else {
+                    mFirebase.child(Users.NODE_NAME).child(signed_user.id).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
+                    mFirebase.child(Project.NODE_NAME).child(newObservation.projectId).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
+                    Toast.makeText(MainActivity.this, MainActivity.this.getResources().getString(R.string.dialog_add_observation_success), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

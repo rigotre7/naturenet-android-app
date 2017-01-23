@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +18,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -65,75 +67,92 @@ public class JoinActivity extends AppCompatActivity {
         affiliation_names = getIntent().getStringArrayExtra(NAMES);
         pd = new ProgressDialog(this);
 
-        et_affiliation.setOnClickListener(v -> {
-            View view = View.inflate(this, R.layout.affiliation_list, null);
-            ListView lv_affiliation = (ListView) view.findViewById(R.id.join_lv_affiliation);
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(v.getContext(), android.R.layout.simple_spinner_dropdown_item, affiliation_names);
-            lv_affiliation.setAdapter(adapter);
-            AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext()).setView(view);
-            final AlertDialog affiliationList = builder.create();
+        et_affiliation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View view = View.inflate(JoinActivity.this, R.layout.affiliation_list, null);
+                ListView lv_affiliation = (ListView) view.findViewById(R.id.join_lv_affiliation);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(v.getContext(), android.R.layout.simple_spinner_dropdown_item, affiliation_names);
+                lv_affiliation.setAdapter(adapter);
+                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext()).setView(view);
+                final AlertDialog affiliationList = builder.create();
 
-            lv_affiliation.setOnItemClickListener((parent, view1, position, id) -> {
-                et_affiliation.setText(affiliation_names[position]);
-                affiliation = affiliation_ids[position];
-                affiliationList.dismiss();
-            });
+                lv_affiliation.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view1, int position, long id) {
+                        et_affiliation.setText(affiliation_names[position]);
+                        affiliation = affiliation_ids[position];
+                        affiliationList.dismiss();
+                    }
+                });
 
-            affiliationList.show();
+                affiliationList.show();
+            }
         });
 
-        back.setOnClickListener(v -> goBackToLaunchFragment());
-        join.setOnClickListener(v -> {
-            userName = ((EditText) findViewById(R.id.join_et_user_name)).getText().toString();
-            password = ((EditText) findViewById(R.id.join_et_password)).getText().toString();
-            name = ((EditText) findViewById(R.id.join_et_name)).getText().toString();
-            emailAddress = ((EditText) findViewById(R.id.join_et_email_address)).getText().toString();
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                JoinActivity.this.goBackToLaunchFragment();
+            }
+        });
+        join.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userName = ((EditText) JoinActivity.this.findViewById(R.id.join_et_user_name)).getText().toString();
+                password = ((EditText) JoinActivity.this.findViewById(R.id.join_et_password)).getText().toString();
+                name = ((EditText) JoinActivity.this.findViewById(R.id.join_et_name)).getText().toString();
+                emailAddress = ((EditText) JoinActivity.this.findViewById(R.id.join_et_email_address)).getText().toString();
 
-            if (is_any_field_empty() || is_email_address_invalid() || is_password_invalid()) {
-                Toast.makeText(JoinActivity.this, error, Toast.LENGTH_SHORT).show();
-            } else {
-                join.setVisibility(View.GONE);
-                pd.setMessage(JOINING);
-                pd.setCancelable(false);
-                pd.show();
-                fbRef = FirebaseDatabase.getInstance().getReference();
-                final FirebaseAuth mAuth = FirebaseAuth.getInstance();
-                Timber.i("Creating new user account for %s", emailAddress);
-                mAuth.createUserWithEmailAndPassword(emailAddress, password)
-                        .continueWithTask(new Continuation<AuthResult, Task<Void>>() {
-                            @Override
-                            public Task<Void> then(@NonNull final Task<AuthResult> taskCreate) throws Exception {
-                                if (taskCreate.isSuccessful()) {
-                                    final String id = taskCreate.getResult().getUser().getUid();
-                                    Timber.i("Account creation successful for user %s, signing in...", id);
-                                    mAuth.signInWithEmailAndPassword(emailAddress, password).addOnCompleteListener(JoinActivity.this, task -> {
-                                        if (task.isSuccessful()) {
-                                            Timber.i("Successful authentication, writing new user data...");
-                                            String default_avatar = getResources().getString(R.string.join_default_avatar);
-                                            final Users user = Users.createNew(id, userName, affiliation, default_avatar);
-                                            final UsersPrivate userPrivate = UsersPrivate.createNew(id, name);
-                                            fbRef.child(USERS).child(id).setValue(user);
-                                            fbRef.child(USERS_PRIVATE).child(id).setValue(userPrivate);
-                                            pd.dismiss();
-                                            join.setVisibility(View.VISIBLE);
-                                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.join_success_message), Toast.LENGTH_SHORT).show();
-                                            continueAsSignedUser(user);
-                                        } else {
-                                            Timber.e(task.getException(), "Failed to authenticate with new account for %s", id);
-                                            pd.dismiss();
-                                            join.setVisibility(View.VISIBLE);
-                                            Toast.makeText(JoinActivity.this, getResources().getString(R.string.login_error_message_firebase_login) + task.getException(), Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                } else {
-                                    Timber.e(taskCreate.getException(), "Failed to create account for %s", emailAddress);
-                                    pd.dismiss();
-                                    join.setVisibility(View.VISIBLE);
-                                    Toast.makeText(JoinActivity.this, getResources().getString(R.string.join_error_message_firebase_create) + taskCreate.getException(), Toast.LENGTH_SHORT).show();
+                if (JoinActivity.this.is_any_field_empty() || JoinActivity.this.is_email_address_invalid() || JoinActivity.this.is_password_invalid()) {
+                    Toast.makeText(JoinActivity.this, error, Toast.LENGTH_SHORT).show();
+                } else {
+                    join.setVisibility(View.GONE);
+                    pd.setMessage(JOINING);
+                    pd.setCancelable(false);
+                    pd.show();
+                    fbRef = FirebaseDatabase.getInstance().getReference();
+                    final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                    Timber.i("Creating new user account for %s", emailAddress);
+                    mAuth.createUserWithEmailAndPassword(emailAddress, password)
+                            .continueWithTask(new Continuation<AuthResult, Task<Void>>() {
+                                @Override
+                                public Task<Void> then(@NonNull final Task<AuthResult> taskCreate) throws Exception {
+                                    if (taskCreate.isSuccessful()) {
+                                        final String id = taskCreate.getResult().getUser().getUid();
+                                        Timber.i("Account creation successful for user %s, signing in...", id);
+                                        mAuth.signInWithEmailAndPassword(emailAddress, password).addOnCompleteListener(JoinActivity.this, new OnCompleteListener<AuthResult>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                                if (task.isSuccessful()) {
+                                                    Timber.i("Successful authentication, writing new user data...");
+                                                    String default_avatar = getResources().getString(R.string.join_default_avatar);
+                                                    final Users user = Users.createNew(id, userName, affiliation, default_avatar);
+                                                    final UsersPrivate userPrivate = UsersPrivate.createNew(id, name);
+                                                    fbRef.child(USERS).child(id).setValue(user);
+                                                    fbRef.child(USERS_PRIVATE).child(id).setValue(userPrivate);
+                                                    pd.dismiss();
+                                                    join.setVisibility(View.VISIBLE);
+                                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.join_success_message), Toast.LENGTH_SHORT).show();
+                                                    continueAsSignedUser(user);
+                                                } else {
+                                                    Timber.e(task.getException(), "Failed to authenticate with new account for %s", id);
+                                                    pd.dismiss();
+                                                    join.setVisibility(View.VISIBLE);
+                                                    Toast.makeText(JoinActivity.this, getResources().getString(R.string.login_error_message_firebase_login) + task.getException(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+                                    } else {
+                                        Timber.e(taskCreate.getException(), "Failed to create account for %s", emailAddress);
+                                        pd.dismiss();
+                                        join.setVisibility(View.VISIBLE);
+                                        Toast.makeText(JoinActivity.this, getResources().getString(R.string.join_error_message_firebase_create) + taskCreate.getException(), Toast.LENGTH_SHORT).show();
+                                    }
+                                    return null;
                                 }
-                                return null;
-                            }
-                        });
+                            });
+                }
             }
         });
     }

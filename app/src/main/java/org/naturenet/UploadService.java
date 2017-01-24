@@ -5,14 +5,19 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.collect.Maps;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.storage.FirebaseStorage;
@@ -36,16 +41,49 @@ import timber.log.Timber;
 public class UploadService extends IntentService {
 
     public static final String EXTRA_URI_PATH = "uri_path";
-    public static final String EXTRA_ACTIVE_USER = "active_user";
     public static final String EXTRA_OBSERVATION = "observation";
 
     private static final int MAX_IMAGE_DIMENSION = 1920;
     private static final String LATEST_CONTRIBUTION = "latest_contribution";
 
     private FirebaseDatabase mDatabase;
-    private Observation newObservation;
+    private Observation mObservation;
     private Uri mImageUri;
-    private Users mUser;
+    private Handler mHandler = new Handler();
+    private Target mFirebaseUploadTarget = new Target() {
+
+        final StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("photos").child(UUID.randomUUID().toString());
+
+        @Override
+        public int hashCode() {
+            return mImageUri.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return (obj != null) && (obj instanceof Target) && mImageUri.equals(obj);
+        }
+
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+            Timber.d("Bitmap loaded; uploading data stream to Firebase");
+            final ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+            byte[] data = stream.toByteArray();
+            continueWithFirebaseUpload(storageRef.putBytes(data));
+        }
+
+        @Override
+        public void onBitmapFailed(Drawable errorDrawable) {
+            Timber.e("Could not load bitmap; uploading original file to Firebase");
+            continueWithFirebaseUpload(storageRef.putFile(mImageUri));
+        }
+
+        @Override
+        public void onPrepareLoad(Drawable placeHolderDrawable) {
+            Timber.d("Loading raw bitmap data from %s", mImageUri.getPath());
+        }
+    };
 
     public UploadService() {
         super("UploadService");
@@ -54,17 +92,21 @@ public class UploadService extends IntentService {
 
     @Override
     public void onHandleIntent(Intent intent) {
-        newObservation = intent.getParcelableExtra(EXTRA_OBSERVATION);
-        mImageUri = Uri.parse(intent.getStringExtra(EXTRA_URI_PATH));
-        mUser = intent.getParcelableExtra(EXTRA_ACTIVE_USER);
+        mObservation = intent.getParcelableExtra(EXTRA_OBSERVATION);
+        mImageUri = intent.getParcelableExtra(EXTRA_URI_PATH);
         uploadObservation();
     }
 
     private void uploadObservation() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null && user.getUid().equals(mUser.id)) {
+        if (user != null && user.getUid().equals(mObservation.userId)) {
             Timber.d("Preparing image for upload");
-            Toast.makeText(this, "Your observation is being submitted.", Toast.LENGTH_SHORT).show();
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(UploadService.this, "Your observation is being submitted.", Toast.LENGTH_SHORT).show();
+                }
+            });
 
             final Map<String, String> config = Maps.newHashMap();
             config.put("cloud_name", "university-of-colorado");
@@ -80,7 +122,12 @@ public class UploadService extends IntentService {
 
         } else {
             Timber.w("Attempt to upload observation without valid login");
-            Toast.makeText(getApplicationContext(), "Please sign in to contribute an observation.", Toast.LENGTH_LONG).show();
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(UploadService.this, "Please sign in to contribute an observation.", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
@@ -91,62 +138,61 @@ public class UploadService extends IntentService {
 
     private void uploadImageWithFirebase() {
         Timber.i("Attempting upload to Firebase");
-        Picasso.with(this).load(mImageUri).resize(MAX_IMAGE_DIMENSION, MAX_IMAGE_DIMENSION).centerInside().onlyScaleDown().into(new Target() {
-
-            final StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("photos").child(UUID.randomUUID().toString());
-
+        mHandler.post(new Runnable() {
             @Override
-            public int hashCode() {
-                return mImageUri.hashCode();
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                return (obj != null) && (obj instanceof Target) && mImageUri.equals(obj);
-            }
-
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                Timber.d("Bitmap loaded; uploading data stream to Firebase");
-                final ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
-                byte[] data = stream.toByteArray();
-                continueWithFirebaseUpload(storageRef.putBytes(data));
-            }
-
-            @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
-                Timber.e("Could not load bitmap; uploading original file to Firebase");
-                continueWithFirebaseUpload(storageRef.putFile(mImageUri));
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-                Timber.d("Loading raw bitmap data from %s", mImageUri.getPath());
+            public void run() {
+                Picasso.with(UploadService.this).load(mImageUri).resize(MAX_IMAGE_DIMENSION, MAX_IMAGE_DIMENSION)
+                        .centerInside().onlyScaleDown().into(mFirebaseUploadTarget);
             }
         });
     }
 
     private void continueWithFirebaseUpload(UploadTask uploadTask) {
-        uploadTask.addOnSuccessListener(taskSnapshot -> writeObservationToFirebase(taskSnapshot.getDownloadUrl().toString()))
-                .addOnFailureListener(ex -> {
-                    Timber.w(ex, "Image upload task failed: %s", ex.getMessage());
-                    Toast.makeText(getApplicationContext(), "Your photo could not be uploaded.", Toast.LENGTH_SHORT).show();
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                UploadService.this.writeObservationToFirebase(taskSnapshot.getDownloadUrl().toString());
+            }
+        })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception ex) {
+                Timber.w(ex, "Image upload task failed: %s", ex.getMessage());
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(UploadService.this, getString(R.string.image_upload_error), Toast.LENGTH_LONG).show();
+                    }
                 });
+            }
+        });
     }
 
     private void writeObservationToFirebase(String imageUrl) {
         final String id = mDatabase.getReference(Observation.NODE_NAME).push().getKey();
-        newObservation.id = id;
-        newObservation.data.image = imageUrl;
-        mDatabase.getReference(Observation.NODE_NAME).child(id).setValue(newObservation,(databaseError, databaseReference) -> {
-            if (databaseError != null) {
-                Timber.w(databaseError.toException(), "Failed to write observation to database: %s", databaseError.getMessage());
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.dialog_add_observation_error), Toast.LENGTH_SHORT).show();
-            } else {
-                mDatabase.getReference(Users.NODE_NAME).child(mUser.id).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
-                mDatabase.getReference(Project.NODE_NAME).child(newObservation.projectId).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.dialog_add_observation_success), Toast.LENGTH_SHORT).show();
+        mObservation.id = id;
+        mObservation.data.image = imageUrl;
+        mDatabase.getReference(Observation.NODE_NAME).child(id).setValue(mObservation, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    Timber.w(databaseError.toException(), "Failed to write observation to database: %s", databaseError.getMessage());
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(UploadService.this, getString(R.string.dialog_add_observation_error), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    mDatabase.getReference(Users.NODE_NAME).child(mObservation.userId).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
+                    mDatabase.getReference(Project.NODE_NAME).child(mObservation.projectId).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(UploadService.this, getString(R.string.dialog_add_observation_success), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         });
     }

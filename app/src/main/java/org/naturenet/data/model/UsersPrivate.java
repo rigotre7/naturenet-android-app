@@ -3,6 +3,7 @@ package org.naturenet.data.model;
 import android.os.Parcel;
 import android.support.annotation.Nullable;
 
+import com.google.common.collect.Maps;
 import com.google.firebase.database.Exclude;
 
 import java.util.Map;
@@ -24,7 +25,7 @@ public class UsersPrivate extends TimestampedData {
     public String name;
 
     @Nullable
-    public Map<String, Boolean> demographics;
+    public Map<String, Boolean> demographics = Maps.newHashMap();
 
     private UsersPrivate() {}
 

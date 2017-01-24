@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
+import com.google.common.collect.Maps;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
@@ -34,7 +35,7 @@ public class Project implements Parcelable {
     public Long latestContribution;
 
     @Nullable
-    public Map<String, Boolean> sites;
+    public Map<String, Boolean> sites = Maps.newHashMap();
 
     private Project() {}
 

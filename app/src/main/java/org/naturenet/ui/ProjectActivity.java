@@ -37,6 +37,7 @@ public class ProjectActivity extends AppCompatActivity {
     static String FRAGMENT_TAG_PROJECT_DETAIL = "project_detail_fragment";
     static String FRAGMENT_TAG_SELECTED_OBSERVATION = "selected_observation_fragment";
     static String SIGNED_USER = "signed_user";
+    static String PROJECT = "project";
     static String EMPTY = "";
     static int NUM_OF_OBSERVATIONS = 10;
     static String NAME = "name";
@@ -64,8 +65,8 @@ public class ProjectActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         project_back = (TextView) findViewById(R.id.project_back);
         toolbar_title = (TextView) findViewById(R.id.app_bar_project_tv);
-        signed_user = (Users) getIntent().getSerializableExtra(SIGNED_USER);
-        project = (Project) getIntent().getSerializableExtra("project");
+        signed_user = getIntent().getParcelableExtra(SIGNED_USER);
+        project = getIntent().getParcelableExtra(PROJECT);
         setSupportActionBar(toolbar);
         toolbar.setTitle(EMPTY);
         toolbar_title.setVisibility(View.VISIBLE);

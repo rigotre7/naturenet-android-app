@@ -48,7 +48,7 @@ public abstract class TimestampedData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeValue(createdAt);
-        parcel.writeValue(updatedAt);
+        parcel.writeValue(getCreatedAtMillis());
+        parcel.writeValue(getUpdatedAtMillis());
     }
 }

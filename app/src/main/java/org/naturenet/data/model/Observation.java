@@ -3,6 +3,8 @@ package org.naturenet.data.model;
 import android.os.Parcel;
 import android.support.annotation.Nullable;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
@@ -44,7 +46,7 @@ public class Observation extends TimestampedData {
     public String geohash;
 
     @PropertyName("l")
-    public List<Double> location;
+    public List<Double> location = Lists.newArrayList();
 
     public PhotoCaptionContent data;
 
@@ -58,10 +60,10 @@ public class Observation extends TimestampedData {
     public String source;
 
     @Nullable
-    public Map<String, Boolean> comments = null;
+    public Map<String, Boolean> comments = Maps.newHashMap();
 
     @Nullable
-    public Map<String, Boolean> likes = null;
+    public Map<String, Boolean> likes = Maps.newHashMap();
 
     public Observation() {}
 

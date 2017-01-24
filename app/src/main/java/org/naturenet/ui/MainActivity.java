@@ -6,13 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -32,12 +29,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -45,14 +39,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 import com.squareup.picasso.Transformation;
 
 import org.naturenet.NatureNetApplication;
+import org.naturenet.UploadService;
 import org.naturenet.util.CroppedCircleTransformation;
 import org.naturenet.R;
 import org.naturenet.data.model.Comment;
@@ -63,15 +55,12 @@ import org.naturenet.data.model.Project;
 import org.naturenet.data.model.Site;
 import org.naturenet.data.model.Users;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import timber.log.Timber;
 
@@ -115,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     String[] affiliation_ids, affiliation_names;
     Observation newObservation, selectedObservation, previewSelectedObservation;
     ObserverInfo selectedObserverInfo;
-    List<Observation> observations;
+    ArrayList<Observation> observations;
     List<ObserverInfo> observers;
     List<Comment> comments;
     List<String> ids, names;
@@ -480,7 +469,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         beginTransaction().
                         replace(R.id.fragment_container, new ExploreFragment(), FRAGMENT_TAG_EXPLORE).
                         addToBackStack(FRAGMENT_TAG_EXPLORE).
-                        commit();
+                        commitAllowingStateLoss();
             }
         } else {
             Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
@@ -579,9 +568,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void goToObservationActivity() {
         Intent observation = new Intent(this, ObservationActivity.class);
         observation.putExtra(SIGNED_USER, signed_user);
-        observation.putExtra(OBSERVATIONS, (Serializable) observations);
-        observation.putExtra(OBSERVERS, (Serializable) observers);
-        observation.putExtra(OBSERVATION, previewSelectedObservation);
+        observation.putParcelableArrayListExtra(OBSERVATIONS, observations);
+        observation.putExtra(OBSERVERS, (Serializable)observers);
+        if (previewSelectedObservation != null) {
+            observation.putExtra(OBSERVATION, previewSelectedObservation);
+        }
         startActivityForResult(observation, REQUEST_CODE_OBSERVATION_ACTIVITY);
         overridePendingTransition(R.anim.slide_up, R.anim.stay);
     }
@@ -611,114 +602,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return listOfAllImages;
     }
 
-    private void uploadObservation() {
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            pd.setMessage(SUBMITTING);
-            pd.setCancelable(false);
-            pd.show();
-
-            Timber.d("Preparing image for upload");
-            Toast.makeText(this, "Your observation is being submitted.", Toast.LENGTH_SHORT).show();
-
-            AsyncTask<Uri, Void, Map> uploader = new AsyncTask<Uri, Void, Map>() {
-                @Override
-                protected Map doInBackground(Uri... uris) {
-                    final Uri observationPath = uris[0];
-                    final Map<String, String> config = Maps.newHashMap();
-                    config.put("cloud_name", "university-of-colorado");
-                    Cloudinary cloudinary = new Cloudinary(config);
-
-                    try {
-                        return cloudinary.uploader().unsignedUpload(new File(observationPath.getPath()), "android-preset", ObjectUtils.emptyMap());
-                    } catch (IOException ex) {
-                        Timber.w(ex, "Failed to upload image to Cloudinary");
-                        return null;
-                    }
-                }
-
-                @Override
-                protected void onPostExecute(Map results) {
-                    super.onPostExecute(results);
-                    pd.dismiss();
-                    if (results == null) {
-                        uploadImageWithFirebase();
-                    } else {
-                        continueWithCloudinaryUpload(results);
-                    }
-                }
-            };
-
-            uploader.execute(observationPath);
-        }
-    }
-
-    private void continueWithCloudinaryUpload(Map results) {
-        Timber.i("Image uploaded to Cloudinary as %s", results.get("public_id"));
-        writeObservationToFirebase((String)results.get("secure_url"));
-    }
-
-    private void uploadImageWithFirebase() {
-        Timber.i("Attempting upload to Firebase");
-        Picasso.with(this).load(observationPath).resize(MAX_IMAGE_DIMENSION, MAX_IMAGE_DIMENSION).centerInside().onlyScaleDown().into(new Target() {
-
-            final StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("photos").child(UUID.randomUUID().toString());
-
-            @Override
-            public int hashCode() {
-                return observationPath.hashCode();
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                return (obj != null) && (obj instanceof Target) && observationPath.equals(obj);
-            }
-
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                Timber.d("Bitmap loaded; uploading data stream to Firebase");
-                final ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
-                byte[] data = stream.toByteArray();
-                continueWithFirebaseUpload(storageRef.putBytes(data));
-            }
-
-            @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
-                Timber.e("Could not load bitmap; uploading original file to Firebase");
-                continueWithFirebaseUpload(storageRef.putFile(observationPath));
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-                Timber.d("Loading raw bitmap data from %s", observationPath.getPath());
-            }
-        });
-    }
-
-    private void continueWithFirebaseUpload(UploadTask uploadTask) {
-        uploadTask.addOnSuccessListener(taskSnapshot -> writeObservationToFirebase(taskSnapshot.getDownloadUrl().toString()))
-            .addOnFailureListener(ex -> {
-                Timber.w(ex, "Image upload task failed: %s", ex.getMessage());
-                Toast.makeText(MainActivity.this, "Your photo could not be uploaded.", Toast.LENGTH_SHORT).show();
-            });
-    }
-
-    private void writeObservationToFirebase(String imageUrl) {
-        final String id = mFirebase.child(OBSERVATIONS).push().getKey();
-        newObservation.id = id;
-        newObservation.data.image = imageUrl;
-        mFirebase.child(Observation.NODE_NAME).child(id).setValue(newObservation,(databaseError, databaseReference) -> {
-            if (databaseError != null) {
-                Timber.w(databaseError.toException(), "Failed to write observation to database: %s", databaseError.getMessage());
-                Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_error), Toast.LENGTH_SHORT).show();
-            } else {
-                mFirebase.child(Users.NODE_NAME).child(signed_user.id).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
-                mFirebase.child(Project.NODE_NAME).child(newObservation.projectId).child(LATEST_CONTRIBUTION).setValue(ServerValue.TIMESTAMP);
-                Toast.makeText(MainActivity.this, getResources().getString(R.string.dialog_add_observation_success), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
@@ -729,7 +612,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     } else if (LAUNCH.equals(data.getExtras().getString(JOIN))) {
                         goToLaunchFragment();
                     } else if (LOGIN.equals(data.getExtras().getString(JOIN))) {
-                        signed_user = (Users) data.getSerializableExtra(NEW_USER);
+                        signed_user = data.getParcelableExtra(NEW_USER);
                         logout.setVisible(true);
                         this.supportInvalidateOptionsMenu();
 
@@ -772,9 +655,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             case(REQUEST_CODE_ADD_OBSERVATION): {
                 if(resultCode == Activity.RESULT_OK) {
-                    newObservation = (Observation) data.getSerializableExtra(OBSERVATION);
+                    newObservation = data.getParcelableExtra(OBSERVATION);
                     newObservation.userId = signed_user.id;
-                    uploadObservation();
+                    Intent uploadIntent = new Intent(MainActivity.this, UploadService.class);
+                    uploadIntent.putExtra(UploadService.EXTRA_OBSERVATION, newObservation);
+                    uploadIntent.putExtra(UploadService.EXTRA_URI_PATH, observationPath);
+                    startService(uploadIntent);
                     goToExploreFragment();
                 }
                 break;
@@ -808,7 +694,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Toast.makeText(MainActivity.this, getString(R.string.login_error_message_firebase_read), Toast.LENGTH_SHORT).show();
             }
         });
-        Toast.makeText(MainActivity.this, String.format("Welcome, %s!", signed_user.displayName), Toast.LENGTH_SHORT).show();
     }
 
     public void updateUINoUser() {

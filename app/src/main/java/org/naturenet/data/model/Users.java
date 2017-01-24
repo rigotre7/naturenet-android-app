@@ -3,6 +3,7 @@ package org.naturenet.data.model;
 import android.os.Parcel;
 import android.support.annotation.Nullable;
 
+import com.google.common.collect.Maps;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
@@ -38,7 +39,7 @@ public class Users extends TimestampedData {
     public String bio;
 
     @Nullable
-    public Map<String, Boolean> groups;
+    public Map<String, Boolean> groups = Maps.newHashMap();
 
     @Nullable
     @PropertyName("latest_contribution")

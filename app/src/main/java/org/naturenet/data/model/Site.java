@@ -3,6 +3,7 @@ package org.naturenet.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.common.collect.Lists;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
@@ -23,7 +24,7 @@ public class Site implements Parcelable {
     public String description;
 
     @PropertyName("l")
-    public ArrayList<Double> location;
+    public ArrayList<Double> location = Lists.newArrayList();
 
     @PropertyName("g")
     public String geohash;

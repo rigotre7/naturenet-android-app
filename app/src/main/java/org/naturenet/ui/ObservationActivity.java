@@ -60,8 +60,8 @@ public class ObservationActivity extends AppCompatActivity {
         toolbar_title = (TextView) findViewById(R.id.app_bar_explore_tv);
         explore_tv_back = (TextView) findViewById(R.id.explore_tv_back);
         gridView = (GridView) findViewById(R.id.observation_gallery);
-        signed_user = (Users) getIntent().getSerializableExtra(SIGNED_USER);
-        observations = (ArrayList<Observation>) getIntent().getSerializableExtra(OBSERVATIONS);
+        signed_user = getIntent().getParcelableExtra(SIGNED_USER);
+        observations = getIntent().getParcelableArrayListExtra(OBSERVATIONS);
         observers = (ArrayList<ObserverInfo>) getIntent().getSerializableExtra(OBSERVERS);
         setSupportActionBar(toolbar);
         toolbar.setTitle(EMPTY);
@@ -73,8 +73,8 @@ public class ObservationActivity extends AppCompatActivity {
 
         goToObservationGalleryFragment();
 
-        if (getIntent().getSerializableExtra(OBSERVATION) != null) {
-            selectedObservation = (Observation) getIntent().getSerializableExtra(OBSERVATION);
+        if (getIntent().hasExtra(OBSERVATION)) {
+            selectedObservation = getIntent().getParcelableExtra(OBSERVATION);
             for (ObserverInfo observer : observers) {
                 if (observer.getObserverId().equals(selectedObservation.userId)) {
                     selectedObserverInfo = observer;

@@ -3,6 +3,8 @@ package org.naturenet.ui;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.text.method.MovementMethod;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,7 +66,10 @@ public class ProjectDetailFragment extends Fragment {
             iv_status.setVisibility(View.GONE);
         }
 
-        if (p.project.description != null) { description.setText(p.project.description); }
+        if (p.project.description != null) {
+            description.setText(p.project.description);
+            description.setMovementMethod(ScrollingMovementMethod.getInstance());
+        }
         if (p.project.iconUrl != null) { Picasso.with(p).load(Strings.emptyToNull(p.project.iconUrl)).fit().into(icon); }
 
         if (p.observations != null && p.observations.size() != 0) {

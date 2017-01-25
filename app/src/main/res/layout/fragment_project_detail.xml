@@ -65,6 +65,8 @@
         android:layout_marginRight="@dimen/project_margin_right"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxLines="5"
+        android:scrollbars="vertical"
         style="@style/project_tv_description"/>
 
     <RelativeLayout

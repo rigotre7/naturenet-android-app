@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.google.common.collect.Lists;
@@ -55,23 +56,26 @@ public class ObservationGalleryFragment extends Fragment {
         while(!gridView.getAdapter().areAllItemsEnabled()) {}
         pd.dismiss();
 
-        gridView.setOnItemClickListener((parent, view, position, id) -> {
-            o.selectedObservation = observations.get(position);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                o.selectedObservation = observations.get(position);
 
-            for (int i=0; i<o.observers.size(); i++) {
-                if (o.observers.get(i).getObserverId().equals(o.selectedObservation.userId)) {
-                    o.selectedObserverInfo = o.observers.get(i);
-                    break;
+                for (int i = 0; i < o.observers.size(); i++) {
+                    if (o.observers.get(i).getObserverId().equals(o.selectedObservation.userId)) {
+                        o.selectedObserverInfo = o.observers.get(i);
+                        break;
+                    }
                 }
+
+                Timber.d("Observation: " + o.selectedObservation.toString());
+                Timber.d("Observer Id: " + o.selectedObserverInfo.getObserverId());
+                Timber.d("Observer Avatar: " + o.selectedObserverInfo.getObserverAvatar());
+                Timber.d("Observer Name: " + o.selectedObserverInfo.getObserverName());
+                Timber.d("Observer Affiliation: " + o.selectedObserverInfo.getObserverAffiliation());
+
+                o.goToSelectedObservationFragment();
             }
-
-            Timber.d("Observation: " + o.selectedObservation.toString());
-            Timber.d("Observer Id: " + o.selectedObserverInfo.getObserverId());
-            Timber.d("Observer Avatar: " + o.selectedObserverInfo.getObserverAvatar());
-            Timber.d("Observer Name: " + o.selectedObserverInfo.getObserverName());
-            Timber.d("Observer Affiliation: " + o.selectedObserverInfo.getObserverAffiliation());
-
-            o.goToSelectedObservationFragment();
         });
     }
 }

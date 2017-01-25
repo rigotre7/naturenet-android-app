@@ -69,7 +69,12 @@ public class ObservationActivity extends AppCompatActivity {
         selectedObserverInfo = null;
         comments = null;
 
-        explore_tv_back.setOnClickListener(v -> goBackToExploreFragment());
+        explore_tv_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ObservationActivity.this.goBackToExploreFragment();
+            }
+        });
 
         goToObservationGalleryFragment();
 

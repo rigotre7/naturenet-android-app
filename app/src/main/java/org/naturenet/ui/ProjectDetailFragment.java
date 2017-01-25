@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -90,17 +91,20 @@ public class ProjectDetailFragment extends Fragment {
         while(!gridView.getAdapter().areAllItemsEnabled()) {}
         pd.dismiss();
 
-        gridView.setOnItemClickListener((parent, view, position, id) -> {
-            p.selectedObservation = observations.get(position);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                p.selectedObservation = observations.get(position);
 
-            for (int i=0; i<p.observers.size(); i++) {
-                if (p.observers.get(i).getObserverId().equals(p.selectedObservation.userId)) {
-                    p.selectedObserverInfo = p.observers.get(i);
-                    break;
+                for (int i = 0; i < p.observers.size(); i++) {
+                    if (p.observers.get(i).getObserverId().equals(p.selectedObservation.userId)) {
+                        p.selectedObserverInfo = p.observers.get(i);
+                        break;
+                    }
                 }
-            }
 
-            p.goToSelectedObservationFragment();
+                p.goToSelectedObservationFragment();
+            }
         });
     }
 }

@@ -3,6 +3,7 @@ package org.naturenet.ui;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
@@ -29,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
@@ -37,23 +39,21 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
 import org.naturenet.NatureNetApplication;
-import org.naturenet.UploadService;
-import org.naturenet.util.CroppedCircleTransformation;
 import org.naturenet.R;
-import org.naturenet.data.model.Comment;
-import org.naturenet.data.model.Observation;
+import org.naturenet.UploadService;
 import org.naturenet.data.ObserverInfo;
 import org.naturenet.data.PreviewInfo;
+import org.naturenet.data.model.Comment;
+import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Project;
 import org.naturenet.data.model.Site;
 import org.naturenet.data.model.Users;
+import org.naturenet.util.CroppedCircleTransformation;
 
 import java.io.File;
 import java.io.Serializable;
@@ -62,6 +62,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.functions.Consumer;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -72,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     final static int REQUEST_CODE_PROJECT_ACTIVITY = 4;
     final static int REQUEST_CODE_OBSERVATION_ACTIVITY = 5;
     final static int NUM_OF_OBSERVATIONS = 20;
-    final static int MAX_IMAGE_DIMENSION = 1920;
     static String FRAGMENT_TAG_LAUNCH = "launch_fragment";
     static String FRAGMENT_TAG_EXPLORE = "explore_fragment";
     static String FRAGMENT_TAG_PROJECTS = "projects_fragment";
@@ -86,14 +86,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     static String NAMES = "names";
     static String NEW_USER = "new_user";
     static String SIGNED_USER = "signed_user";
-    static String LATEST_CONTRIBUTION = "latest_contribution";
     static String UPDATED_AT = "updated_at";
     static String NAME = "name";
     static String OBSERVATION = "observation";
     static String OBSERVATION_PATH = "observation_path";
     static String PROJECT = "project";
     static String EMPTY = "";
-    static String SUBMITTING = "Submitting...";
     static String LOADING_OBSERVATIONS = "Loading Observations...";
     static String LOADING_DESIGN_IDEAS = "Loading Design Ideas...";
     static String LOADING_COMMUNITIES = "Loading Communities...";
@@ -149,31 +147,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-        licenses.setOnClickListener(v ->
-            new AlertDialog.Builder(v.getContext())
-                    .setView(View.inflate(this, R.layout.about, null))
-                    .setNegativeButton("Dismiss", null)
-                    .setCancelable(false)
-                    .show()
+        licenses.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new AlertDialog.Builder(v.getContext())
+                            .setView(View.inflate(MainActivity.this, R.layout.about, null))
+                            .setNegativeButton("Dismiss", null)
+                            .setCancelable(false)
+                            .show();
+                }
+            }
         );
 
         this.invalidateOptionsMenu();
         pd = new ProgressDialog(this);
         pd.setCancelable(false);
 
-        sign_in.setOnClickListener(v -> {
-            if (haveNetworkConnection()) {
-                goToLoginActivity();
-            } else {
-                Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+        sign_in.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (MainActivity.this.haveNetworkConnection()) {
+                    MainActivity.this.goToLoginActivity();
+                } else {
+                    Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
-        join.setOnClickListener(v -> {
-            if (haveNetworkConnection()) {
-                goToJoinActivity();
-            } else {
-                Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+        join.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (MainActivity.this.haveNetworkConnection()) {
+                    MainActivity.this.goToJoinActivity();
+                } else {
+                    Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -190,8 +198,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             new android.app.AlertDialog.Builder(this)
                 .setMessage("Your GPS seems to be disabled, do you want to enable it?")
                 .setCancelable(false)
-                .setPositiveButton("Yes", (dialog, id) -> startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)))
-                .setNegativeButton("No", (dialog, id) -> dialog.cancel())
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        MainActivity.this.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                })
                 .create().show();
         }
     }
@@ -200,16 +218,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onStart() {
         super.onStart();
 
-        ((NatureNetApplication)getApplication()).getCurrentUserObservable().subscribe(user -> {
-            if (user.isPresent()) {
-                onUserSignIn(user.get());
-            } else {
-                if (signed_user != null) {
-                    mFirebase.child(Users.NODE_NAME).child(signed_user.id).keepSynced(false);
-                    onUserSignOut();
+        ((NatureNetApplication)getApplication()).getCurrentUserObservable().subscribe(new Consumer<Optional<Users>>() {
+            @Override
+            public void accept(Optional<Users> user) throws Exception {
+                if (user.isPresent()) {
+                    MainActivity.this.onUserSignIn(user.get());
+                } else {
+                    if (signed_user != null) {
+                        mFirebase.child(Users.NODE_NAME).child(signed_user.id).keepSynced(false);
+                        MainActivity.this.onUserSignOut();
+                    }
+                    MainActivity.this.updateUINoUser();
+                    MainActivity.this.goToLaunchFragment();
                 }
-                updateUINoUser();
-                goToLaunchFragment();
             }
         });
     }

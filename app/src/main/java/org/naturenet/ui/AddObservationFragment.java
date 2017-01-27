@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -69,25 +68,21 @@ public class AddObservationFragment extends Fragment {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (add.signedUser != null) {
-                    send.setVisibility(View.GONE);
-                    fbRef = FirebaseDatabase.getInstance().getReference();
-                    PhotoCaptionContent data = new PhotoCaptionContent();
-                    data.text = description.getText().toString();
-                    String where = whereIsIt.getText().toString().trim();
+                send.setVisibility(View.GONE);
+                fbRef = FirebaseDatabase.getInstance().getReference();
+                PhotoCaptionContent data = new PhotoCaptionContent();
+                data.text = description.getText().toString();
+                String where = whereIsIt.getText().toString().trim();
 
-                    if (!where.isEmpty()) {
-                        add.newObservation.where = where;
-                    }
-
-                    add.newObservation.data = data;
-                    add.newObservation.projectId = selectedProject.id;
-                    add.newObservation.siteId = add.signedUser.affiliation;
-
-                    add.goBackToMainActivity();
-                } else {
-                    Toast.makeText(add, "Please login to add an observation.", Toast.LENGTH_SHORT).show();
+                if (!where.isEmpty()) {
+                    add.newObservation.where = where;
                 }
+
+                add.newObservation.data = data;
+                add.newObservation.projectId = selectedProject.id;
+                add.newObservation.siteId = add.signedUser.affiliation;
+
+                add.goBackToMainActivity();
             }
         });
 

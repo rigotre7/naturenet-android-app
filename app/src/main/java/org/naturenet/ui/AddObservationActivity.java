@@ -54,9 +54,9 @@ public class AddObservationActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(EMPTY);
         setSupportActionBar(toolbar);
-        newObservation = (Observation) getIntent().getSerializableExtra(OBSERVATION);
+        newObservation = getIntent().getParcelableExtra(OBSERVATION);
         observationPath = getIntent().getParcelableExtra(OBSERVATION_PATH);
-        signedUser = (Users) getIntent().getSerializableExtra(SIGNED_USER);
+        signedUser = getIntent().getParcelableExtra(SIGNED_USER);
         signed_user_email = getIntent().getStringExtra(EMAIL);
         signed_user_password = getIntent().getStringExtra(PASSWORD);
         pd = new ProgressDialog(this);

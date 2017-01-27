@@ -41,7 +41,9 @@ public class NatureNetApplication extends MultiDexApplication {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Timber.d("Loaded profile data for %s" + uid);
-                        usersBehaviorSubject.onNext(Optional.fromNullable(dataSnapshot.getValue(Users.class)));
+                        Users user = dataSnapshot.getValue(Users.class);
+                        usersBehaviorSubject.onNext(Optional.fromNullable(user));
+                        Toast.makeText(getApplicationContext(), String.format("Welcome, %s!", user.displayName), Toast.LENGTH_SHORT).show();
                     }
 
                     @Override

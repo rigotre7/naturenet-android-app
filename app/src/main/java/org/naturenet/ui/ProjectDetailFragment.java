@@ -3,9 +3,12 @@ package org.naturenet.ui;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.text.method.MovementMethod;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -63,7 +66,10 @@ public class ProjectDetailFragment extends Fragment {
             iv_status.setVisibility(View.GONE);
         }
 
-        if (p.project.description != null) { description.setText(p.project.description); }
+        if (p.project.description != null) {
+            description.setText(p.project.description);
+            description.setMovementMethod(ScrollingMovementMethod.getInstance());
+        }
         if (p.project.iconUrl != null) { Picasso.with(p).load(Strings.emptyToNull(p.project.iconUrl)).fit().into(icon); }
 
         if (p.observations != null && p.observations.size() != 0) {
@@ -90,17 +96,20 @@ public class ProjectDetailFragment extends Fragment {
         while(!gridView.getAdapter().areAllItemsEnabled()) {}
         pd.dismiss();
 
-        gridView.setOnItemClickListener((parent, view, position, id) -> {
-            p.selectedObservation = observations.get(position);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                p.selectedObservation = observations.get(position);
 
-            for (int i=0; i<p.observers.size(); i++) {
-                if (p.observers.get(i).getObserverId().equals(p.selectedObservation.userId)) {
-                    p.selectedObserverInfo = p.observers.get(i);
-                    break;
+                for (int i = 0; i < p.observers.size(); i++) {
+                    if (p.observers.get(i).getObserverId().equals(p.selectedObservation.userId)) {
+                        p.selectedObserverInfo = p.observers.get(i);
+                        break;
+                    }
                 }
-            }
 
-            p.goToSelectedObservationFragment();
+                p.goToSelectedObservationFragment();
+            }
         });
     }
 }

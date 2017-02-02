@@ -52,6 +52,7 @@
         </provider>
 
         <!-- Services -->
+        <service android:name=".UploadService" android:exported="false" />
         <!-- Services -->
 
 

@@ -16,7 +16,7 @@ dependencies {
     compile 'com.google.firebase:firebase-database:10.0.1'
     compile 'com.google.firebase:firebase-storage:10.0.1'
     compile 'com.google.firebase:firebase-auth:10.0.1'
-    compile 'com.google.firebase:firebase-crash:10.0.1'
+    releaseCompile 'com.google.firebase:firebase-crash:10.0.1'
     compile 'com.google.guava:guava:20.0'
     compile 'pub.devrel:easypermissions:0.2.1'
     compile 'com.cloudinary:cloudinary-android:1.5.0'
@@ -39,6 +39,9 @@ dependencies {
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
+//    dexOptions {
+//        javaMaxHeapSize "4g"
+//    }
     defaultConfig {
         applicationId "org.naturenet"
         minSdkVersion 16
@@ -48,10 +51,13 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         resValue "string", "app_version", versionName
         multiDexEnabled true
-        jackOptions {
-            enabled true
-            additionalParameters('jack.incremental': 'true')
-        }
+//        jackOptions {
+//            enabled true
+//            additionalParameters("jack.dex.output.policy" : "minimal-multidex")
+//            additionalParameters("jack.preprocessor.file" : "legacyMultidexInstallation.jpp")
+//            additionalParameters("jack.dex.output.multidex.legacy": "true")
+//            additionalParameters("jack.preprocessor" : "true")
+//        }
     }
     buildTypes {
         debug {
@@ -60,15 +66,15 @@ android {
             resValue "string", "app_name", "NatureNet (debug)"
         }
         release {
-            useProguard false
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             resValue "string", "app_name", "NatureNet"
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
     packagingOptions {
         exclude 'META-INF/NOTICE'

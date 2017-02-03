@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
@@ -72,7 +73,9 @@ public class SelectedObservationFragment extends Fragment {
 
         if (o.comments != null) {
             Timber.d("Comments are available");
-            o.comments.forEach(c -> Timber.d("Comment: %s", c));
+            for (Comment c : o.comments) {
+                Timber.d("Comment: %s", c);
+            }
         } else {
             Timber.d("Comments are not available");
         }
@@ -109,56 +112,65 @@ public class SelectedObservationFragment extends Fragment {
             observer_affiliation.setText(null);
         }
 
-        like.setOnClickListener(v -> {
-            if (o.signed_user != null) {
-                Optional<Boolean> value;
+        like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (o.signed_user != null) {
+                    Optional<Boolean> value;
 
-                if (o.like) {
-                    o.like = false;
-                    like.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.unlike));
-                    value = Optional.absent();
-                } else {
-                    o.like = true;
-                    like.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.like));
-                    value = Optional.of(true);
-                }
+                    if (o.like) {
+                        o.like = false;
+                        like.setImageDrawable(ContextCompat.getDrawable(SelectedObservationFragment.this.getActivity(), R.drawable.unlike));
+                        value = Optional.absent();
+                    } else {
+                        o.like = true;
+                        like.setImageDrawable(ContextCompat.getDrawable(SelectedObservationFragment.this.getActivity(), R.drawable.like));
+                        value = Optional.of(true);
+                    }
 
-                DatabaseReference fbRef = FirebaseDatabase.getInstance().getReference();
-                fbRef.child("observations").child(o.selectedObservation.id).child("likes").child(o.signed_user.id).setValue(value.orNull());
-            } else
-                Toast.makeText(o, "Please login to like an observation.", Toast.LENGTH_SHORT).show();
+                    DatabaseReference fbRef = FirebaseDatabase.getInstance().getReference();
+                    fbRef.child("observations").child(o.selectedObservation.id).child("likes").child(o.signed_user.id).setValue(value.orNull());
+                } else
+                    Toast.makeText(o, "Please login to like an observation.", Toast.LENGTH_SHORT).show();
+            }
         });
 
-        send.setOnClickListener(v -> {
-            String commentText = comment.getText().toString();
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String commentText = comment.getText().toString();
 
-            if (!commentText.isEmpty()) {
-                if (o.signed_user != null) {
-                    send.setVisibility(View.GONE);
-                    send.setEnabled(false);
-                    comment.setEnabled(false);
-                    final DatabaseReference commentRef = FirebaseDatabase.getInstance().getReference().child(Comment.NODE_NAME).push();
-                    Comment newComment = Comment.createNew(commentRef.getKey(), commentText, o.signed_user.id, o.selectedObservation.id, Observation.NODE_NAME);
+                if (!commentText.isEmpty()) {
+                    if (o.signed_user != null) {
+                        send.setVisibility(View.GONE);
+                        send.setEnabled(false);
+                        comment.setEnabled(false);
+                        final DatabaseReference commentRef = FirebaseDatabase.getInstance().getReference().child(Comment.NODE_NAME).push();
+                        Comment newComment = Comment.createNew(commentRef.getKey(), commentText, o.signed_user.id, o.selectedObservation.id, Observation.NODE_NAME);
 
-                    commentRef.setValue(newComment, (databaseError, databaseReference) -> {
-                        send.setEnabled(true);
-                        comment.setEnabled(true);
+                        commentRef.setValue(newComment, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                send.setEnabled(true);
+                                comment.setEnabled(true);
 
-                        if (databaseError != null) {
-                            send.setVisibility(View.VISIBLE);
-                            Timber.w("Could not write comment for %s: %s", o.selectedObservation.id, databaseError.getDetails());
-                            Toast.makeText(o, "Your comment could not be submitted.", Toast.LENGTH_LONG).show();
-                        } else {
-                            // Update /observations/<observation-id>/comments/ with new comment
-                            FirebaseDatabase.getInstance().getReference().child(Observation.NODE_NAME)
-                                    .child(o.selectedObservation.id).child("comments").child(commentRef.getKey()).setValue(true);
-                            comment.getText().clear();
-                            send.setVisibility(View.VISIBLE);
-                            Toast.makeText(o, "Your comment has been submitted.", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } else {
-                    Toast.makeText(o, "Please login to comment.", Toast.LENGTH_SHORT).show();
+                                if (databaseError != null) {
+                                    send.setVisibility(View.VISIBLE);
+                                    Timber.w("Could not write comment for %s: %s", o.selectedObservation.id, databaseError.getDetails());
+                                    Toast.makeText(o, "Your comment could not be submitted.", Toast.LENGTH_LONG).show();
+                                } else {
+                                    // Update /observations/<observation-id>/comments/ with new comment
+                                    FirebaseDatabase.getInstance().getReference().child(Observation.NODE_NAME)
+                                            .child(o.selectedObservation.id).child("comments").child(commentRef.getKey()).setValue(true);
+                                    comment.getText().clear();
+                                    send.setVisibility(View.VISIBLE);
+                                    Toast.makeText(o, "Your comment has been submitted.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    } else {
+                        Toast.makeText(o, "Please login to comment.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });

@@ -1,5 +1,6 @@
 package org.naturenet;
 
+<<<<<<< HEAD
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Before;
@@ -17,4 +18,24 @@ import static android.support.test.espresso.Espresso.onView;
 @RunWith(AndroidJUnit4.class)
 public class ApplicationTest{
 
+=======
+import android.content.Context;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static junit.framework.Assert.assertEquals;
+
+@RunWith(AndroidJUnit4.class)
+public class ApplicationTest {
+    @Test
+    public void useAppContext() throws Exception {
+        // Context of the app under test.
+        Context appContext = InstrumentationRegistry.getTargetContext();
+
+        assertEquals("org.naturenet", appContext.getPackageName());
+    }
+>>>>>>> 932f4789e17b6a0b51c9fd0a50f68905490c3709
 }

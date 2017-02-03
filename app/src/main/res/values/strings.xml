@@ -122,6 +122,7 @@
     <string name="dialog_add_observation_b_gallery">Gallery</string>
     <string name="dialog_add_observation_success">Your observation has been added successfully.</string>
     <string name="dialog_add_observation_error">Your observation could not be submitted.</string>
+    <string name="image_upload_error">Your photo could not be uploaded. Please try again later or choose another photo.</string>
     <!-- Add Observation Dialog -->
 
     <!-- Add Design Idea Dialog -->

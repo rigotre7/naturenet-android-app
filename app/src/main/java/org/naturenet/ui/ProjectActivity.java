@@ -162,7 +162,7 @@ public class ProjectActivity extends AppCompatActivity {
                                                         if (finalMyCount == observations.size()) {
                                                             pd.dismiss();
                                                             getFragmentManager().beginTransaction()
-                                                                    .replace(R.id.fragment_container, new ProjectDetailFragment(), FRAGMENT_TAG_PROJECT_DETAIL)
+                                                                    .replace(R.id.fragment_container, ProjectDetailFragment.newInstance(project), FRAGMENT_TAG_PROJECT_DETAIL)
                                                                     .commit();
                                                         }
                                                     }
@@ -247,7 +247,7 @@ public class ProjectActivity extends AppCompatActivity {
 
         getFragmentManager().
                 beginTransaction().
-                replace(R.id.fragment_container, new ProjectDetailFragment(), FRAGMENT_TAG_PROJECT_DETAIL).
+                replace(R.id.fragment_container, ProjectDetailFragment.newInstance(project), FRAGMENT_TAG_PROJECT_DETAIL).
                 commit();
     }
 
@@ -269,7 +269,7 @@ public class ProjectActivity extends AppCompatActivity {
 
     private void showDetailFragment() {
         getFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, new ProjectDetailFragment(), FRAGMENT_TAG_PROJECT_DETAIL)
+                .replace(R.id.fragment_container, ProjectDetailFragment.newInstance(project), FRAGMENT_TAG_PROJECT_DETAIL)
                 .addToBackStack(null).commit();
     }
 

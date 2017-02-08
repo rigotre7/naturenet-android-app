@@ -17,13 +17,32 @@ import com.squareup.picasso.Transformation;
 
 import org.naturenet.R;
 import org.naturenet.data.model.Site;
+import org.naturenet.data.model.TimestampedData;
 import org.naturenet.data.model.Users;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import timber.log.Timber;
 
 public class NatureNetUtils {
 
     private static final Transformation mAvatarTransform = new CroppedCircleTransformation();
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.getDefault());
+
+    public static String toDateString(TimestampedData data) {
+        Long timestamp = data.getUpdatedAtMillis();
+        if (timestamp == null) {
+            return null;
+        }
+        return dateFormat.format(new Date(data.getUpdatedAtMillis()));
+    }
+
+    public static void showUserAvatar(final Context context, final ImageView view, final String avatarUrl) {
+        Picasso.with(context).load(Strings.emptyToNull(avatarUrl)).transform(mAvatarTransform)
+                .placeholder(R.drawable.default_avatar).fit().into(view);
+    }
 
     public static void makeUserBadge(final Context context, final ViewGroup root, final String userId) {
 

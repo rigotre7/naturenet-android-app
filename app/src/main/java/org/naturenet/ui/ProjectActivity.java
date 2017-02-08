@@ -53,7 +53,6 @@ public class ProjectActivity extends AppCompatActivity {
     Toolbar toolbar;
     ProgressDialog pd;
     Observation selectedObservation;
-    ObserverInfo selectedObserverInfo;
     Users signed_user;
     TextView project_back, toolbar_title;
 
@@ -83,7 +82,6 @@ public class ProjectActivity extends AppCompatActivity {
         });
 
         selectedObservation = null;
-        selectedObserverInfo = null;
         pd = new ProgressDialog(this);
         pd.setCancelable(false);
 
@@ -200,7 +198,7 @@ public class ProjectActivity extends AppCompatActivity {
         }
     }
 
-    public void goToSelectedObservationFragment() {
+    public void goToSelectedObservation() {
         toolbar_title.setVisibility(View.GONE);
         project_back.setText(String.format(getString(R.string.project_back_left_arrows), project.name));
         comments = null;
@@ -212,11 +210,10 @@ public class ProjectActivity extends AppCompatActivity {
             like = (selectedObservation.likes != null) && selectedObservation.likes.keySet().contains(signed_user.id);
         }
 
-        getFragmentManager().
-                beginTransaction().
-                replace(R.id.fragment_container, new SelectedObservationFragment(), FRAGMENT_TAG_SELECTED_OBSERVATION).
-                addToBackStack(null).
-                commit();
+        Intent observationIntent = new Intent(this, ObservationActivity.class);
+        observationIntent.putExtra(SIGNED_USER, signed_user);
+        observationIntent.putExtra(ObservationActivity.OBSERVATION, selectedObservation);
+        startActivity(observationIntent);
     }
 
     private void getCommentsFor(final String parent) {
@@ -240,7 +237,6 @@ public class ProjectActivity extends AppCompatActivity {
 
     public void goBackToProjectDetailFragment() {
         selectedObservation = null;
-        selectedObserverInfo = null;
         project_back.setText(String.format(getString(R.string.project_back_left_arrows),"PROJECTS"));
         if (project.name != null) { toolbar_title.setText(project.name); }
         toolbar_title.setVisibility(View.VISIBLE);

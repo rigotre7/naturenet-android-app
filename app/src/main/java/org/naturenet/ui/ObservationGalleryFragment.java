@@ -70,18 +70,7 @@ public class ObservationGalleryFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 o.selectedObservation = (Observation) view.getTag();
 
-                for (int i = 0; i < o.observers.size(); i++) {
-                    if (o.observers.get(i).getObserverId().equals(o.selectedObservation.userId)) {
-                        o.selectedObserverInfo = o.observers.get(i);
-                        break;
-                    }
-                }
-
                 Timber.d("Observation: " + o.selectedObservation.toString());
-                Timber.d("Observer Id: " + o.selectedObserverInfo.getObserverId());
-                Timber.d("Observer Avatar: " + o.selectedObserverInfo.getObserverAvatar());
-                Timber.d("Observer Name: " + o.selectedObserverInfo.getObserverName());
-                Timber.d("Observer Affiliation: " + o.selectedObserverInfo.getObserverAffiliation());
 
                 o.goToSelectedObservationFragment();
             }

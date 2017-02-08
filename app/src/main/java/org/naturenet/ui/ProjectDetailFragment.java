@@ -93,15 +93,7 @@ public class ProjectDetailFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 p.selectedObservation = (Observation) view.getTag();
-
-                for (int i = 0; i < p.observers.size(); i++) {
-                    if (p.observers.get(i).getObserverId().equals(p.selectedObservation.userId)) {
-                        p.selectedObserverInfo = p.observers.get(i);
-                        break;
-                    }
-                }
-
-                p.goToSelectedObservationFragment();
+                p.goToSelectedObservation();
             }
         });
     }

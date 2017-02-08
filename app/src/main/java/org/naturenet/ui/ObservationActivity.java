@@ -18,12 +18,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import org.naturenet.R;
-import org.naturenet.data.ObserverInfo;
 import org.naturenet.data.model.Comment;
 import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Users;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import timber.log.Timber;
@@ -34,19 +32,16 @@ public class ObservationActivity extends AppCompatActivity {
     static String FRAGMENT_TAG_OBSERVATION = "observation_fragment";
     static String TITLE = "EXPLORE";
     static String SIGNED_USER = "signed_user";
-    static String OBSERVERS = "observers";
     static String OBSERVATION = "observation";
     static String OBSERVATIONS = "observations";
     static String EMPTY = "";
 
     Toolbar toolbar;
     Observation selectedObservation;
-    ObserverInfo selectedObserverInfo;
     TextView explore_tv_back, toolbar_title;
     GridView gridView;
     DatabaseReference mFirebase;
     List<Observation> observations;
-    List<ObserverInfo> observers;
     List<Comment> comments;
     Users signed_user;
     Boolean like;
@@ -62,11 +57,9 @@ public class ObservationActivity extends AppCompatActivity {
         gridView = (GridView) findViewById(R.id.observation_gallery);
         signed_user = getIntent().getParcelableExtra(SIGNED_USER);
         observations = getIntent().getParcelableArrayListExtra(OBSERVATIONS);
-        observers = (ArrayList<ObserverInfo>) getIntent().getSerializableExtra(OBSERVERS);
         setSupportActionBar(toolbar);
         toolbar.setTitle(EMPTY);
         selectedObservation = null;
-        selectedObserverInfo = null;
         comments = null;
 
         explore_tv_back.setOnClickListener(new View.OnClickListener() {
@@ -80,12 +73,6 @@ public class ObservationActivity extends AppCompatActivity {
 
         if (getIntent().hasExtra(OBSERVATION)) {
             selectedObservation = getIntent().getParcelableExtra(OBSERVATION);
-            for (ObserverInfo observer : observers) {
-                if (observer.getObserverId().equals(selectedObservation.userId)) {
-                    selectedObserverInfo = observer;
-                    break;
-                }
-            }
             goToSelectedObservationFragment();
         }
     }
@@ -94,15 +81,12 @@ public class ObservationActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         selectedObservation = null;
-        selectedObserverInfo = null;
         comments = null;
     }
 
     public void goBackToExploreFragment() {
         observations = null;
-        observers = null;
         selectedObservation = null;
-        selectedObserverInfo = null;
         comments = null;
         gridView = null;
 

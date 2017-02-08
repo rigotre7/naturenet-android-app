@@ -14,20 +14,21 @@ import android.widget.Toast;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
 import org.naturenet.R;
 import org.naturenet.data.model.Comment;
 import org.naturenet.data.model.Observation;
+import org.naturenet.data.model.Site;
+import org.naturenet.data.model.Users;
 import org.naturenet.util.CroppedCircleTransformation;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import org.naturenet.util.NatureNetUtils;
 
 import timber.log.Timber;
 
@@ -38,7 +39,7 @@ public class ObservationFragment extends Fragment {
     TextView observer_name, observer_affiliation, observeration_timestamp, observeration_text, send;
     EditText comment;
     ListView lv_comments;
-    private Transformation mAvatarTransform = new CroppedCircleTransformation();
+    private String mObservationId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,6 +51,7 @@ public class ObservationFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         o = (ObservationActivity) getActivity();
+        mObservationId = o.selectedObservation.id;
         observer_avatar = (ImageView) o.findViewById(R.id.selected_observer_avatar);
         observation_image = (ImageView) o.findViewById(R.id.selected_observation_icon);
         like = (ImageView) o.findViewById(R.id.iv_like);
@@ -60,6 +62,67 @@ public class ObservationFragment extends Fragment {
         send = (TextView) o.findViewById(R.id.tv_send);
         comment = (EditText) o.findViewById(R.id.et_comment);
         lv_comments = (ListView) o.findViewById(R.id.lv_comments);
+
+        FirebaseDatabase.getInstance().getReference(Observation.NODE_NAME).child(mObservationId).addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final Observation obs = dataSnapshot.getValue(Observation.class);
+
+                Picasso.with(o).load(Strings.emptyToNull(obs.data.image)).placeholder(R.drawable.no_image)
+                        .error(R.drawable.no_image).fit().centerInside().into(observation_image);
+
+                if (obs.data.text != null) {
+                    observeration_text.setText(obs.data.text);
+                } else {
+                    observeration_text.setText(R.string.no_description);
+                }
+
+                observeration_timestamp.setText(NatureNetUtils.toDateString(obs));
+
+                FirebaseDatabase.getInstance().getReference(Users.NODE_NAME).child(obs.userId)
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                final Users user = dataSnapshot.getValue(Users.class);
+                                NatureNetUtils.showUserAvatar(o, observer_avatar, user.avatar);
+                                if (user.displayName != null) {
+                                    observer_name.setText(user.displayName);
+                                } else {
+                                    observer_name.setText(R.string.unknown_user);
+                                }
+
+                                FirebaseDatabase.getInstance().getReference(Site.NODE_NAME).child(user.affiliation)
+                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                Site site = dataSnapshot.getValue(Site.class);
+                                                if (site.name != null) {
+                                                    observer_affiliation.setText(site.name);
+                                                } else {
+                                                    observer_affiliation.setText(null);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+                                                Timber.w(databaseError.toException(), "Unable to read data for site %s", user.affiliation);
+                                            }
+                                        });
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Timber.w(databaseError.toException(), "Unable to read data for user %s", obs.userId);
+                            }
+                        });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Timber.w(databaseError.toException(), "Unable to read data for observation %s", mObservationId);
+            }
+        });
 
         if (o.like != null) {
             if (o.like) {
@@ -78,38 +141,6 @@ public class ObservationFragment extends Fragment {
             }
         } else {
             Timber.d("Comments are not available");
-        }
-
-        Picasso.with(o).load(Strings.emptyToNull(o.selectedObservation.data.image))
-                .placeholder(R.drawable.no_image).error(R.drawable.no_image).fit().centerInside().into(observation_image);
-
-        if (o.selectedObservation.data.text != null) {
-            observeration_text.setText(o.selectedObservation.data.text);
-        } else {
-            observeration_text.setText(R.string.no_description);
-        }
-
-        if (o.selectedObservation.getUpdatedAtMillis() != null) {
-            SimpleDateFormat sfd = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.getDefault());
-            Date date = new Date(o.selectedObservation.getUpdatedAtMillis());
-            observeration_timestamp.setText(sfd.format(date));
-        } else {
-            observeration_timestamp.setText(R.string.no_timestamp);
-        }
-
-        Picasso.with(o).load(Strings.emptyToNull(o.selectedObserverInfo.getObserverAvatar()))
-                .transform(mAvatarTransform).placeholder(R.drawable.default_avatar).fit().into(observer_avatar);
-
-        if (o.selectedObserverInfo.getObserverName() != null) {
-            observer_name.setText(o.selectedObserverInfo.getObserverName());
-        } else {
-            observer_name.setText(R.string.unknown_user);
-        }
-
-        if (o.selectedObserverInfo.getObserverAffiliation() != null) {
-            observer_affiliation.setText(o.selectedObserverInfo.getObserverAffiliation());
-        } else {
-            observer_affiliation.setText(null);
         }
 
         like.setOnClickListener(new View.OnClickListener() {

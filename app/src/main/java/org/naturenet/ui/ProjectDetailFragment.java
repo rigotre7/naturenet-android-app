@@ -1,7 +1,6 @@
 package org.naturenet.ui;
 
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,26 +11,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
 import org.naturenet.data.model.Observation;
 
-import java.util.Collections;
-import java.util.List;
-
 public class ProjectDetailFragment extends Fragment {
 
     static String COMPLETED = "Completed";
-    static String DISPLAYING_OBSERVATIONS = "Displaying Observations...";
 
     TextView name, status, description, no_recent, recent;
     ImageView icon, iv_status;
     ProjectActivity p;
     GridView gridView;
-    ProgressDialog pd;
-    List<Observation> observations;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -76,25 +70,15 @@ public class ProjectDetailFragment extends Fragment {
         }
 
         gridView = (GridView) p.findViewById(R.id.observation_gallery);
-
-        pd = new ProgressDialog(p);
-        pd.setMessage(DISPLAYING_OBSERVATIONS);
-        pd.setCancelable(false);
-        pd.show();
-
-        observations = Lists.newArrayList(p.observations);
-        Collections.reverse(observations);
-        ObservationAdapter adapter = new ObservationAdapter(p, observations, p.observers);
-        adapter.notifyDataSetChanged();
+        Query query = FirebaseDatabase.getInstance().getReference(Observation.NODE_NAME)
+                .orderByChild("activity").equalTo(p.project.id).limitToLast(20);
+        ObservationAdapter adapter = new ObservationAdapter(p, query);
         gridView.setAdapter(adapter);
-
-        while(!gridView.getAdapter().areAllItemsEnabled()) {}
-        pd.dismiss();
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                p.selectedObservation = observations.get(position);
+                p.selectedObservation = (Observation) view.getTag();
 
                 for (int i = 0; i < p.observers.size(); i++) {
                     if (p.observers.get(i).getObserverId().equals(p.selectedObservation.userId)) {

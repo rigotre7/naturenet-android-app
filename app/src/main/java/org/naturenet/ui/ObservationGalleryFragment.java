@@ -8,22 +8,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.common.base.Strings;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
 
 import org.naturenet.R;
 import org.naturenet.data.model.Observation;
-import org.naturenet.data.model.Users;
-import org.naturenet.util.CroppedCircleTransformation;
+import org.naturenet.util.NatureNetUtils;
 
 import timber.log.Timber;
 
@@ -32,7 +26,6 @@ public class ObservationGalleryFragment extends Fragment {
     ObservationActivity o;
     GridView gridView;
     FirebaseListAdapter mAdapter;
-    Transformation mAvatarTransform = new CroppedCircleTransformation();
 
     @Override
     public void onDestroy() {
@@ -58,26 +51,12 @@ public class ObservationGalleryFragment extends Fragment {
             @Override
             protected void populateView(final View v, final Observation model, int position) {
                 v.setTag(model);
+                ViewGroup badge = (ViewGroup) v.findViewById(R.id.observation_user_badge);
+                //TODO: instead of recreating a new layout, make a Badge class and clear contents individually
+                badge.removeAllViews();
+                NatureNetUtils.makeUserBadge(getActivity(), badge, model.userId);
                 Picasso.with(getActivity()).load(Strings.emptyToNull(model.data.image)).error(R.drawable.no_image)
                         .fit().centerCrop().into((ImageView) v.findViewById(R.id.observation_icon));
-
-                FirebaseDatabase.getInstance().getReference(Users.NODE_NAME).child(model.userId)
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                Users user = dataSnapshot.getValue(Users.class);
-                                ((TextView) v.findViewById(R.id.observer_user_name)).setText(user.displayName);
-                                Picasso.with(getActivity()).load(Strings.emptyToNull(user.avatar)).transform(mAvatarTransform)
-                                        .placeholder(R.drawable.default_avatar).error(R.drawable.default_avatar)
-                                        .fit().into((ImageView) v.findViewById(R.id.observer_avatar));
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                Timber.w(databaseError.toException(), "Unable to read data for user %s", model.userId);
-                            }
-                        });
-
             }
             @Override
             public Observation getItem(int pos) {

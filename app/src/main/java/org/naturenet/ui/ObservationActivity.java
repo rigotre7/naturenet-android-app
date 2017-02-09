@@ -28,9 +28,7 @@ import timber.log.Timber;
 
 public class ObservationActivity extends AppCompatActivity {
 
-    static String FRAGMENT_TAG_OBSERVATION_GALLERY = "observation_gallery_fragment";
     static String FRAGMENT_TAG_OBSERVATION = "observation_fragment";
-    static String TITLE = "EXPLORE";
     static String SIGNED_USER = "signed_user";
     static String OBSERVATION = "observation";
     static String OBSERVATIONS = "observations";
@@ -59,7 +57,6 @@ public class ObservationActivity extends AppCompatActivity {
         observations = getIntent().getParcelableArrayListExtra(OBSERVATIONS);
         setSupportActionBar(toolbar);
         toolbar.setTitle(EMPTY);
-        selectedObservation = null;
         comments = null;
 
         explore_tv_back.setOnClickListener(new View.OnClickListener() {
@@ -69,12 +66,8 @@ public class ObservationActivity extends AppCompatActivity {
             }
         });
 
-        goToObservationGalleryFragment();
-
-        if (getIntent().hasExtra(OBSERVATION)) {
-            selectedObservation = getIntent().getParcelableExtra(OBSERVATION);
-            goToSelectedObservationFragment();
-        }
+        selectedObservation = getIntent().getParcelableExtra(OBSERVATION);
+        goToSelectedObservationFragment();
     }
 
     @Override
@@ -96,16 +89,6 @@ public class ObservationActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.stay, R.anim.slide_down);
     }
 
-    public void goToObservationGalleryFragment() {
-        toolbar_title.setVisibility(View.VISIBLE);
-        toolbar_title.setText(TITLE);
-
-        getFragmentManager().
-                beginTransaction().
-                replace(R.id.fragment_container, new ObservationGalleryFragment(), FRAGMENT_TAG_OBSERVATION_GALLERY).
-                commit();
-    }
-
     public void goToSelectedObservationFragment() {
         toolbar_title.setVisibility(View.GONE);
         comments = null;
@@ -118,8 +101,8 @@ public class ObservationActivity extends AppCompatActivity {
         }
 
         getFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, new ObservationFragment(), FRAGMENT_TAG_OBSERVATION)
-                .addToBackStack(FRAGMENT_TAG_OBSERVATION).commit();
+                .add(R.id.fragment_container, ObservationFragment.newInstance(selectedObservation.id), FRAGMENT_TAG_OBSERVATION)
+                .commit();
     }
 
     private void getCommentsFor(final String parent) {

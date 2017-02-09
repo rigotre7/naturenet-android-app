@@ -2,6 +2,7 @@ package org.naturenet.ui;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,20 +21,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
 
 import org.naturenet.R;
 import org.naturenet.data.model.Comment;
 import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Site;
 import org.naturenet.data.model.Users;
-import org.naturenet.util.CroppedCircleTransformation;
 import org.naturenet.util.NatureNetUtils;
 
 import timber.log.Timber;
 
 public class ObservationFragment extends Fragment {
 
+    private static final String ARG_OBSERVATION = "ARG_OBSERVATION";
     ObservationActivity o;
     ImageView observer_avatar, observation_image, like;
     TextView observer_name, observer_affiliation, observeration_timestamp, observeration_text, send;
@@ -41,27 +41,47 @@ public class ObservationFragment extends Fragment {
     ListView lv_comments;
     private String mObservationId;
 
+    public static ObservationFragment newInstance(String observationId) {
+        ObservationFragment frag = new ObservationFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_OBSERVATION, observationId);
+        frag.setArguments(args);
+        return frag;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_observation, container, false);
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        observer_avatar = (ImageView) view.findViewById(R.id.selected_observer_avatar);
+        observation_image = (ImageView) view.findViewById(R.id.selected_observation_icon);
+        like = (ImageView) view.findViewById(R.id.iv_like);
+        observer_name = (TextView) view.findViewById(R.id.selected_observer_user_name);
+        observer_affiliation = (TextView) view.findViewById(R.id.selected_observer_affiliation);
+        observeration_timestamp = (TextView) view.findViewById(R.id.selected_observeration_timestamp);
+        observeration_text = (TextView) view.findViewById(R.id.selected_observation_text);
+        send = (TextView) view.findViewById(R.id.tv_send);
+        comment = (EditText) view.findViewById(R.id.et_comment);
+        lv_comments = (ListView) view.findViewById(R.id.lv_comments);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        if (getArguments() == null || getArguments().getString(ARG_OBSERVATION) == null) {
+            Timber.e(new IllegalArgumentException(), "Tried to load ObservationFragment without an Observation argument");
+            Toast.makeText(getActivity(), "No observation to display", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         o = (ObservationActivity) getActivity();
-        mObservationId = o.selectedObservation.id;
-        observer_avatar = (ImageView) o.findViewById(R.id.selected_observer_avatar);
-        observation_image = (ImageView) o.findViewById(R.id.selected_observation_icon);
-        like = (ImageView) o.findViewById(R.id.iv_like);
-        observer_name = (TextView) o.findViewById(R.id.selected_observer_user_name);
-        observer_affiliation = (TextView) o.findViewById(R.id.selected_observer_affiliation);
-        observeration_timestamp = (TextView) o.findViewById(R.id.selected_observeration_timestamp);
-        observeration_text = (TextView) o.findViewById(R.id.selected_observation_text);
-        send = (TextView) o.findViewById(R.id.tv_send);
-        comment = (EditText) o.findViewById(R.id.et_comment);
-        lv_comments = (ListView) o.findViewById(R.id.lv_comments);
+        mObservationId = getArguments().getString(ARG_OBSERVATION);
 
         FirebaseDatabase.getInstance().getReference(Observation.NODE_NAME).child(mObservationId).addValueEventListener(new ValueEventListener() {
 
@@ -69,7 +89,7 @@ public class ObservationFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final Observation obs = dataSnapshot.getValue(Observation.class);
 
-                Picasso.with(o).load(Strings.emptyToNull(obs.data.image)).placeholder(R.drawable.no_image)
+                Picasso.with(getActivity()).load(Strings.emptyToNull(obs.data.image)).placeholder(R.drawable.no_image)
                         .error(R.drawable.no_image).fit().centerInside().into(observation_image);
 
                 if (obs.data.text != null) {
@@ -85,7 +105,7 @@ public class ObservationFragment extends Fragment {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 final Users user = dataSnapshot.getValue(Users.class);
-                                NatureNetUtils.showUserAvatar(o, observer_avatar, user.avatar);
+                                NatureNetUtils.showUserAvatar(getActivity(), observer_avatar, user.avatar);
                                 if (user.displayName != null) {
                                     observer_name.setText(user.displayName);
                                 } else {

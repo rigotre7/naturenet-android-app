@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     final static int NUM_OF_OBSERVATIONS = 20;
     static String FRAGMENT_TAG_LAUNCH = "launch_fragment";
     static String FRAGMENT_TAG_EXPLORE = "explore_fragment";
+    static String FRAGMENT_TAG_GALLERY = "gallery_fragment";
     static String FRAGMENT_TAG_PROJECTS = "projects_fragment";
     static String FRAGMENT_TAG_DESIGNIDEAS = "designideas_fragment";
     static String FRAGMENT_TAG_COMMUNITIES = "communities_fragment";
@@ -290,106 +291,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void goToGalleryFragment() {
-        if (haveNetworkConnection()) {
-            pd.setMessage(LOADING_OBSERVATIONS);
-            pd.setCancelable(false);
-            pd.show();
-
-            if (observations == null) {
-                observations = Lists.newArrayList();
-                observers = Lists.newArrayList();
-                mFirebase = FirebaseDatabase.getInstance().getReference();
-
-                mFirebase.child(Observation.NODE_NAME).orderByChild(UPDATED_AT).limitToLast(NUM_OF_OBSERVATIONS).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot snapshot) {
-                        for(DataSnapshot child : snapshot.getChildren()) {
-                            final Observation observation = child.getValue(Observation.class);
-                            observations.add(observation);
-                            final PreviewInfo preview = new PreviewInfo();
-                            preview.observationImageUrl = observation.data.image;
-
-                            if (observation.data.text != null) {
-                                preview.observationText = observation.data.text;
-                            } else {
-                                preview.observationText = "No Description";
-                            }
-
-                            if (observation.comments != null) {
-                                preview.commentsCount = Integer.toString(observation.comments.size());
-                            } else {
-                                preview.commentsCount = "0";
-                            }
-
-                            if (observation.likes != null) {
-                                preview.likesCount = String.valueOf(HashMultiset.create(observation.likes.values()).count(true));
-                            } else {
-                                preview.likesCount = "0";
-                            }
-
-                            boolean contains = false;
-                            for (int i=0; i<observers.size(); i++) {
-                                contains = observers.get(i).getObserverId().equals(observation.userId);
-                                if (contains) {
-                                    preview.observerAvatarUrl = observers.get(i).getObserverAvatar();
-                                    preview.observerName = observers.get(i).getObserverName();
-                                    preview.affiliation = observers.get(i).getObserverAffiliation();
-                                    break;
-                                }
-                            }
-
-                            if (!contains) {
-                                final ObserverInfo observer = new ObserverInfo();
-                                observer.setObserverId(observation.userId);
-                                DatabaseReference f = FirebaseDatabase.getInstance().getReference();
-                                f.child(Users.NODE_NAME).child(observation.userId).addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot snapshot) {
-                                        Users user = snapshot.getValue(Users.class);
-                                        observer.setObserverName(user.displayName);
-                                        observer.setObserverAvatar(user.avatar);
-                                        DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
-                                        fb.child(Site.NODE_NAME).child(user.affiliation).addListenerForSingleValueEvent(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot snapshot) {
-                                                Site site =  snapshot.getValue(Site.class);
-                                                observer.setObserverAffiliation(site.name);
-                                                preview.observerAvatarUrl = observer.getObserverAvatar();
-                                                preview.observerName = observer.getObserverName();
-                                                preview.affiliation = observer.getObserverAffiliation();
-                                                observers.add(observer);
-                                                previews.put(observation, preview);
-                                                if (observations.size() >= NUM_OF_OBSERVATIONS) {
-                                                    pd.dismiss();
-                                                    goToObservationActivity();
-                                                }
-                                            }
-
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {}
-                                        });
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {}
-                                });
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        pd.dismiss();
-                        Toast.makeText(MainActivity.this, "Could not get observations: "+ databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } else {
-                pd.dismiss();
-                goToObservationActivity();
-            }
-        } else {
-            Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
-        }
+        getFragmentManager().
+                beginTransaction().
+                replace(R.id.fragment_container, new ObservationGalleryFragment(), FRAGMENT_TAG_PROJECTS).
+                addToBackStack(FRAGMENT_TAG_GALLERY).
+                commit();
     }
 
     public void goToExploreFragment() {

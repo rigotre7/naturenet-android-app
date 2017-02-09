@@ -1,7 +1,9 @@
 package org.naturenet.ui;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +21,8 @@ import org.naturenet.R;
 import org.naturenet.data.model.Observation;
 import org.naturenet.util.NatureNetUtils;
 
-import timber.log.Timber;
-
 public class ObservationGalleryFragment extends Fragment {
 
-    ObservationActivity o;
     GridView gridView;
     FirebaseListAdapter mAdapter;
 
@@ -39,11 +38,14 @@ public class ObservationGalleryFragment extends Fragment {
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        gridView = (GridView) view.findViewById(R.id.observation_gallery);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        o = (ObservationActivity) getActivity();
-        gridView = (GridView) o.findViewById(R.id.observation_gallery);
 
         Query query = FirebaseDatabase.getInstance().getReference(Observation.NODE_NAME)
                 .orderByChild("updated_at").limitToLast(20);
@@ -68,11 +70,9 @@ public class ObservationGalleryFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                o.selectedObservation = (Observation) view.getTag();
-
-                Timber.d("Observation: " + o.selectedObservation.toString());
-
-                o.goToSelectedObservationFragment();
+                Intent observationIntent = new Intent(getActivity(), ObservationActivity.class);
+                observationIntent.putExtra(ObservationActivity.OBSERVATION, (Observation)view.getTag());
+                startActivity(observationIntent);
             }
         });
     }

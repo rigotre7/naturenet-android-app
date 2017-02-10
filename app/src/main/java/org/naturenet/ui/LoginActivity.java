@@ -6,18 +6,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import org.naturenet.R;
-import org.naturenet.data.model.Users;
 
 public class LoginActivity extends AppCompatActivity {
 
-    static String FRAGMENT_TAG_LOGIN = "login_fragment";
-    static String LOGIN = "login";
-    static String JOIN = "join";
-    static String SIGNED_USER = "signed_user";
-    static String EMAIL = "email";
-    static String PASSWORD = "password";
-
-    String signed_user_email, signed_user_password;
+    public static final String EXTRA_LOGIN = "login";
+    public static final String EXTRA_JOIN = "join";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,27 +19,24 @@ public class LoginActivity extends AppCompatActivity {
         goToLoginFragment();
     }
 
-    public void continueAsSignedUser(Users signed_user) {
+    public void continueAsSignedUser() {
         Intent resultIntent = new Intent(this, MainActivity.class);
-        resultIntent.putExtra(LOGIN, LOGIN);
-        resultIntent.putExtra(SIGNED_USER, signed_user);
-        resultIntent.putExtra(EMAIL, signed_user_email);
-        resultIntent.putExtra(PASSWORD, signed_user_password);
         setResult(Activity.RESULT_OK, resultIntent);
+        resultIntent.putExtra(EXTRA_LOGIN, EXTRA_LOGIN);
         finish();
     }
 
     public void goToLoginFragment() {
         getFragmentManager().
                 beginTransaction().
-                replace(R.id.fragment_container, new LoginFragment(), FRAGMENT_TAG_LOGIN).
+                replace(R.id.fragment_container, new LoginFragment(), LoginFragment.FRAGMENT_TAG).
                 addToBackStack(null).
                 commit();
     }
 
     public void goToJoinActivity() {
         Intent resultIntent = new Intent(this, MainActivity.class);
-        resultIntent.putExtra(LOGIN, JOIN);
+        resultIntent.putExtra(EXTRA_LOGIN, EXTRA_JOIN);
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
     }

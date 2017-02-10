@@ -25,15 +25,12 @@ import timber.log.Timber;
 
 public class ObservationActivity extends AppCompatActivity {
 
-    static String FRAGMENT_TAG_OBSERVATION = "observation_fragment";
-    static String SIGNED_USER = "signed_user";
-    static String OBSERVATION = "observation";
-    static String OBSERVATIONS = "observations";
+    public static final String EXTRA_USER = "signed_user";
+    public static final String EXTRA_OBSERVATION = "observation";
 
     Observation selectedObservation;
     GridView gridView;
     DatabaseReference mFirebase;
-    List<Observation> observations;
     List<Comment> comments;
     Users signed_user;
     Boolean like;
@@ -42,7 +39,8 @@ public class ObservationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_observation);
-        selectedObservation = getIntent().getParcelableExtra(OBSERVATION);
+        selectedObservation = getIntent().getParcelableExtra(EXTRA_OBSERVATION);
+        signed_user = getIntent().getParcelableExtra(EXTRA_USER);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -53,8 +51,6 @@ public class ObservationActivity extends AppCompatActivity {
         }
 
         gridView = (GridView) findViewById(R.id.observation_gallery);
-        signed_user = getIntent().getParcelableExtra(SIGNED_USER);
-        observations = getIntent().getParcelableArrayListExtra(OBSERVATIONS);
         comments = null;
 
         goToSelectedObservationFragment();
@@ -92,7 +88,7 @@ public class ObservationActivity extends AppCompatActivity {
         }
 
         getFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, ObservationFragment.newInstance(selectedObservation.id), FRAGMENT_TAG_OBSERVATION)
+                .add(R.id.fragment_container, ObservationFragment.newInstance(selectedObservation.id), ObservationFragment.FRAGMENT_TAG)
                 .commit();
     }
 

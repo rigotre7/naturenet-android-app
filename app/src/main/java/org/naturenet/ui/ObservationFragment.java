@@ -33,7 +33,9 @@ import timber.log.Timber;
 
 public class ObservationFragment extends Fragment {
 
+    public static final String FRAGMENT_TAG = "observation_fragment";
     private static final String ARG_OBSERVATION = "ARG_OBSERVATION";
+
     ObservationActivity o;
     ImageView observer_avatar, observation_image, like;
     TextView observer_name, observer_affiliation, observeration_timestamp, observeration_text, send;

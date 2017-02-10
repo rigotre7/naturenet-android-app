@@ -27,12 +27,10 @@ import java.util.List;
 
 public class AddObservationActivity extends AppCompatActivity {
 
-    static String FRAGMENT_TAG_ADD_OBSERVATION = "add_observation_fragment";
-    static String OBSERVATION = "observation";
-    static String OBSERVATION_PATH = "observation_path";
-    static String SIGNED_USER = "signed_user";
-    static String EMAIL = "email";
-    static String PASSWORD = "password";
+    public static final String EXTRA_OBSERVATION = "observation";
+    public static final String EXTRA_IMAGE_PATH = "observation_path";
+    public static final String EXTRA_USER = "signed_user";
+
     static String LATEST_CONTRIBUTION = "latest_contribution";
     static String LOADING = "Loading...";
     static String DEFAULT_PROJECT_ID = "-ACES_a38";
@@ -40,7 +38,6 @@ public class AddObservationActivity extends AppCompatActivity {
 
     DatabaseReference fbRef;
     ProgressDialog pd;
-    String signed_user_email, signed_user_password;
     Uri observationPath;
     Observation newObservation;
     Project defaultProject;
@@ -54,11 +51,9 @@ public class AddObservationActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(EMPTY);
         setSupportActionBar(toolbar);
-        newObservation = getIntent().getParcelableExtra(OBSERVATION);
-        observationPath = getIntent().getParcelableExtra(OBSERVATION_PATH);
-        signedUser = getIntent().getParcelableExtra(SIGNED_USER);
-        signed_user_email = getIntent().getStringExtra(EMAIL);
-        signed_user_password = getIntent().getStringExtra(PASSWORD);
+        newObservation = getIntent().getParcelableExtra(EXTRA_OBSERVATION);
+        observationPath = getIntent().getParcelableExtra(EXTRA_IMAGE_PATH);
+        signedUser = getIntent().getParcelableExtra(EXTRA_USER);
         pd = new ProgressDialog(this);
         defaultProject = null;
         goToAddObservationFragment();
@@ -93,7 +88,7 @@ public class AddObservationActivity extends AppCompatActivity {
                     if (mProjects.size() != 0) {
                         getFragmentManager().
                                 beginTransaction().
-                                replace(R.id.fragment_container, new AddObservationFragment(), FRAGMENT_TAG_ADD_OBSERVATION).
+                                replace(R.id.fragment_container, new AddObservationFragment(), AddObservationFragment.FRAGMENT_TAG).
                                 commit();
                     }
 
@@ -109,7 +104,7 @@ public class AddObservationActivity extends AppCompatActivity {
             pd.dismiss();
             getFragmentManager().
                     beginTransaction().
-                    replace(R.id.fragment_container, new AddObservationFragment(), FRAGMENT_TAG_ADD_OBSERVATION).
+                    replace(R.id.fragment_container, new AddObservationFragment(), AddObservationFragment.FRAGMENT_TAG).
                     addToBackStack(null).
                     commit();
         }
@@ -119,7 +114,7 @@ public class AddObservationActivity extends AppCompatActivity {
         findViewById(R.id.toolbar_send).setVisibility(View.GONE);
         findViewById(R.id.toolbar_busy).setVisibility(View.VISIBLE);
         Intent resultIntent = new Intent(this, MainActivity.class);
-        resultIntent.putExtra(OBSERVATION, newObservation);
+        resultIntent.putExtra(EXTRA_OBSERVATION, newObservation);
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
     }

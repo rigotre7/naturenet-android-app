@@ -54,7 +54,6 @@ import org.naturenet.data.model.Users;
 import org.naturenet.util.CroppedCircleTransformation;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,29 +64,16 @@ import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    final static int REQUEST_CODE_JOIN = 1;
-    final static int REQUEST_CODE_LOGIN = 2;
-    final static int REQUEST_CODE_ADD_OBSERVATION = 3;
-    final static int REQUEST_CODE_PROJECT_ACTIVITY = 4;
-    final static int REQUEST_CODE_OBSERVATION_ACTIVITY = 5;
-    final static int NUM_OF_OBSERVATIONS = 20;
-    static String LOGIN = "login";
-    static String GUEST = "guest";
-    static String LAUNCH = "launch";
-    static String JOIN = "join";
-    static String IDS = "ids";
-    static String NAMES = "names";
-    static String NEW_USER = "new_user";
-    static String SIGNED_USER = "signed_user";
+    private final static int REQUEST_CODE_JOIN = 1;
+    private final static int REQUEST_CODE_LOGIN = 2;
+    private final static int REQUEST_CODE_ADD_OBSERVATION = 3;
+    private final static int REQUEST_CODE_PROJECT_ACTIVITY = 4;
+    private final static int REQUEST_CODE_OBSERVATION_ACTIVITY = 5;
+    private final static int NUM_OF_OBSERVATIONS = 20;
+
     static String UPDATED_AT = "updated_at";
     static String NAME = "name";
-    static String OBSERVATION = "observation";
-    static String OBSERVATION_PATH = "observation_path";
-    static String PROJECT = "project";
-    static String EMPTY = "";
     static String LOADING_OBSERVATIONS = "Loading Observations...";
-    static String OBSERVERS = "observers";
-    static String OBSERVATIONS = "observations";
 
     String[] affiliation_ids, affiliation_names;
     Observation newObservation, selectedObservation, previewSelectedObservation;
@@ -128,8 +114,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         display_name = (TextView) header.findViewById(R.id.nav_tv_display_name);
         affiliation = (TextView) header.findViewById(R.id.nav_tv_affiliation);
         licenses = (TextView) navigationView.findViewById(R.id.licenses);
-        toolbar.setTitle(EMPTY);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
@@ -425,8 +411,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.invalidateOptionsMenu();
         Picasso.with(this).load(R.drawable.default_avatar)
                 .transform(mAvatarTransform).fit().into(nav_iv);
-        display_name.setText(EMPTY);
-        affiliation.setText(EMPTY);
+        display_name.setText(null);
+        affiliation.setText(null);
         sign_in.setVisibility(View.VISIBLE);
         join.setVisibility(View.VISIBLE);
         display_name.setVisibility(View.GONE);
@@ -448,8 +434,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     affiliation_ids = ids.toArray(new String[ids.size()]);
                     affiliation_names = names.toArray(new String[names.size()]);
                     Intent join = new Intent(getApplicationContext(), JoinActivity.class);
-                    join.putExtra(IDS, affiliation_ids);
-                    join.putExtra(NAMES, affiliation_names);
+                    join.putExtra(JoinActivity.EXTRA_SITE_IDS, affiliation_ids);
+                    join.putExtra(JoinActivity.EXTRA_SITE_NAMES, affiliation_names);
                     startActivityForResult(join, REQUEST_CODE_JOIN);
                     overridePendingTransition(R.anim.slide_up, R.anim.stay);
                 }
@@ -468,27 +454,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void goToAddObservationActivity() {
         Intent addObservation = new Intent(this, AddObservationActivity.class);
-        addObservation.putExtra(OBSERVATION_PATH, observationPath);
-        addObservation.putExtra(OBSERVATION, newObservation);
-        addObservation.putExtra(SIGNED_USER, signed_user);
+        addObservation.putExtra(AddObservationActivity.EXTRA_IMAGE_PATH, observationPath);
+        addObservation.putExtra(AddObservationActivity.EXTRA_OBSERVATION, newObservation);
+        addObservation.putExtra(AddObservationActivity.EXTRA_USER, signed_user);
         startActivityForResult(addObservation, REQUEST_CODE_ADD_OBSERVATION);
         overridePendingTransition(R.anim.slide_up, R.anim.stay);
     }
 
     public void goToProjectActivity(Project p) {
         Intent project = new Intent(this, ProjectActivity.class);
-        project.putExtra(PROJECT, p);
-        project.putExtra(SIGNED_USER, signed_user);
+        project.putExtra(ProjectActivity.EXTRA_PROJECT, p);
         startActivityForResult(project, REQUEST_CODE_PROJECT_ACTIVITY);
         overridePendingTransition(R.anim.slide_up, R.anim.stay);
     }
+
     public void goToObservationActivity() {
         Intent observation = new Intent(this, ObservationActivity.class);
-        observation.putExtra(SIGNED_USER, signed_user);
-        observation.putParcelableArrayListExtra(OBSERVATIONS, observations);
-        observation.putExtra(OBSERVERS, (Serializable)observers);
+        observation.putExtra(ObservationActivity.EXTRA_USER, signed_user);
         if (previewSelectedObservation != null) {
-            observation.putExtra(OBSERVATION, previewSelectedObservation);
+            observation.putExtra(ObservationActivity.EXTRA_OBSERVATION, previewSelectedObservation);
         }
         startActivityForResult(observation, REQUEST_CODE_OBSERVATION_ACTIVITY);
         overridePendingTransition(R.anim.slide_up, R.anim.stay);
@@ -524,12 +508,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (requestCode) {
             case (REQUEST_CODE_JOIN): {
                 if (resultCode == Activity.RESULT_OK) {
-                    if (GUEST.equals(data.getExtras().getString(JOIN))) {
-                        drawer.openDrawer(GravityCompat.START);
-                    } else if (LAUNCH.equals(data.getExtras().getString(JOIN))) {
+                    if (JoinActivity.EXTRA_LAUNCH.equals(data.getExtras().getString(JoinActivity.EXTRA_JOIN))) {
                         goToLaunchFragment();
-                    } else if (LOGIN.equals(data.getExtras().getString(JOIN))) {
-                        signed_user = data.getParcelableExtra(NEW_USER);
+                    } else if (JoinActivity.EXTRA_LOGIN.equals(data.getExtras().getString(JoinActivity.EXTRA_JOIN))) {
+                        signed_user = data.getParcelableExtra(JoinActivity.EXTRA_NEW_USER);
                         logout.setVisible(true);
                         this.supportInvalidateOptionsMenu();
 
@@ -562,9 +544,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             case(REQUEST_CODE_LOGIN): {
                 if (resultCode == Activity.RESULT_OK) {
-                    if (data.getStringExtra(LOGIN).equals(JOIN)) {
+                    if (data.getStringExtra(LoginActivity.EXTRA_LOGIN).equals(LoginActivity.EXTRA_JOIN)) {
                         goToJoinActivity();
-                    } else if (data.getStringExtra(LOGIN).equals(GUEST)) {
+                    } else {
                         drawer.openDrawer(GravityCompat.START);
                     }
                 }
@@ -572,7 +554,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             case(REQUEST_CODE_ADD_OBSERVATION): {
                 if(resultCode == Activity.RESULT_OK) {
-                    newObservation = data.getParcelableExtra(OBSERVATION);
+                    newObservation = data.getParcelableExtra(AddObservationActivity.EXTRA_OBSERVATION);
                     newObservation.userId = signed_user.id;
                     Intent uploadIntent = new Intent(MainActivity.this, UploadService.class);
                     uploadIntent.putExtra(UploadService.EXTRA_OBSERVATION, newObservation);
@@ -604,8 +586,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Picasso.with(this).load(R.drawable.default_avatar)
                 .transform(mAvatarTransform).fit().into(nav_iv);
         logout.setVisible(false);
-        display_name.setText(EMPTY);
-        affiliation.setText(EMPTY);
+        display_name.setText(null);
+        affiliation.setText(null);
         sign_in.setVisibility(View.VISIBLE);
         join.setVisibility(View.VISIBLE);
         display_name.setVisibility(View.GONE);
@@ -625,5 +607,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         affiliation.setVisibility(View.VISIBLE);
         drawer.openDrawer(GravityCompat.START);
     }
-
 }

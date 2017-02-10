@@ -24,6 +24,8 @@ import org.naturenet.data.model.Project;
 
 public class AddObservationFragment extends Fragment {
 
+    public static final String FRAGMENT_TAG = "add_observation_fragment";
+
     TextView toolbar_title, send, project;
     EditText description, whereIsIt;
     ImageView image;

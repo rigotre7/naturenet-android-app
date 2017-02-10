@@ -10,14 +10,13 @@ import org.naturenet.data.model.Project;
 
 public class ProjectActivity extends AppCompatActivity {
 
-    static String FRAGMENT_TAG_PROJECT_DETAIL = "project_detail_fragment";
-    static String PROJECT = "project";
+    public static final String EXTRA_PROJECT = "project";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project);
-        Project project = getIntent().getParcelableExtra(PROJECT);
+        Project project = getIntent().getParcelableExtra(EXTRA_PROJECT);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -28,7 +27,7 @@ public class ProjectActivity extends AppCompatActivity {
         }
 
         getFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, ProjectDetailFragment.newInstance(project), FRAGMENT_TAG_PROJECT_DETAIL)
+                .add(R.id.fragment_container, ProjectDetailFragment.newInstance(project), ProjectDetailFragment.FRAGMENT_TAG)
                 .commit();
     }
 

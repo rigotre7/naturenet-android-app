@@ -27,6 +27,7 @@ import timber.log.Timber;
 public class ProjectDetailFragment extends Fragment {
 
     static String COMPLETED = "Completed";
+    static String FRAGMENT_TAG = "project_detail_fragment";
     private static final String ARG_PROJECT = "ARG_PROJECT";
 
     private TextView mName, mStatus, mDescription, mEmpty;
@@ -97,7 +98,7 @@ public class ProjectDetailFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent observationIntent = new Intent(getActivity(), ObservationActivity.class);
-                observationIntent.putExtra(ObservationActivity.OBSERVATION, (Observation)view.getTag());
+                observationIntent.putExtra(ObservationActivity.EXTRA_OBSERVATION, (Observation)view.getTag());
                 startActivity(observationIntent);
             }
         });

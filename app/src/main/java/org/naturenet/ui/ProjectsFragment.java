@@ -54,6 +54,7 @@ import timber.log.Timber;
 
 public class ProjectsFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
+    public static final String FRAGMENT_TAG = "projects_fragment";
     final private static int CAMERA_REQUEST = 1;
     final private static int GALLERY_REQUEST = 2;
     static String LATEST_CONTRIBUTION = "latest_contribution";

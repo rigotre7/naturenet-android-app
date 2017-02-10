@@ -23,6 +23,8 @@ import org.naturenet.util.NatureNetUtils;
 
 public class ObservationGalleryFragment extends Fragment {
 
+    public static final String FRAGMENT_TAG = "gallery_fragment";
+
     GridView gridView;
     FirebaseListAdapter mAdapter;
 

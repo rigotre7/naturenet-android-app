@@ -72,9 +72,11 @@ public class ObservationActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        selectedObservation = null;
-        comments = null;
+        if(getFragmentManager().getBackStackEntryCount() == 0) {
+            finish();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     public void goBackToExploreFragment() {

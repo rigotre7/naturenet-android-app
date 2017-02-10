@@ -51,4 +51,12 @@ public class ProjectActivity extends AppCompatActivity {
                 .commit();
     }
 
+    @Override
+    public void onBackPressed() {
+        if(getFragmentManager().getBackStackEntryCount() == 0) {
+            finish();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

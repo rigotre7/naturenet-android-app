@@ -1,6 +1,7 @@
 package org.naturenet.ui;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,7 +16,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -73,12 +73,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     final static int REQUEST_CODE_PROJECT_ACTIVITY = 4;
     final static int REQUEST_CODE_OBSERVATION_ACTIVITY = 5;
     final static int NUM_OF_OBSERVATIONS = 20;
-    static String FRAGMENT_TAG_LAUNCH = "launch_fragment";
-    static String FRAGMENT_TAG_EXPLORE = "explore_fragment";
-    static String FRAGMENT_TAG_GALLERY = "gallery_fragment";
-    static String FRAGMENT_TAG_PROJECTS = "projects_fragment";
-    static String FRAGMENT_TAG_DESIGNIDEAS = "designideas_fragment";
-    static String FRAGMENT_TAG_COMMUNITIES = "communities_fragment";
     static String LOGIN = "login";
     static String GUEST = "guest";
     static String LAUNCH = "launch";
@@ -94,9 +88,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     static String PROJECT = "project";
     static String EMPTY = "";
     static String LOADING_OBSERVATIONS = "Loading Observations...";
-    static String LOADING_DESIGN_IDEAS = "Loading Design Ideas...";
-    static String LOADING_COMMUNITIES = "Loading Communities...";
-    static String SIGNING_OUT = "Signing Out...";
     static String OBSERVERS = "observers";
     static String OBSERVATIONS = "observations";
 
@@ -120,7 +111,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ImageView nav_iv;
     MenuItem logout;
     ProgressDialog pd;
-    public static FragmentManager fragmentManager;
     Map<Observation, PreviewInfo> previews = new HashMap<>();
     private Transformation mAvatarTransform = new CroppedCircleTransformation();
 
@@ -129,7 +119,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        fragmentManager = getSupportFragmentManager();
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -213,6 +202,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 })
                 .create().show();
         }
+
+        goToExploreFragment();
     }
 
     @Override
@@ -223,79 +214,84 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void accept(Optional<Users> user) throws Exception {
                 if (user.isPresent()) {
-                    MainActivity.this.onUserSignIn(user.get());
+                    if (signed_user == null) {
+                        MainActivity.this.onUserSignIn(user.get());
+                    }
                 } else {
                     if (signed_user != null) {
                         mFirebase.child(Users.NODE_NAME).child(signed_user.id).keepSynced(false);
                         MainActivity.this.onUserSignOut();
                     }
                     MainActivity.this.updateUINoUser();
+                    clearBackStack();
                     MainActivity.this.goToLaunchFragment();
                 }
             }
         });
     }
 
+    private void clearBackStack() {
+        FragmentManager manager = getFragmentManager();
+        if (manager.getBackStackEntryCount() > 0) {
+            FragmentManager.BackStackEntry first = manager.getBackStackEntryAt(0);
+            manager.popBackStack(first.getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(getFragmentManager().getBackStackEntryCount() == 0) {
+            finish();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        if (haveNetworkConnection()) {
-            int id = item.getItemId();
-            switch(id) {
-                case R.id.nav_explore:
-                    goToExploreFragment();
-                    drawer.closeDrawer(GravityCompat.START);
-                    break;
-                case R.id.nav_gallery:
-                    goToGalleryFragment();
-                    drawer.closeDrawer(GravityCompat.START);
-                    break;
-                case R.id.nav_projects:
-                    goToProjectsFragment();
-                    drawer.closeDrawer(GravityCompat.START);
-                    break;
-                case R.id.nav_design_ideas:
-                    pd.setMessage(LOADING_DESIGN_IDEAS);
-                    pd.setCancelable(false);
-                    pd.show();
-                    goToDesignIdeasFragment();
-                    drawer.closeDrawer(GravityCompat.START);
-                    pd.dismiss();
-                    break;
-                case R.id.nav_communities:
-                    pd.setMessage(LOADING_COMMUNITIES);
-                    pd.setCancelable(false);
-                    pd.show();
-                    goToCommunitiesFragment();
-                    drawer.closeDrawer(GravityCompat.START);
-                    pd.dismiss();
-                    break;
-                case R.id.nav_logout:
-                    pd.setMessage(SIGNING_OUT);
-                    pd.setCancelable(false);
-                    pd.show();
-                    FirebaseAuth.getInstance().signOut();
-                    pd.dismiss();
-                    break;
-            }
-        } else {
-            Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+        int id = item.getItemId();
+        switch(id) {
+            case R.id.nav_explore:
+                goToExploreFragment();
+                drawer.closeDrawer(GravityCompat.START);
+                break;
+            case R.id.nav_gallery:
+                goToGalleryFragment();
+                drawer.closeDrawer(GravityCompat.START);
+                break;
+            case R.id.nav_projects:
+                goToProjectsFragment();
+                drawer.closeDrawer(GravityCompat.START);
+                break;
+            case R.id.nav_design_ideas:
+                goToDesignIdeasFragment();
+                drawer.closeDrawer(GravityCompat.START);
+                break;
+            case R.id.nav_communities:
+                goToCommunitiesFragment();
+                drawer.closeDrawer(GravityCompat.START);
+                break;
+            case R.id.nav_logout:
+                FirebaseAuth.getInstance().signOut();
+                break;
         }
         return true;
     }
 
     public void goToLaunchFragment() {
-        getFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, new LaunchFragment(), FRAGMENT_TAG_LAUNCH)
-                .addToBackStack(FRAGMENT_TAG_LAUNCH)
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, new LaunchFragment())
+                .addToBackStack(LaunchFragment.FRAGMENT_TAG)
                 .commit();
     }
 
     public void goToGalleryFragment() {
-        getFragmentManager().
-                beginTransaction().
-                replace(R.id.fragment_container, new ObservationGalleryFragment(), FRAGMENT_TAG_PROJECTS).
-                addToBackStack(FRAGMENT_TAG_GALLERY).
-                commit();
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, new ObservationGalleryFragment())
+                .addToBackStack(ObservationGalleryFragment.FRAGMENT_TAG)
+                .commit();
     }
 
     public void goToExploreFragment() {
@@ -363,11 +359,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                                 previews.put(observation, preview);
                                                 if (observations.size() >= NUM_OF_OBSERVATIONS) {
                                                     pd.dismiss();
-                                                    getFragmentManager().
-                                                            beginTransaction().
-                                                            replace(R.id.fragment_container, new ExploreFragment(), FRAGMENT_TAG_EXPLORE).
-                                                            addToBackStack(FRAGMENT_TAG_EXPLORE).
-                                                            commit();
+                                                    getFragmentManager()
+                                                            .beginTransaction()
+                                                            .replace(R.id.fragment_container, new ExploreFragment())
+                                                            .addToBackStack(ExploreFragment.FRAGMENT_TAG)
+                                                            .commit();
                                                 }
                                             }
 
@@ -392,11 +388,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
             } else {
                 pd.dismiss();
-                getFragmentManager().
-                        beginTransaction().
-                        replace(R.id.fragment_container, new ExploreFragment(), FRAGMENT_TAG_EXPLORE).
-                        addToBackStack(FRAGMENT_TAG_EXPLORE).
-                        commitAllowingStateLoss();
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, new ExploreFragment())
+                        .addToBackStack(ExploreFragment.FRAGMENT_TAG)
+                        .commitAllowingStateLoss();
             }
         } else {
             Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
@@ -404,27 +400,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void goToProjectsFragment() {
-        getFragmentManager().
-                beginTransaction().
-                replace(R.id.fragment_container, new ProjectsFragment(), FRAGMENT_TAG_PROJECTS).
-                addToBackStack(FRAGMENT_TAG_PROJECTS).
-                commit();
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, new ProjectsFragment())
+                .addToBackStack(ProjectsFragment.FRAGMENT_TAG)
+                .commit();
     }
 
     public void goToDesignIdeasFragment() {
-        getFragmentManager().
-                beginTransaction().
-                replace(R.id.fragment_container, new IdeasFragment(), FRAGMENT_TAG_DESIGNIDEAS).
-                addToBackStack(FRAGMENT_TAG_DESIGNIDEAS).
-                commit();
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, new IdeasFragment())
+                .addToBackStack(IdeasFragment.FRAGMENT_TAG)
+                .commit();
     }
 
     public void goToCommunitiesFragment() {
-        getFragmentManager().
-                beginTransaction().
-                replace(R.id.fragment_container, new CommunitiesFragment(), FRAGMENT_TAG_COMMUNITIES).
-                addToBackStack(FRAGMENT_TAG_COMMUNITIES).
-                commit();
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, new CommunitiesFragment())
+                .addToBackStack(CommunitiesFragment.FRAGMENT_TAG)
+                .commit();
     }
 
     public void onUserSignOut() {
@@ -592,19 +588,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 break;
             }
-            case(REQUEST_CODE_PROJECT_ACTIVITY): {
-                if(resultCode == Activity.RESULT_OK) {
-                    goToProjectsFragment();
-                }
-                break;
-            }
-            case(REQUEST_CODE_OBSERVATION_ACTIVITY): {
-                if(resultCode == Activity.RESULT_OK) {
-                    previewSelectedObservation = null;
-                    goToExploreFragment();
-                }
-                break;
-            }
         }
     }
     public void onUserSignIn(@NonNull Users user) {
@@ -646,7 +629,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         join.setVisibility(View.GONE);
         display_name.setVisibility(View.VISIBLE);
         affiliation.setVisibility(View.VISIBLE);
-        goToExploreFragment();
         drawer.openDrawer(GravityCompat.START);
     }
 

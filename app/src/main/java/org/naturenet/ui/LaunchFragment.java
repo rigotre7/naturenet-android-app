@@ -13,6 +13,8 @@ import org.naturenet.R;
 
 public class LaunchFragment extends Fragment {
 
+    public static final String FRAGMENT_TAG = "launch_fragment";
+
     ImageButton join_ib;
     MainActivity main;
     TextView toolbar_title, sign_in;

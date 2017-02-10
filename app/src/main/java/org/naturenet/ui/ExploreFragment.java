@@ -47,6 +47,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
 import com.kosalgeek.android.photoutil.CameraPhoto;
 import com.kosalgeek.android.photoutil.GalleryPhoto;
 import com.squareup.picasso.Picasso;
@@ -68,6 +73,7 @@ import timber.log.Timber;
 
 public class ExploreFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
+    public static final String FRAGMENT_TAG = "explore_fragment";
     static final private int CAMERA_REQUEST = 1;
     static final private int GALLERY_REQUEST = 2;
 
@@ -91,6 +97,34 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
     Observation previewSelectedObservation;
     Transformation mAvatarTransform = new CroppedCircleTransformation();
     private Map<Marker, PreviewInfo> allMarkersMap = new HashMap<>();
+    private Map<String, Observation> mObservations = Maps.newHashMap();
+
+    private final ChildEventListener mObservationListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String key) {
+            mObservations.put(key, dataSnapshot.getValue(Observation.class));
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String key) {
+            mObservations.put(key, dataSnapshot.getValue(Observation.class));
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            mObservations.remove(dataSnapshot.getKey());
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String key) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            Timber.w(databaseError.toException(), "Observation listener canceled");
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -157,6 +191,9 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                 // Default to CONUS until we get location info
                 googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(40, -96), 3));
 
+                FirebaseDatabase.getInstance().getReference(Observation.NODE_NAME).orderByChild("updated_at")
+                        .limitToLast(20).addChildEventListener(mObservationListener);
+
                 for (int i = 0; i < main.observations.size(); i++) {
                     final Observation observation = main.observations.get(i);
                     BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.marker_observation);
@@ -179,7 +216,8 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                                 }
                             }
 
-                            Picasso.with(main).load(Strings.emptyToNull(preview.observationImageUrl)).fit().centerCrop().into(preview_observation_image);
+                            Picasso.with(main).load(Strings.emptyToNull(preview.observationImageUrl)).fit().centerCrop()
+                                    .into(preview_observation_image);
                             Picasso.with(main).load(Strings.emptyToNull(preview.observerAvatarUrl))
                                     .transform(mAvatarTransform).fit().into(preview_observer_avatar);
 

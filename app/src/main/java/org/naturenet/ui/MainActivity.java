@@ -9,8 +9,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -156,10 +154,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         sign_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (MainActivity.this.haveNetworkConnection()) {
+                if (((NatureNetApplication)getApplication()).isConnected()) {
                     MainActivity.this.goToLoginActivity();
                 } else {
-                    Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -167,10 +165,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         join.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (MainActivity.this.haveNetworkConnection()) {
+                if (((NatureNetApplication)getApplication()).isConnected()) {
                     MainActivity.this.goToJoinActivity();
                 } else {
-                    Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, R.string.no_connection, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -295,107 +293,103 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void goToExploreFragment() {
-        if (haveNetworkConnection()) {
-            pd.setMessage(LOADING_OBSERVATIONS);
-            pd.setCancelable(false);
-            pd.show();
-            if (observations == null) {
-                observations = Lists.newArrayList();
-                observers = Lists.newArrayList();
-                mFirebase = FirebaseDatabase.getInstance().getReference();
-                mFirebase.child(Observation.NODE_NAME).orderByChild(UPDATED_AT).limitToLast(NUM_OF_OBSERVATIONS).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot snapshot) {
-                        for(DataSnapshot child : snapshot.getChildren()) {
-                            final Observation observation = child.getValue(Observation.class);
-                            observations.add(observation);
-                            final PreviewInfo preview = new PreviewInfo();
-                            preview.observationImageUrl = observation.data.image;
-                            if (observation.data.text != null) {
-                                preview.observationText = observation.data.text;
-                            } else {
-                                preview.observationText = "No Description";
-                            }
-                            if (observation.comments != null) {
-                                preview.commentsCount = Integer.toString(observation.comments.size());
-                            } else {
-                                preview.commentsCount = "0";
-                            }
-                            if (observation.likes != null) {
-                                preview.likesCount = String.valueOf(HashMultiset.create(observation.likes.values()).count(true));
-                            } else {
-                                preview.likesCount = "0";
-                            }
-                            boolean contains = false;
-                            for (int i = 0; i < observers.size(); i++) {
-                                contains = observers.get(i).getObserverId().equals(observation.userId);
-                                if (contains) {
-                                    preview.observerAvatarUrl = observers.get(i).getObserverAvatar();
-                                    preview.observerName = observers.get(i).getObserverName();
-                                    preview.affiliation = observers.get(i).getObserverAffiliation();
-                                    break;
-                                }
-                            }
-                            if (!contains) {
-                                final ObserverInfo observer = new ObserverInfo();
-                                observer.setObserverId(observation.userId);
-                                DatabaseReference f = FirebaseDatabase.getInstance().getReference();
-                                f.child(Users.NODE_NAME).child(observation.userId).addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot snapshot) {
-                                        Users user = snapshot.getValue(Users.class);
-                                        observer.setObserverName(user.displayName);
-                                        observer.setObserverAvatar(user.avatar);
-                                        DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
-                                        fb.child(Site.NODE_NAME).child(user.affiliation).addListenerForSingleValueEvent(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(DataSnapshot snapshot) {
-                                                Site site = snapshot.getValue(Site.class);
-                                                observer.setObserverAffiliation(site.name);
-                                                preview.observerAvatarUrl = observer.getObserverAvatar();
-                                                preview.observerName = observer.getObserverName();
-                                                preview.affiliation = observer.getObserverAffiliation();
-                                                observers.add(observer);
-                                                previews.put(observation, preview);
-                                                if (observations.size() >= NUM_OF_OBSERVATIONS) {
-                                                    pd.dismiss();
-                                                    getFragmentManager()
-                                                            .beginTransaction()
-                                                            .replace(R.id.fragment_container, new ExploreFragment())
-                                                            .addToBackStack(ExploreFragment.FRAGMENT_TAG)
-                                                            .commit();
-                                                }
-                                            }
-
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
-                                            }
-                                        });
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-                                    }
-                                });
+        pd.setMessage(LOADING_OBSERVATIONS);
+        pd.setCancelable(false);
+        pd.show();
+        if (observations == null) {
+            observations = Lists.newArrayList();
+            observers = Lists.newArrayList();
+            mFirebase = FirebaseDatabase.getInstance().getReference();
+            mFirebase.child(Observation.NODE_NAME).orderByChild(UPDATED_AT).limitToLast(NUM_OF_OBSERVATIONS).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    for(DataSnapshot child : snapshot.getChildren()) {
+                        final Observation observation = child.getValue(Observation.class);
+                        observations.add(observation);
+                        final PreviewInfo preview = new PreviewInfo();
+                        preview.observationImageUrl = observation.data.image;
+                        if (observation.data.text != null) {
+                            preview.observationText = observation.data.text;
+                        } else {
+                            preview.observationText = "No Description";
+                        }
+                        if (observation.comments != null) {
+                            preview.commentsCount = Integer.toString(observation.comments.size());
+                        } else {
+                            preview.commentsCount = "0";
+                        }
+                        if (observation.likes != null) {
+                            preview.likesCount = String.valueOf(HashMultiset.create(observation.likes.values()).count(true));
+                        } else {
+                            preview.likesCount = "0";
+                        }
+                        boolean contains = false;
+                        for (int i = 0; i < observers.size(); i++) {
+                            contains = observers.get(i).getObserverId().equals(observation.userId);
+                            if (contains) {
+                                preview.observerAvatarUrl = observers.get(i).getObserverAvatar();
+                                preview.observerName = observers.get(i).getObserverName();
+                                preview.affiliation = observers.get(i).getObserverAffiliation();
+                                break;
                             }
                         }
+                        if (!contains) {
+                            final ObserverInfo observer = new ObserverInfo();
+                            observer.setObserverId(observation.userId);
+                            DatabaseReference f = FirebaseDatabase.getInstance().getReference();
+                            f.child(Users.NODE_NAME).child(observation.userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot snapshot) {
+                                    Users user = snapshot.getValue(Users.class);
+                                    observer.setObserverName(user.displayName);
+                                    observer.setObserverAvatar(user.avatar);
+                                    DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
+                                    fb.child(Site.NODE_NAME).child(user.affiliation).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot snapshot) {
+                                            Site site = snapshot.getValue(Site.class);
+                                            observer.setObserverAffiliation(site.name);
+                                            preview.observerAvatarUrl = observer.getObserverAvatar();
+                                            preview.observerName = observer.getObserverName();
+                                            preview.affiliation = observer.getObserverAffiliation();
+                                            observers.add(observer);
+                                            previews.put(observation, preview);
+                                            if (observations.size() >= NUM_OF_OBSERVATIONS) {
+                                                pd.dismiss();
+                                                getFragmentManager()
+                                                        .beginTransaction()
+                                                        .replace(R.id.fragment_container, new ExploreFragment())
+                                                        .addToBackStack(ExploreFragment.FRAGMENT_TAG)
+                                                        .commit();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                }
+                            });
+                        }
                     }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        pd.dismiss();
-                        Toast.makeText(MainActivity.this, "Could not get observations: "+ databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } else {
-                pd.dismiss();
-                getFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, new ExploreFragment())
-                        .addToBackStack(ExploreFragment.FRAGMENT_TAG)
-                        .commitAllowingStateLoss();
-            }
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    pd.dismiss();
+                    Toast.makeText(MainActivity.this, "Could not get observations: "+ databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         } else {
-            Toast.makeText(MainActivity.this, "No Internet Connection", Toast.LENGTH_SHORT).show();
+            pd.dismiss();
+            getFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, new ExploreFragment())
+                    .addToBackStack(ExploreFragment.FRAGMENT_TAG)
+                    .commitAllowingStateLoss();
         }
     }
 
@@ -630,22 +624,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         display_name.setVisibility(View.VISIBLE);
         affiliation.setVisibility(View.VISIBLE);
         drawer.openDrawer(GravityCompat.START);
-    }
-
-    public boolean haveNetworkConnection() {
-        boolean haveConnectedWifi = false;
-        boolean haveConnectedMobile = false;
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
-        for (NetworkInfo ni : netInfo) {
-            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
-                if (ni.isConnected())
-                    haveConnectedWifi = true;
-            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
-                if (ni.isConnected())
-                    haveConnectedMobile = true;
-        }
-        return haveConnectedWifi || haveConnectedMobile;
     }
 
 }

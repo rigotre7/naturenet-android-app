@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.naturenet.NatureNetApplication;
 import org.naturenet.R;
 import org.naturenet.data.model.Users;
 
@@ -64,7 +65,7 @@ public class LoginFragment extends Fragment {
                     Toast.makeText(log, LoginFragment.this.getResources().getString(R.string.login_error_message_empty_email), Toast.LENGTH_SHORT).show();
                 } else if (password.equals("")) {
                     Toast.makeText(log, LoginFragment.this.getResources().getString(R.string.login_error_message_empty_password), Toast.LENGTH_SHORT).show();
-                } else if (log.haveNetworkConnection()) {
+                } else if (((NatureNetApplication)getActivity().getApplication()).isConnected()) {
                     signIn.setVisibility(View.GONE);
                     pd.setCancelable(false);
                     pd.show();
@@ -101,7 +102,7 @@ public class LoginFragment extends Fragment {
                         }
                     });
                 } else {
-                    Toast.makeText(log, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(log, R.string.no_connection, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -109,11 +110,11 @@ public class LoginFragment extends Fragment {
         join.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (log.haveNetworkConnection()) {
+                if (((NatureNetApplication)getActivity().getApplication()).isConnected()) {
                     join.setVisibility(View.GONE);
                     log.goToJoinActivity();
                 } else {
-                    Toast.makeText(log, "No Internet Connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(log, R.string.no_connection, Toast.LENGTH_SHORT).show();
                 }
             }
         });

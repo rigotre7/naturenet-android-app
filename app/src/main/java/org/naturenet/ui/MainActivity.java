@@ -30,7 +30,6 @@ import android.widget.Toast;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
-import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -44,9 +43,6 @@ import com.squareup.picasso.Transformation;
 import org.naturenet.NatureNetApplication;
 import org.naturenet.R;
 import org.naturenet.UploadService;
-import org.naturenet.data.ObserverInfo;
-import org.naturenet.data.PreviewInfo;
-import org.naturenet.data.model.Comment;
 import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Project;
 import org.naturenet.data.model.Site;
@@ -55,9 +51,7 @@ import org.naturenet.util.CroppedCircleTransformation;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import io.reactivex.functions.Consumer;
 import timber.log.Timber;
@@ -69,18 +63,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private final static int REQUEST_CODE_ADD_OBSERVATION = 3;
     private final static int REQUEST_CODE_PROJECT_ACTIVITY = 4;
     private final static int REQUEST_CODE_OBSERVATION_ACTIVITY = 5;
-    private final static int NUM_OF_OBSERVATIONS = 20;
 
-    static String UPDATED_AT = "updated_at";
     static String NAME = "name";
-    static String LOADING_OBSERVATIONS = "Loading Observations...";
 
     String[] affiliation_ids, affiliation_names;
-    Observation newObservation, selectedObservation, previewSelectedObservation;
-    ObserverInfo selectedObserverInfo;
-    ArrayList<Observation> observations;
-    List<ObserverInfo> observers;
-    List<Comment> comments;
+    Observation newObservation, previewSelectedObservation;
     List<String> ids, names;
     DatabaseReference mFirebase;
     Users signed_user;
@@ -95,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ImageView nav_iv;
     MenuItem logout;
     ProgressDialog pd;
-    Map<Observation, PreviewInfo> previews = new HashMap<>();
     private Transformation mAvatarTransform = new CroppedCircleTransformation();
 
     @Override
@@ -161,11 +147,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         mFirebase = FirebaseDatabase.getInstance().getReference();
         updateUINoUser();
-        observations = null;
-        observers = null;
-        selectedObservation = null;
-        selectedObserverInfo = null;
-        comments = null;
+
         final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -277,104 +259,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void goToExploreFragment() {
-        pd.setMessage(LOADING_OBSERVATIONS);
-        pd.setCancelable(false);
-        pd.show();
-        if (observations == null) {
-            observations = Lists.newArrayList();
-            observers = Lists.newArrayList();
-            mFirebase = FirebaseDatabase.getInstance().getReference();
-            mFirebase.child(Observation.NODE_NAME).orderByChild(UPDATED_AT).limitToLast(NUM_OF_OBSERVATIONS).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    for(DataSnapshot child : snapshot.getChildren()) {
-                        final Observation observation = child.getValue(Observation.class);
-                        observations.add(observation);
-                        final PreviewInfo preview = new PreviewInfo();
-                        preview.observationImageUrl = observation.data.image;
-                        if (observation.data.text != null) {
-                            preview.observationText = observation.data.text;
-                        } else {
-                            preview.observationText = "No Description";
-                        }
-                        if (observation.comments != null) {
-                            preview.commentsCount = Integer.toString(observation.comments.size());
-                        } else {
-                            preview.commentsCount = "0";
-                        }
-                        if (observation.likes != null) {
-                            preview.likesCount = String.valueOf(HashMultiset.create(observation.likes.values()).count(true));
-                        } else {
-                            preview.likesCount = "0";
-                        }
-                        boolean contains = false;
-                        for (int i = 0; i < observers.size(); i++) {
-                            contains = observers.get(i).getObserverId().equals(observation.userId);
-                            if (contains) {
-                                preview.observerAvatarUrl = observers.get(i).getObserverAvatar();
-                                preview.observerName = observers.get(i).getObserverName();
-                                preview.affiliation = observers.get(i).getObserverAffiliation();
-                                break;
-                            }
-                        }
-                        if (!contains) {
-                            final ObserverInfo observer = new ObserverInfo();
-                            observer.setObserverId(observation.userId);
-                            DatabaseReference f = FirebaseDatabase.getInstance().getReference();
-                            f.child(Users.NODE_NAME).child(observation.userId).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot snapshot) {
-                                    Users user = snapshot.getValue(Users.class);
-                                    observer.setObserverName(user.displayName);
-                                    observer.setObserverAvatar(user.avatar);
-                                    DatabaseReference fb = FirebaseDatabase.getInstance().getReference();
-                                    fb.child(Site.NODE_NAME).child(user.affiliation).addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot snapshot) {
-                                            Site site = snapshot.getValue(Site.class);
-                                            observer.setObserverAffiliation(site.name);
-                                            preview.observerAvatarUrl = observer.getObserverAvatar();
-                                            preview.observerName = observer.getObserverName();
-                                            preview.affiliation = observer.getObserverAffiliation();
-                                            observers.add(observer);
-                                            previews.put(observation, preview);
-                                            if (observations.size() >= NUM_OF_OBSERVATIONS) {
-                                                pd.dismiss();
-                                                getFragmentManager()
-                                                        .beginTransaction()
-                                                        .replace(R.id.fragment_container, new ExploreFragment())
-                                                        .addToBackStack(ExploreFragment.FRAGMENT_TAG)
-                                                        .commit();
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
-                                        }
-                                    });
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                }
-                            });
-                        }
-                    }
-                }
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    pd.dismiss();
-                    Toast.makeText(MainActivity.this, "Could not get observations: "+ databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        } else {
-            pd.dismiss();
-            getFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, new ExploreFragment())
-                    .addToBackStack(ExploreFragment.FRAGMENT_TAG)
-                    .commitAllowingStateLoss();
-        }
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, ExploreFragment.newInstance(user_home_site))
+                .addToBackStack(ExploreFragment.FRAGMENT_TAG)
+                .commit();
     }
 
     public void goToProjectsFragment() {

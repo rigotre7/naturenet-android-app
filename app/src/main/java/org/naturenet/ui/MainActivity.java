@@ -207,8 +207,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         MainActivity.this.onUserSignOut();
                     }
                     MainActivity.this.updateUINoUser();
-                    clearBackStack();
-                    MainActivity.this.goToLaunchFragment();
+                    MainActivity.this.showLaunchFragment();
                 }
             }
         });
@@ -262,11 +261,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    public void goToLaunchFragment() {
+    public void showLaunchFragment() {
         getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, new LaunchFragment())
-                .addToBackStack(LaunchFragment.FRAGMENT_TAG)
                 .commit();
     }
 
@@ -417,6 +415,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         join.setVisibility(View.VISIBLE);
         display_name.setVisibility(View.GONE);
         affiliation.setVisibility(View.GONE);
+        clearBackStack();
     }
 
     public void goToJoinActivity() {
@@ -509,7 +508,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case (REQUEST_CODE_JOIN): {
                 if (resultCode == Activity.RESULT_OK) {
                     if (JoinActivity.EXTRA_LAUNCH.equals(data.getExtras().getString(JoinActivity.EXTRA_JOIN))) {
-                        goToLaunchFragment();
+                        showLaunchFragment();
                     } else if (JoinActivity.EXTRA_LOGIN.equals(data.getExtras().getString(JoinActivity.EXTRA_JOIN))) {
                         signed_user = data.getParcelableExtra(JoinActivity.EXTRA_NEW_USER);
                         logout.setVisible(true);

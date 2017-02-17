@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
@@ -37,6 +38,7 @@ public class AddObservationFragment extends Fragment {
     AddObservationActivity add;
     DatabaseReference fbRef;
     Project selectedProject;
+    ProjectAdapter mProjectAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -60,7 +62,11 @@ public class AddObservationFragment extends Fragment {
         mProjectsListView = (ListView) add.findViewById(R.id.projects_list);
         add_observation_ll = (LinearLayout) add.findViewById(R.id.add_observation_ll);
         noProjects = (TextView) add.findViewById(R.id.projecs_tv);
-        mProjectsListView.setAdapter(new ProjectAdapter(add, add.mProjects));
+
+        Query query = FirebaseDatabase.getInstance().getReference(Project.NODE_NAME).orderByChild("latest_contribution");
+        mProjectAdapter = new ProjectAdapter(getActivity(), query);
+        mProjectsListView.setAdapter(mProjectAdapter);
+
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

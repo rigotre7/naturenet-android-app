@@ -51,22 +51,7 @@ public class ObservationGalleryFragment extends Fragment {
 
         Query query = FirebaseDatabase.getInstance().getReference(Observation.NODE_NAME)
                 .orderByChild("updated_at").limitToLast(20);
-        mAdapter = new FirebaseListAdapter<Observation>(getActivity(), Observation.class, R.layout.observation_list_item, query) {
-            @Override
-            protected void populateView(final View v, final Observation model, int position) {
-                v.setTag(model);
-                ViewGroup badge = (ViewGroup) v.findViewById(R.id.observation_user_badge);
-                //TODO: instead of recreating a new layout, make a Badge class and clear contents individually
-                badge.removeAllViews();
-                NatureNetUtils.makeUserBadge(getActivity(), badge, model.userId);
-                Picasso.with(getActivity()).load(Strings.emptyToNull(model.data.image)).error(R.drawable.no_image)
-                        .fit().centerCrop().into((ImageView) v.findViewById(R.id.observation_icon));
-            }
-            @Override
-            public Observation getItem(int pos) {
-                return super.getItem(getCount() - 1 - pos);
-            }
-        };
+        mAdapter = new ObservationAdapter(getActivity(), query);
         gridView.setAdapter(mAdapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

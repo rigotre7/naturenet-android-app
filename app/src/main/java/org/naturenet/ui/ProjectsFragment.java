@@ -2,7 +2,6 @@ package org.naturenet.ui;
 
 import android.Manifest;
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -26,17 +25,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.common.collect.Lists;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.Query;
 import com.kosalgeek.android.photoutil.CameraPhoto;
 import com.kosalgeek.android.photoutil.GalleryPhoto;
 
@@ -47,7 +45,6 @@ import org.naturenet.data.model.Site;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 import timber.log.Timber;
@@ -58,13 +55,11 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
     final private static int CAMERA_REQUEST = 1;
     final private static int GALLERY_REQUEST = 2;
     static String LATEST_CONTRIBUTION = "latest_contribution";
-    static String LOADING_PROJECTS = "Loading Projects...";
 
     MainActivity main;
-    ProgressDialog pd;
     private ListView mProjectsListView = null;
-    private List<Project> mProjects = Lists.newArrayList();
     private DatabaseReference mFirebase = FirebaseDatabase.getInstance().getReference();
+    private FirebaseListAdapter mAdapter;
     ImageButton add_observation, add_design_idea;
     Button camera, gallery, design_ideas, design_challenges;
     TextView toolbar_title, select;
@@ -109,8 +104,6 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
         }
 
         mProjectsListView = (ListView) root.findViewById(R.id.projects_list);
-        pd = new ProgressDialog(main);
-        readProjects();
 
         return root;
     }
@@ -166,6 +159,7 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mAdapter.cleanup();
     }
 
     @Override
@@ -193,6 +187,11 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
         design_challenges = (Button) main.findViewById(R.id.dialog_add_design_idea_b_design_challenges);
         cameraPhoto = new CameraPhoto(main);
         galleryPhoto = new GalleryPhoto(main);
+
+        Timber.d("Getting projects");
+        Query query = mFirebase.child(Project.NODE_NAME).orderByChild(LATEST_CONTRIBUTION);
+        mAdapter = new ProjectAdapter(main, query);
+        mProjectsListView.setAdapter(mAdapter);
 
         add_observation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -283,7 +282,7 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
         mProjectsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                main.goToProjectActivity(mProjects.get(position));
+                main.goToProjectActivity((Project)view.getTag());
             }
         });
     }
@@ -363,40 +362,5 @@ public class ProjectsFragment extends Fragment implements GoogleApiClient.Connec
             default:
                 break;
         }
-    }
-
-    private void readProjects() {
-        Timber.d("Getting projects");
-        pd.setMessage(LOADING_PROJECTS);
-        pd.setCancelable(false);
-        pd.show();
-
-        mFirebase.child(Project.NODE_NAME).orderByChild(LATEST_CONTRIBUTION).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                Timber.d("Got projects, count: %d", snapshot.getChildrenCount());
-
-                for(DataSnapshot child : snapshot.getChildren()) {
-                    Project project = child.getValue(Project.class);
-                    mProjects.add(project);
-                }
-
-                // Timestamps sort in ascending order
-                Collections.reverse(mProjects);
-
-                if (mProjects.size() != 0) {
-                    mProjectsListView.setAdapter(new ProjectAdapter(main, mProjects));
-                }
-
-                pd.dismiss();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Timber.e("Failed to read Projects: %s", databaseError.getMessage());
-                pd.dismiss();
-                Toast.makeText(main, "Could not get projects: "+ databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }

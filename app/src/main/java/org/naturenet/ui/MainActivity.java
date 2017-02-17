@@ -48,11 +48,13 @@ import org.naturenet.data.model.Project;
 import org.naturenet.data.model.Site;
 import org.naturenet.data.model.Users;
 import org.naturenet.util.CroppedCircleTransformation;
+import org.naturenet.util.NatureNetUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import timber.log.Timber;
 
@@ -83,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     MenuItem logout;
     ProgressDialog pd;
     private Transformation mAvatarTransform = new CroppedCircleTransformation();
+    private Disposable mUserAuthSubscription;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -146,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         mFirebase = FirebaseDatabase.getInstance().getReference();
-        updateUINoUser();
+        showNoUser();
 
         final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -169,30 +172,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .create().show();
         }
 
-        goToExploreFragment();
-    }
+        getFragmentManager()
+                .beginTransaction()
+                .add(R.id.fragment_container, new LaunchFragment())
+                .commit();
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        ((NatureNetApplication)getApplication()).getCurrentUserObservable().subscribe(new Consumer<Optional<Users>>() {
+        mUserAuthSubscription = ((NatureNetApplication)getApplication()).getCurrentUserObservable().subscribe(new Consumer<Optional<Users>>() {
             @Override
             public void accept(Optional<Users> user) throws Exception {
                 if (user.isPresent()) {
                     if (signed_user == null) {
-                        MainActivity.this.onUserSignIn(user.get());
+                        onUserSignIn(user.get());
+                    }
+
+                    if (getFragmentManager().getBackStackEntryCount() == 0) {
+                        getFragmentManager()
+                                .beginTransaction()
+                                .add(R.id.fragment_container, ExploreFragment.newInstance(user_home_site))
+                                .commit();
                     }
                 } else {
                     if (signed_user != null) {
-                        mFirebase.child(Users.NODE_NAME).child(signed_user.id).keepSynced(false);
-                        MainActivity.this.onUserSignOut();
+                        onUserSignOut();
                     }
-                    MainActivity.this.updateUINoUser();
-                    MainActivity.this.showLaunchFragment();
+                    showNoUser();
                 }
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        mUserAuthSubscription.dispose();
+        super.onDestroy();
     }
 
     private void clearBackStack() {
@@ -205,7 +217,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        if(getFragmentManager().getBackStackEntryCount() == 0) {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else if(getFragmentManager().getBackStackEntryCount() == 0) {
             finish();
         } else {
             super.onBackPressed();
@@ -288,23 +302,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .replace(R.id.fragment_container, new CommunitiesFragment())
                 .addToBackStack(CommunitiesFragment.FRAGMENT_TAG)
                 .commit();
-    }
-
-    public void onUserSignOut() {
-        Toast.makeText(this, "You have been logged out.", Toast.LENGTH_SHORT).show();
-        signed_user = null;
-        user_home_site = null;
-        logout.setVisible(false);
-        this.invalidateOptionsMenu();
-        Picasso.with(this).load(R.drawable.default_avatar)
-                .transform(mAvatarTransform).fit().into(nav_iv);
-        display_name.setText(null);
-        affiliation.setText(null);
-        sign_in.setVisibility(View.VISIBLE);
-        join.setVisibility(View.VISIBLE);
-        display_name.setVisibility(View.GONE);
-        affiliation.setVisibility(View.GONE);
-        clearBackStack();
     }
 
     public void goToJoinActivity() {
@@ -460,7 +457,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 user_home_site = dataSnapshot.getValue(Site.class);
-                updateUIUser(signed_user);
+                showUserInfo(signed_user);
             }
 
             @Override
@@ -470,29 +467,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
-    public void updateUINoUser() {
-        Picasso.with(this).load(R.drawable.default_avatar)
-                .transform(mAvatarTransform).fit().into(nav_iv);
+    public void onUserSignOut() {
+        if (signed_user != null) {
+            Toast.makeText(this, "You have been logged out.", Toast.LENGTH_SHORT).show();
+            mFirebase.child(Users.NODE_NAME).child(signed_user.id).keepSynced(false);
+            signed_user = null;
+        }
+        user_home_site = null;
+        this.invalidateOptionsMenu();
+        clearBackStack();
+        showLaunchFragment();
+    }
+
+    public void showNoUser() {
+        NatureNetUtils.showUserAvatar(this, nav_iv, R.drawable.default_avatar);
         logout.setVisible(false);
         display_name.setText(null);
         affiliation.setText(null);
-        sign_in.setVisibility(View.VISIBLE);
-        join.setVisibility(View.VISIBLE);
         display_name.setVisibility(View.GONE);
         affiliation.setVisibility(View.GONE);
+        sign_in.setVisibility(View.VISIBLE);
+        join.setVisibility(View.VISIBLE);
     }
 
-    public void updateUIUser(final Users user) {
-        Picasso.with(MainActivity.this).load(Strings.emptyToNull(user.avatar))
-                .placeholder(R.drawable.default_avatar)
-                .transform(mAvatarTransform).fit().into(nav_iv);
+    public void showUserInfo(final Users user) {
+        NatureNetUtils.showUserAvatar(this, nav_iv, user.avatar);
         logout.setVisible(true);
         display_name.setText(user.displayName);
         affiliation.setText(user_home_site.name);
-        sign_in.setVisibility(View.GONE);
-        join.setVisibility(View.GONE);
         display_name.setVisibility(View.VISIBLE);
         affiliation.setVisibility(View.VISIBLE);
+        sign_in.setVisibility(View.GONE);
+        join.setVisibility(View.GONE);
         drawer.openDrawer(GravityCompat.START);
     }
 }

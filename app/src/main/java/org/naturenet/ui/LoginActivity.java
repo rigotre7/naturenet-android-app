@@ -27,11 +27,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void goToLoginFragment() {
-        getFragmentManager().
-                beginTransaction().
-                replace(R.id.fragment_container, new LoginFragment(), LoginFragment.FRAGMENT_TAG).
-                addToBackStack(null).
-                commit();
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, new LoginFragment(), LoginFragment.FRAGMENT_TAG)
+                .commit();
     }
 
     public void goToJoinActivity() {

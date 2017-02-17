@@ -44,6 +44,11 @@ public class NatureNetUtils {
                 .placeholder(R.drawable.default_avatar).fit().into(view);
     }
 
+    public static void showUserAvatar(final Context context, final ImageView view, final int avatarId) {
+        Picasso.with(context).load(avatarId).transform(mAvatarTransform)
+                .placeholder(R.drawable.default_avatar).fit().into(view);
+    }
+
     public static void makeUserBadge(final Context context, final ViewGroup root, final String userId) {
 
         View badge = View.inflate(context, R.layout.badge_horizontal, root);

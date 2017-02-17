@@ -47,7 +47,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -57,14 +56,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.kosalgeek.android.photoutil.CameraPhoto;
 import com.kosalgeek.android.photoutil.GalleryPhoto;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
 
 import org.naturenet.R;
-import org.naturenet.data.PreviewInfo;
 import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Site;
 import org.naturenet.data.model.Users;
-import org.naturenet.util.CroppedCircleTransformation;
 import org.naturenet.util.NatureNetUtils;
 
 import java.io.File;

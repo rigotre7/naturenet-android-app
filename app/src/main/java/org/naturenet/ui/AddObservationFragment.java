@@ -13,19 +13,26 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
 import org.naturenet.data.model.PhotoCaptionContent;
 import org.naturenet.data.model.Project;
 
+import timber.log.Timber;
+
 public class AddObservationFragment extends Fragment {
 
     public static final String FRAGMENT_TAG = "add_observation_fragment";
+    private static final String DEFAULT_PROJECT_ID = "-ACES_a38";
 
     TextView toolbar_title, send, project;
     EditText description, whereIsIt;
@@ -37,7 +44,7 @@ public class AddObservationFragment extends Fragment {
     LinearLayout add_observation_ll;
     AddObservationActivity add;
     DatabaseReference fbRef;
-    Project selectedProject;
+    String selectedProjectId;
     ProjectAdapter mProjectAdapter;
 
     @Override
@@ -76,29 +83,35 @@ public class AddObservationFragment extends Fragment {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                send.setVisibility(View.GONE);
-                fbRef = FirebaseDatabase.getInstance().getReference();
-                PhotoCaptionContent data = new PhotoCaptionContent();
-                data.text = description.getText().toString();
-                String where = whereIsIt.getText().toString().trim();
+                if (add.signedUser != null) {
+                    send.setVisibility(View.GONE);
+                    fbRef = FirebaseDatabase.getInstance().getReference();
+                    PhotoCaptionContent data = new PhotoCaptionContent();
+                    data.text = description.getText().toString();
+                    String where = whereIsIt.getText().toString().trim();
 
-                if (!where.isEmpty()) {
-                    add.newObservation.where = where;
+                    if (!where.isEmpty()) {
+                        add.newObservation.where = where;
+                    }
+
+                    add.newObservation.data = data;
+                    add.newObservation.projectId = selectedProjectId;
+                    add.newObservation.siteId = add.signedUser.affiliation;
+
+                    add.goBackToMainActivity();
+                } else {
+                    Toast.makeText(getActivity(), "Please sign in to contribute to NatureNet", Toast.LENGTH_SHORT).show();
+                    //TODO: start login activity for result, then come back to send
                 }
-
-                add.newObservation.data = data;
-                add.newObservation.projectId = selectedProject.id;
-                add.newObservation.siteId = add.signedUser.affiliation;
-
-                add.goBackToMainActivity();
             }
         });
 
         mProjectsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                project.setText(add.mProjects.get(position).name);
-                selectedProject = add.mProjects.get(position);
+                Project p = (Project) view.getTag();
+                project.setText(p.name);
+                selectedProjectId = p.id;
                 add_observation_ll.setVisibility(View.VISIBLE);
                 mProjectsListView.setVisibility(View.GONE);
             }
@@ -122,12 +135,19 @@ public class AddObservationFragment extends Fragment {
             }
         });
 
-        if (add.defaultProject != null) {
-            selectedProject = add.defaultProject;
-            project.setText(String.format(getString(R.string.add_observation_default_project), selectedProject.name));
-        } else {
-            project.setText(null);
-        }
+        selectedProjectId = DEFAULT_PROJECT_ID;
+        FirebaseDatabase.getInstance().getReference(Project.NODE_NAME).child(DEFAULT_PROJECT_ID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Project p = dataSnapshot.getValue(Project.class);
+                project.setText(String.format(getString(R.string.add_observation_default_project), p.name));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Timber.e(databaseError.toException(), "Could not read default project");
+            }
+        });
 
         add_observation_ll.setVisibility(View.VISIBLE);
         mProjectsListView.setVisibility(View.GONE);

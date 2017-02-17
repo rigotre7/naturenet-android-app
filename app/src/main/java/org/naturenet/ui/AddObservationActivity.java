@@ -31,18 +31,11 @@ public class AddObservationActivity extends AppCompatActivity {
     public static final String EXTRA_IMAGE_PATH = "observation_path";
     public static final String EXTRA_USER = "signed_user";
 
-    static String LATEST_CONTRIBUTION = "latest_contribution";
-    static String LOADING = "Loading...";
-    static String DEFAULT_PROJECT_ID = "-ACES_a38";
     static String EMPTY = "";
 
-    DatabaseReference fbRef;
-    ProgressDialog pd;
     Uri observationPath;
     Observation newObservation;
-    Project defaultProject;
     Users signedUser;
-    List<Project> mProjects = Lists.newArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,60 +47,10 @@ public class AddObservationActivity extends AppCompatActivity {
         newObservation = getIntent().getParcelableExtra(EXTRA_OBSERVATION);
         observationPath = getIntent().getParcelableExtra(EXTRA_IMAGE_PATH);
         signedUser = getIntent().getParcelableExtra(EXTRA_USER);
-        pd = new ProgressDialog(this);
-        defaultProject = null;
-        goToAddObservationFragment();
-    }
-
-    public void goToAddObservationFragment() {
-        if (signedUser != null) {
-            fbRef = FirebaseDatabase.getInstance().getReference();
-            pd.setMessage(LOADING);
-            pd.setCancelable(false);
-            pd.show();
-            fbRef.child(Project.NODE_NAME).orderByChild(LATEST_CONTRIBUTION).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-
-                    for (DataSnapshot child : snapshot.getChildren()) {
-                        Project project = child.getValue(Project.class);
-                        if (project.id.equals(DEFAULT_PROJECT_ID)) {
-                            defaultProject = project;
-                        }
-
-                        // TODO: decide on site-project submission rule
-                        //Map<String, Object> sites = (Map<String, Object>) map.get(SITES);
-                        //if (sites.containsKey(signedUser.affiliation)) {
-                            mProjects.add(project);
-                        //}
-                    }
-
-                    // Timestamps sort in ascending order
-                    Collections.reverse(mProjects);
-
-                    if (mProjects.size() != 0) {
-                        getFragmentManager().
-                                beginTransaction().
-                                replace(R.id.fragment_container, new AddObservationFragment(), AddObservationFragment.FRAGMENT_TAG).
-                                commit();
-                    }
-
-                    pd.dismiss();
-                }
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    pd.dismiss();
-                    Toast.makeText(AddObservationActivity.this, "Could not get projects: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        } else {
-            pd.dismiss();
-            getFragmentManager().
-                    beginTransaction().
-                    replace(R.id.fragment_container, new AddObservationFragment(), AddObservationFragment.FRAGMENT_TAG).
-                    addToBackStack(null).
-                    commit();
-        }
+        getFragmentManager().
+                beginTransaction().
+                replace(R.id.fragment_container, new AddObservationFragment(), AddObservationFragment.FRAGMENT_TAG).
+                commit();
     }
 
     public void goBackToMainActivity() {

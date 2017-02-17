@@ -1,19 +1,23 @@
 package org.naturenet.ui;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
-import android.location.LocationManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -23,11 +27,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -37,6 +57,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.kosalgeek.android.photoutil.CameraPhoto;
+import com.kosalgeek.android.photoutil.GalleryPhoto;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
@@ -51,6 +73,7 @@ import org.naturenet.util.CroppedCircleTransformation;
 import org.naturenet.util.NatureNetUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +81,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private final static int REQUEST_CODE_JOIN = 1;
     private final static int REQUEST_CODE_LOGIN = 2;
@@ -86,6 +110,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ProgressDialog pd;
     private Transformation mAvatarTransform = new CroppedCircleTransformation();
     private Disposable mUserAuthSubscription;
+
+    /* Common submission items */
+    static final private int REQUEST_CODE_CAMERA = 6;
+    static final private int REQUEST_CODE_GALLERY = 7;
+    static final private int REQUEST_CODE_CHECK_LOCATION_SETTINGS = 8;
+    CameraPhoto cameraPhoto;
+    GalleryPhoto galleryPhoto;
+    LocationRequest mLocationRequest;
+    GoogleApiClient mGoogleApiClient;
+    ImageButton add_observation, add_design_idea;
+    Button camera, gallery, design_ideas, design_challenges;
+    TextView select;
+    LinearLayout dialog_add_observation, dialog_add_design_idea;
+    FrameLayout floating_buttons;
+    GridView gridview;
+    ImageView add_observation_cancel, add_design_idea_cancel, gallery_item;
+    List<Uri> recentImageGallery;
+    Uri selectedImage;
+    double latValue, longValue;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -151,27 +194,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mFirebase = FirebaseDatabase.getInstance().getReference();
         showNoUser();
 
-        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            new android.app.AlertDialog.Builder(this)
-                .setMessage("Your GPS seems to be disabled, do you want to enable it?")
-                .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        MainActivity.this.startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                    }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                })
-                .create().show();
-        }
-
         getFragmentManager()
                 .beginTransaction()
                 .add(R.id.fragment_container, new LaunchFragment())
@@ -199,6 +221,263 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
+
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+
+        PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
+                final Status status = locationSettingsResult.getStatus();
+                if (status.getStatusCode() == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
+                    try {
+                        status.startResolutionForResult(MainActivity.this, REQUEST_CODE_CHECK_LOCATION_SETTINGS);
+                    } catch (IntentSender.SendIntentException e) {
+                        Timber.w(e, "Unable to resolve location settings");
+                    }
+                } else if (status.getStatusCode() == LocationSettingsStatusCodes.SUCCESS) {
+                    requestLocationUpdates();
+                }
+            }
+        });
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (lastLocation != null) {
+                latValue = lastLocation.getLatitude();
+                longValue = lastLocation.getLongitude();
+            }
+        } else {
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_CHECK_LOCATION_SETTINGS);
+        }
+
+        latValue = 0.0;
+        longValue = 0.0;
+
+        floating_buttons = (FrameLayout) findViewById(R.id.fl_floating_buttons);
+        add_observation = (ImageButton) findViewById(R.id.floating_buttons_ib_add_observation);
+        add_design_idea = (ImageButton) findViewById(R.id.floating_buttons_ib_add_design_idea);
+        dialog_add_observation = (LinearLayout) findViewById(R.id.ll_dialog_add_observation);
+        add_observation_cancel = (ImageView) findViewById(R.id.dialog_add_observation_iv_cancel);
+        camera = (Button) findViewById(R.id.dialog_add_observation_b_camera);
+        gallery = (Button) findViewById(R.id.dialog_add_observation_b_gallery);
+        select = (TextView) findViewById(R.id.dialog_add_observation_tv_select);
+        gridview = (GridView) findViewById(R.id.dialog_add_observation_gv);
+        gallery_item = (ImageView) findViewById(R.id.gallery_iv);
+        dialog_add_design_idea = (LinearLayout) findViewById(R.id.ll_dialog_add_design_idea);
+        add_design_idea_cancel = (ImageView) findViewById(R.id.dialog_add_design_idea_iv_cancel);
+        design_ideas = (Button) findViewById(R.id.dialog_add_design_idea_b_design_ideas);
+        design_challenges = (Button) findViewById(R.id.dialog_add_design_idea_b_design_challenges);
+        cameraPhoto = new CameraPhoto(this);
+        galleryPhoto = new GalleryPhoto(this);
+
+        add_observation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_GALLERY);
+                } else {
+                    setGallery();
+                }
+
+                select.setVisibility(View.GONE);
+                floating_buttons.setVisibility(View.GONE);
+                dialog_add_observation.setVisibility(View.VISIBLE);
+            }
+        });
+
+        add_design_idea.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                floating_buttons.setVisibility(View.GONE);
+                dialog_add_design_idea.setVisibility(View.VISIBLE);
+            }
+        });
+
+        add_observation_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (recentImageGallery != null) {
+                    int index = recentImageGallery.indexOf(selectedImage);
+                    if (index >= 0) {
+                        gridview.getChildAt(index).findViewById(R.id.gallery_iv).setBackgroundResource(0);
+                    }
+                }
+
+                selectedImage = null;
+                select.setVisibility(View.GONE);
+                floating_buttons.setVisibility(View.VISIBLE);
+                dialog_add_observation.setVisibility(View.GONE);
+            }
+        });
+
+        select.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                observationPath = selectedImage;
+                newObservation = new Observation();
+                newObservation.location = Lists.newArrayList(latValue, longValue);
+                setGallery();
+                goToAddObservationActivity();
+            }
+        });
+
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setGallery();
+                select.setVisibility(View.GONE);
+
+                try {
+                    startActivityForResult(cameraPhoto.takePhotoIntent(), REQUEST_CODE_CAMERA);
+                } catch (IOException e) {
+                    Toast.makeText(MainActivity.this, "Something Wrong while taking photo", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        gallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setGallery();
+                select.setVisibility(View.GONE);
+                startActivityForResult(galleryPhoto.openGalleryIntent(), REQUEST_CODE_GALLERY);
+            }
+        });
+
+        add_design_idea_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                floating_buttons.setVisibility(View.VISIBLE);
+                dialog_add_design_idea.setVisibility(View.GONE);
+            }
+        });
+
+        floating_buttons.setVisibility(View.VISIBLE);
+        dialog_add_observation.setVisibility(View.GONE);
+        dialog_add_design_idea.setVisibility(View.GONE);
+    }
+
+    public void setGallery() {
+        recentImageGallery = getRecentImagesUris();
+
+        if (recentImageGallery.size() != 0) {
+            gridview.setAdapter(new ImageGalleryAdapter(this, recentImageGallery));
+
+            gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                    ImageView iv = (ImageView) v.findViewById(R.id.gallery_iv);
+
+                    if (selectedImage == null) {
+                        selectedImage = recentImageGallery.get(position);
+                        iv.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.border_selected_image));
+                        select.setVisibility(View.VISIBLE);
+                    } else if (selectedImage.equals(recentImageGallery.get(position))) {
+                        selectedImage = null;
+                        iv.setBackgroundResource(0);
+                        select.setVisibility(View.GONE);
+                    } else {
+                        int index = recentImageGallery.indexOf(selectedImage);
+
+                        if (index >= 0) {
+                            gridview.getChildAt(index).findViewById(R.id.gallery_iv).setBackgroundResource(0);
+                        }
+
+                        selectedImage = recentImageGallery.get(position);
+                        iv.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.border_selected_image));
+                        select.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_GALLERY:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    setGallery();
+                else
+                    Toast.makeText(this, "Gallery Access Permission Denied", Toast.LENGTH_SHORT).show();
+                break;
+            case REQUEST_CODE_CAMERA:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    setGallery();
+                else
+                    Toast.makeText(this, "Camera Access Permission Denied", Toast.LENGTH_SHORT).show();
+                break;
+            case REQUEST_CODE_CHECK_LOCATION_SETTINGS:
+                if (permissions.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    requestLocationUpdates();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        requestLocationUpdates();
+    }
+
+    private void requestLocationUpdates() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {}
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
+
+    @Override
+    public void onLocationChanged(Location location) {
+        latValue = location.getLatitude();
+        longValue = location.getLongitude();
+    }
+
+    @Override
+    public void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
+    @Override
+    public void onResume() {
+        if (mGoogleApiClient.isConnected()) {
+            requestLocationUpdates();
+        }
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        if (mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        }
+        super.onPause();
     }
 
     @Override
@@ -449,6 +728,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 break;
             }
+            case REQUEST_CODE_CAMERA: {
+                if (resultCode == MainActivity.RESULT_OK) {
+                    Timber.d("Camera Path: %s", cameraPhoto.getPhotoPath());
+                    observationPath = Uri.fromFile(new File(cameraPhoto.getPhotoPath()));
+                    cameraPhoto.addToGallery();
+                    newObservation = new Observation();
+                    newObservation.location = Lists.newArrayList(latValue, longValue);
+                    setGallery();
+                    goToAddObservationActivity();
+                }
+                break;
+            }
+            case REQUEST_CODE_GALLERY: {
+                if (resultCode == MainActivity.RESULT_OK) {
+                    galleryPhoto.setPhotoUri(data.getData());
+                    Timber.d("Gallery Path: %s", galleryPhoto.getPath());
+                    observationPath = Uri.fromFile(new File(galleryPhoto.getPath()));
+                    newObservation = new Observation();
+                    newObservation.location = Lists.newArrayList(latValue, longValue);
+                    setGallery();
+                    goToAddObservationActivity();
+                }
+                break;
+            }
         }
     }
     public void onUserSignIn(@NonNull Users user) {
@@ -457,6 +760,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 user_home_site = dataSnapshot.getValue(Site.class);
+                if(user_home_site != null && !mGoogleApiClient.isConnected()) {
+                    latValue = user_home_site.location.get(0);
+                    longValue = user_home_site.location.get(1);
+                }
                 showUserInfo(signed_user);
             }
 

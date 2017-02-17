@@ -2,27 +2,18 @@ package org.naturenet.ui;
 
 import android.Manifest;
 import android.app.Fragment;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -46,15 +37,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.kosalgeek.android.photoutil.CameraPhoto;
-import com.kosalgeek.android.photoutil.GalleryPhoto;
 import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
@@ -63,10 +51,7 @@ import org.naturenet.data.model.Site;
 import org.naturenet.data.model.Users;
 import org.naturenet.util.NatureNetUtils;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import timber.log.Timber;
@@ -75,26 +60,15 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
 
     public static final String FRAGMENT_TAG = "explore_fragment";
     private static final String ARG_SITE = "arg_site";
-    static final private int CAMERA_REQUEST = 1;
-    static final private int GALLERY_REQUEST = 2;
 
-    ImageButton add_observation, add_design_idea;
-    Button camera, gallery, design_ideas, design_challenges;
-    TextView toolbar_title, preview_observer_user_name, preview_observer_affiliation, preview_observation_text, preview_likes_count, preview_comments_count, select;
-    LinearLayout dialog_preview, dialog_add_observation, dialog_add_design_idea;
-    FrameLayout floating_buttons;
-    GridView gridview;
-    ImageView add_observation_cancel, add_design_idea_cancel, preview_cancel, preview_observation_image, preview_observer_avatar, gallery_item;
+    TextView toolbar_title, preview_observer_user_name, preview_observer_affiliation, preview_observation_text, preview_likes_count, preview_comments_count;
+    LinearLayout dialog_preview;
+    ImageView preview_cancel, preview_observation_image, preview_observer_avatar;
     MainActivity main;
-    List<Uri> recentImageGallery;
-    Uri selectedImage;
     double latValue, longValue;
-    CameraPhoto cameraPhoto;
-    GalleryPhoto galleryPhoto;
     MapView mMapView;
     GoogleMap googleMap;
     GoogleApiClient mGoogleApiClient;
-    LocationRequest locationRequest;
     Observation previewSelectedObservation;
 
     private Query mQuery = FirebaseDatabase.getInstance()
@@ -176,7 +150,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                     .addOnConnectionFailedListener(this)
                     .build();
 
-            locationRequest = new LocationRequest();
+            LocationRequest locationRequest = new LocationRequest();
             locationRequest.setInterval(10 * 1000);
             locationRequest.setFastestInterval(1 * 1000);
             locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
@@ -286,13 +260,11 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
                     }
                 });
 
-        floating_buttons.setVisibility(View.GONE);
         dialog_preview.setVisibility(View.VISIBLE);
     }
 
     private void hidePreview() {
         if (dialog_preview.getVisibility() == View.VISIBLE) {
-            floating_buttons.setVisibility(View.VISIBLE);
             dialog_preview.setVisibility(View.GONE);
         }
         preview_observer_avatar.setImageDrawable(null);
@@ -305,14 +277,7 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
     }
 
     @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        requestLocationUpdates();
-    }
-
-    private void requestLocationUpdates() {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
-    }
+    public void onConnected(@Nullable Bundle bundle) {}
 
     @Override
     public void onConnectionSuspended(int i) {}
@@ -358,7 +323,6 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
     @Override
     public void onResume() {
         mMapView.onResume();
-        if (mGoogleApiClient.isConnected()) { requestLocationUpdates(); }
         super.onResume();
     }
 
@@ -388,9 +352,6 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        floating_buttons = (FrameLayout) view.findViewById(R.id.fl_floating_buttons);
-        add_observation = (ImageButton) view.findViewById(R.id.floating_buttons_ib_add_observation);
-        add_design_idea = (ImageButton) view.findViewById(R.id.floating_buttons_ib_add_design_idea);
         dialog_preview = (LinearLayout) view.findViewById(R.id.ll_dialog_preview);
         preview_cancel = (ImageView) view.findViewById(R.id.preview_cancel);
         preview_observation_image = (ImageView) view.findViewById(R.id.preview_observation_iv);
@@ -400,17 +361,6 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
         preview_observation_text = (TextView) view.findViewById(R.id.preview_observation_text);
         preview_likes_count = (TextView) view.findViewById(R.id.preview_likes_count);
         preview_comments_count = (TextView) view.findViewById(R.id.preview_comments_count);
-        dialog_add_observation = (LinearLayout) view.findViewById(R.id.ll_dialog_add_observation);
-        add_observation_cancel = (ImageView) view.findViewById(R.id.dialog_add_observation_iv_cancel);
-        camera = (Button) view.findViewById(R.id.dialog_add_observation_b_camera);
-        gallery = (Button) view.findViewById(R.id.dialog_add_observation_b_gallery);
-        select = (TextView) view.findViewById(R.id.dialog_add_observation_tv_select);
-        gridview = (GridView) view.findViewById(R.id.dialog_add_observation_gv);
-        gallery_item = (ImageView) view.findViewById(R.id.gallery_iv);
-        dialog_add_design_idea = (LinearLayout) view.findViewById(R.id.ll_dialog_add_design_idea);
-        add_design_idea_cancel = (ImageView) view.findViewById(R.id.dialog_add_design_idea_iv_cancel);
-        design_ideas = (Button) view.findViewById(R.id.dialog_add_design_idea_b_design_ideas);
-        design_challenges = (Button) view.findViewById(R.id.dialog_add_design_idea_b_design_challenges);
     }
 
     @Override
@@ -420,9 +370,6 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
         main = ((MainActivity) this.getActivity());
         toolbar_title = (TextView) main.findViewById(R.id.app_bar_main_tv);
         toolbar_title.setText(R.string.explore_title);
-
-        cameraPhoto = new CameraPhoto(getActivity());
-        galleryPhoto = new GalleryPhoto(getActivity());
 
         preview_observation_image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -435,169 +382,10 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
         preview_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                floating_buttons.setVisibility(View.VISIBLE);
                 dialog_preview.setVisibility(View.GONE);
             }
         });
 
-        add_observation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, GALLERY_REQUEST);
-                } else {
-                    ExploreFragment.this.setGallery();
-                    select.setVisibility(View.GONE);
-                    floating_buttons.setVisibility(View.GONE);
-                    dialog_add_observation.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
-        add_design_idea.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                floating_buttons.setVisibility(View.GONE);
-                dialog_add_design_idea.setVisibility(View.VISIBLE);
-            }
-        });
-
-        add_observation_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (recentImageGallery != null) {
-                    int index = recentImageGallery.indexOf(selectedImage);
-                    if (index >= 0) {
-                        gridview.getChildAt(index).findViewById(R.id.gallery_iv).setBackgroundResource(0);
-                    }
-                }
-
-                selectedImage = null;
-                select.setVisibility(View.GONE);
-                floating_buttons.setVisibility(View.VISIBLE);
-                dialog_add_observation.setVisibility(View.GONE);
-            }
-        });
-
-        select.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                main.observationPath = selectedImage;
-                main.newObservation = new Observation();
-                main.newObservation.location = Lists.newArrayList(latValue, longValue);
-                ExploreFragment.this.setGallery();
-                main.goToAddObservationActivity();
-            }
-        });
-
-        camera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ExploreFragment.this.setGallery();
-                select.setVisibility(View.GONE);
-                try {
-                    ExploreFragment.this.startActivityForResult(cameraPhoto.takePhotoIntent(), CAMERA_REQUEST);
-                } catch (IOException e) {
-                    Toast.makeText(main, "Something Wrong while taking photo", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        gallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ExploreFragment.this.setGallery();
-                select.setVisibility(View.GONE);
-                ExploreFragment.this.startActivityForResult(galleryPhoto.openGalleryIntent(), GALLERY_REQUEST);
-            }
-        });
-
-        add_design_idea_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                floating_buttons.setVisibility(View.VISIBLE);
-                dialog_add_design_idea.setVisibility(View.GONE);
-            }
-        });
-
-        floating_buttons.setVisibility(View.VISIBLE);
-        dialog_add_observation.setVisibility(View.GONE);
-        dialog_add_design_idea.setVisibility(View.GONE);
         dialog_preview.setVisibility(View.GONE);
-    }
-
-    public void setGallery() {
-        recentImageGallery = main.getRecentImagesUris();
-
-        if (recentImageGallery.size() != 0) {
-            gridview.setAdapter(new ImageGalleryAdapter(main, recentImageGallery));
-            gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                    ImageView iv = (ImageView) v.findViewById(R.id.gallery_iv);
-
-                    if (selectedImage == null) {
-                        selectedImage = recentImageGallery.get(position);
-                        iv.setBackground(ContextCompat.getDrawable(ExploreFragment.this.getActivity(), R.drawable.border_selected_image));
-                        select.setVisibility(View.VISIBLE);
-                    } else if (selectedImage.equals(recentImageGallery.get(position))) {
-                        selectedImage = null;
-                        iv.setBackgroundResource(0);
-                        select.setVisibility(View.GONE);
-                    } else {
-                        int index = recentImageGallery.indexOf(selectedImage);
-                        if (index >= 0) {
-                            gridview.getChildAt(index).findViewById(R.id.gallery_iv).setBackgroundResource(0);
-                        }
-                        selectedImage = recentImageGallery.get(position);
-                        iv.setBackground(ContextCompat.getDrawable(ExploreFragment.this.getActivity(), R.drawable.border_selected_image));
-                        select.setVisibility(View.VISIBLE);
-                    }
-                }
-            });
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == MainActivity.RESULT_OK) {
-            if (requestCode == CAMERA_REQUEST) {
-                Timber.d("Camera Path: %s", cameraPhoto.getPhotoPath());
-                main.observationPath = Uri.fromFile(new File(cameraPhoto.getPhotoPath()));
-                cameraPhoto.addToGallery();
-            } else if (requestCode == GALLERY_REQUEST) {
-                galleryPhoto.setPhotoUri(data.getData());
-                Timber.d("Gallery Path: %s", galleryPhoto.getPath());
-                main.observationPath = Uri.fromFile(new File(galleryPhoto.getPath()));
-            }
-
-            main.newObservation = new Observation();
-            main.newObservation.location = Lists.newArrayList(latValue, longValue);
-            setGallery();
-            main.goToAddObservationActivity();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case GALLERY_REQUEST:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    setGallery();
-                } else {
-                    Toast.makeText(main, "Gallery Access Permission Denied", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case CAMERA_REQUEST:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    setGallery();
-                } else {
-                    Toast.makeText(main, "Camera Access Permission Denied", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            default:
-                break;
-        }
     }
 }

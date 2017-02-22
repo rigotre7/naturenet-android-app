@@ -117,8 +117,13 @@ public class AddObservationFragment extends Fragment {
             }
         });
 
-        Picasso.with(AddObservationFragment.this.getActivity()).load(add.observationPath)
-                .placeholder(R.drawable.no_image).error(R.drawable.no_image).fit().centerInside().into(image);
+        Picasso.with(AddObservationFragment.this.getActivity())
+                .load(add.observationPath)
+                .placeholder(R.drawable.default_image)
+                .error(R.drawable.no_image)
+                .fit()
+                .centerInside()
+                .into(image);
 
         choose.setOnClickListener(new View.OnClickListener() {
             @Override

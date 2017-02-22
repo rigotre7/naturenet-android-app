@@ -91,8 +91,13 @@ public class ObservationFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final Observation obs = dataSnapshot.getValue(Observation.class);
 
-                Picasso.with(getActivity()).load(Strings.emptyToNull(obs.data.image)).placeholder(R.drawable.no_image)
-                        .error(R.drawable.no_image).fit().centerInside().into(observation_image);
+                Picasso.with(getActivity())
+                        .load(Strings.emptyToNull(obs.data.image))
+                        .placeholder(R.drawable.default_image)
+                        .error(R.drawable.no_image)
+                        .fit()
+                        .centerInside()
+                        .into(observation_image);
 
                 if (obs.data.text != null) {
                     observeration_text.setText(obs.data.text);

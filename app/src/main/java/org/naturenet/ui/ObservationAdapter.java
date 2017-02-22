@@ -27,8 +27,14 @@ public class ObservationAdapter extends FirebaseListAdapter<Observation> {
         //TODO: instead of recreating a new layout, make a Badge class and clear contents individually
         badge.removeAllViews();
         NatureNetUtils.makeUserBadge(mActivity, badge, model.userId);
-        Picasso.with(mActivity).load(Strings.emptyToNull(model.data.image)).error(R.drawable.no_image)
-                .fit().centerCrop().into((ImageView) v.findViewById(R.id.observation_icon));
+        Picasso.with(mActivity)
+                .load(Strings.emptyToNull(model.data.image))
+                .placeholder(R.drawable.default_image)
+                .error(R.drawable.no_image)
+                .fit()
+                .centerCrop()
+                .tag(NatureNetUtils.PICASSO_TAGS.PICASSO_TAG_OBSERVATION_LIST)
+                .into((ImageView) v.findViewById(R.id.observation_icon));
     }
 
     @Override

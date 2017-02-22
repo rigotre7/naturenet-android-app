@@ -95,25 +95,18 @@
 
     </RelativeLayout>
 
-    <ScrollView
+    <GridView
+        android:id="@+id/observation_gallery"
+        android:layout_below="@id/contributions"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/contributions"
-        android:layout_gravity="center_horizontal"
-        android:fillViewport="true">
-
-        <GridView
-            android:id="@+id/observation_gallery"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clickable="true"
-            android:padding="10dp"
-            android:numColumns="2"
-            android:verticalSpacing="5dp"
-            android:horizontalSpacing="5dp"
-            android:stretchMode="columnWidth"
-            android:gravity="center" />
-
-    </ScrollView>
+        android:clickable="true"
+        android:padding="10dp"
+        android:numColumns="2"
+        android:verticalSpacing="5dp"
+        android:horizontalSpacing="5dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center"
+        android:scrollbars="vertical"/>
 
 </RelativeLayout>

@@ -49,7 +49,6 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.common.base.Optional;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -60,7 +59,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.kosalgeek.android.photoutil.CameraPhoto;
 import com.kosalgeek.android.photoutil.GalleryPhoto;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
 
 import org.naturenet.NatureNetApplication;
 import org.naturenet.R;
@@ -69,7 +67,6 @@ import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Project;
 import org.naturenet.data.model.Site;
 import org.naturenet.data.model.Users;
-import org.naturenet.util.CroppedCircleTransformation;
 import org.naturenet.util.NatureNetUtils;
 
 import java.io.File;
@@ -108,7 +105,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ImageView nav_iv;
     MenuItem logout;
     ProgressDialog pd;
-    private Transformation mAvatarTransform = new CroppedCircleTransformation();
     private Disposable mUserAuthSubscription;
 
     /* Common submission items */
@@ -325,6 +321,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         select.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Picasso.with(MainActivity.this).cancelTag(ImageGalleryAdapter.class.getSimpleName());
                 observationPath = selectedImage;
                 newObservation = new Observation();
                 newObservation.location = Lists.newArrayList(latValue, longValue);
@@ -370,6 +367,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void setGallery() {
+        Picasso.with(MainActivity.this).cancelTag(ImageGalleryAdapter.class.getSimpleName());
         recentImageGallery = getRecentImagesUris();
 
         if (recentImageGallery.size() != 0) {
@@ -466,6 +464,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onResume() {
+        Picasso.with(MainActivity.this).resumeTag(NatureNetUtils.PICASSO_TAGS.PICASSO_TAG_GALLERY);
         if (mGoogleApiClient.isConnected()) {
             requestLocationUpdates();
         }
@@ -474,6 +473,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onPause() {
+        Picasso.with(MainActivity.this).pauseTag(NatureNetUtils.PICASSO_TAGS.PICASSO_TAG_GALLERY);
         if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
@@ -482,6 +482,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onDestroy() {
+        Picasso.with(MainActivity.this).cancelTag(NatureNetUtils.PICASSO_TAGS.PICASSO_TAG_GALLERY);
         mUserAuthSubscription.dispose();
         super.onDestroy();
     }
@@ -680,9 +681,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         this.supportInvalidateOptionsMenu();
 
                         if (signed_user.avatar != null) {
-                            Picasso.with(this).load(Strings.emptyToNull(signed_user.avatar))
-                                    .placeholder(R.drawable.default_avatar)
-                                    .transform(mAvatarTransform).fit().into(nav_iv);
+                            NatureNetUtils.showUserAvatar(this, nav_iv, signed_user.avatar);
                         }
 
                         display_name.setText(signed_user.displayName);

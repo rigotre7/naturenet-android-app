@@ -12,6 +12,7 @@ import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
 import org.naturenet.data.model.Project;
+import org.naturenet.util.NatureNetUtils;
 
 public class ProjectAdapter extends FirebaseListAdapter<Project> {
 
@@ -23,7 +24,12 @@ public class ProjectAdapter extends FirebaseListAdapter<Project> {
     protected void populateView(final View v, final Project model, int position) {
         v.setTag(model);
         ImageView thumbnail = (ImageView) v.findViewById(R.id.project_thumbnail);
-        Picasso.with(mActivity).load(Strings.emptyToNull(model.iconUrl)).fit().into(thumbnail);
+        Picasso.with(mActivity)
+                .load(Strings.emptyToNull(model.iconUrl))
+                .fit()
+                .tag(NatureNetUtils.PICASSO_TAGS.PICASSO_TAG_PROJECT_LIST)
+                .into(thumbnail);
+
         TextView name = (TextView) v.findViewById(R.id.project_name);
         name.setText(model.name);
     }

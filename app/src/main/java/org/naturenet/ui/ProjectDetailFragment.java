@@ -104,6 +104,7 @@ public class ProjectDetailFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent observationIntent = new Intent(getActivity(), ObservationActivity.class);
                 observationIntent.putExtra(ObservationActivity.EXTRA_OBSERVATION, (Observation)view.getTag());
+                observationIntent.putExtra(ObservationActivity.EXTRA_PROJECT, mProject.name);
                 startActivity(observationIntent);
             }
         });

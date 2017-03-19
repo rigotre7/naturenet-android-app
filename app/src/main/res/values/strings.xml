@@ -160,6 +160,14 @@
     <string name="error_message_firebase_login">Login Unsuccessful: </string>
     <string name="no_connection">Not connected to NatureNet. Please check your network connection.</string>
     <string name="no_connection_warning">Please check your network connection. There may be a delay </string>
+    <string name="people_string">People</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="observations_text">Observation(s)</string>
+    <string name="design_ideas_text">Design Idea(s)</string>
+    <string name="recent_observations">Recent Contributions</string>
+    <string name="gallery_title">Gallery</string>
     <!-- General -->
 
 </resources>

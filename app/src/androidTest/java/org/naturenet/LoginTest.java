@@ -37,6 +37,8 @@ public class LoginTest {
     @Test
     public void login_test_not_logged_in() throws InterruptedException {
 
+        Thread.sleep(1000);
+
         //on the MainActivity w/ Launch Fragment displayed (first screen that is displayed when app is launched)
         onView(withId(R.id.launch_tv_sign_in)).perform(click());
 

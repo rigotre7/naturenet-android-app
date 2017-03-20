@@ -1,4 +1,4 @@
-package org.naturenet;
+package org.naturenet.data.model;
 
 import android.os.Parcel;
 import android.support.test.runner.AndroidJUnit4;

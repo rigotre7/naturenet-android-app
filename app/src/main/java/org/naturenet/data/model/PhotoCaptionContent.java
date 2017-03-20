@@ -47,4 +47,31 @@ public class PhotoCaptionContent implements Parcelable {
         parcel.writeString(image);
         parcel.writeString(text);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PhotoCaptionContent that = (PhotoCaptionContent) o;
+
+        if (image != null ? !image.equals(that.image) : that.image != null) return false;
+        return text != null ? text.equals(that.text) : that.text == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = image != null ? image.hashCode() : 0;
+        result = 31 * result + (text != null ? text.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "PhotoCaptionContent{" +
+                "image='" + image + '\'' +
+                ", text='" + text + '\'' +
+                '}';
+    }
 }

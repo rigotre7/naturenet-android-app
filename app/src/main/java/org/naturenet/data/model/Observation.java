@@ -141,4 +141,46 @@ public class Observation extends TimestampedData {
     public String getWhere() {
         return where;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Observation that = (Observation) o;
+
+        if (!id.equals(that.id)) return false;
+        if (!userId.equals(that.userId)) return false;
+        if (!projectId.equals(that.projectId)) return false;
+        return siteId.equals(that.siteId);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + userId.hashCode();
+        result = 31 * result + projectId.hashCode();
+        result = 31 * result + siteId.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Observation{" +
+                super.toString() +
+                ", id='" + id + '\'' +
+                ", userId='" + userId + '\'' +
+                ", projectId='" + projectId + '\'' +
+                ", siteId='" + siteId + '\'' +
+                ", geohash='" + geohash + '\'' +
+                ", location=" + location +
+                ", data=" + data +
+                ", where='" + where + '\'' +
+                ", status='" + status + '\'' +
+                ", source='" + source + '\'' +
+                ", comments=" + comments +
+                ", likes=" + likes +
+                '}';
+    }
 }

@@ -83,10 +83,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/selected_observation_text"
-            android:layout_above="@+id/scroll_view"
-            android:layout_margin="3dp"/>
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_above="@+id/scroll_view" />
 
-        <ScrollView
+        <LinearLayout
             android:id="@+id/scroll_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -97,7 +99,7 @@
             <ListView
                 android:id="@+id/lv_comments"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="82dp"
                 android:clickable="true"
                 android:padding="3dp"
                 android:numColumns="1"
@@ -105,7 +107,7 @@
                 android:horizontalSpacing="5dp"
                 android:gravity="center" />
 
-        </ScrollView>
+        </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/rl_comment"

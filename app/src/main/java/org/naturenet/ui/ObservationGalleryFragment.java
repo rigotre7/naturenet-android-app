@@ -10,21 +10,20 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
-import com.google.common.base.Strings;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
 import org.naturenet.data.model.Observation;
-import org.naturenet.util.NatureNetUtils;
 
 public class ObservationGalleryFragment extends Fragment {
 
     public static final String FRAGMENT_TAG = "gallery_fragment";
+
+    MainActivity main;
 
     GridView gridView;
     FirebaseListAdapter mAdapter;
@@ -37,6 +36,9 @@ public class ObservationGalleryFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        main = ((MainActivity) getActivity());
+        TextView toolbar_title = (TextView) main.findViewById(R.id.app_bar_main_tv);
+        toolbar_title.setText(R.string.gallery_title);
         return inflater.inflate(R.layout.fragment_observation_gallery, container, false);
     }
 

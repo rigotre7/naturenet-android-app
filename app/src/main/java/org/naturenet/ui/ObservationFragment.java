@@ -9,7 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +21,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
@@ -36,12 +39,16 @@ public class ObservationFragment extends Fragment {
     public static final String FRAGMENT_TAG = "observation_fragment";
     private static final String ARG_OBSERVATION = "ARG_OBSERVATION";
 
+    boolean isImageFitToScreen;
     ObservationActivity o;
     ImageView observer_avatar, observation_image, like;
-    TextView observer_name, observer_affiliation, observeration_timestamp, observeration_text, send;
+    TextView observer_name, observer_affiliation, observation_timestamp, observation_text, send;
+    RelativeLayout commentLayout;
     EditText comment;
     ListView lv_comments;
+    LinearLayout comment_view;
     private String mObservationId;
+    ViewGroup.LayoutParams params;
 
     public static ObservationFragment newInstance(String observationId) {
         ObservationFragment frag = new ObservationFragment();
@@ -62,14 +69,17 @@ public class ObservationFragment extends Fragment {
 
         observer_avatar = (ImageView) view.findViewById(R.id.selected_observer_avatar);
         observation_image = (ImageView) view.findViewById(R.id.selected_observation_icon);
+        params = observation_image.getLayoutParams();
         like = (ImageView) view.findViewById(R.id.iv_like);
         observer_name = (TextView) view.findViewById(R.id.selected_observer_user_name);
         observer_affiliation = (TextView) view.findViewById(R.id.selected_observer_affiliation);
-        observeration_timestamp = (TextView) view.findViewById(R.id.selected_observeration_timestamp);
-        observeration_text = (TextView) view.findViewById(R.id.selected_observation_text);
+        observation_timestamp = (TextView) view.findViewById(R.id.selected_observeration_timestamp);
+        observation_text = (TextView) view.findViewById(R.id.selected_observation_text);
         send = (TextView) view.findViewById(R.id.tv_send);
         comment = (EditText) view.findViewById(R.id.et_comment);
         lv_comments = (ListView) view.findViewById(R.id.lv_comments);
+        commentLayout = (RelativeLayout) view.findViewById(R.id.rl_comment);
+        comment_view = (LinearLayout) view.findViewById(R.id.scroll_view);
     }
 
     @Override
@@ -100,12 +110,12 @@ public class ObservationFragment extends Fragment {
                         .into(observation_image);
 
                 if (obs.data.text != null) {
-                    observeration_text.setText(obs.data.text);
+                    observation_text.setText(obs.data.text);
                 } else {
-                    observeration_text.setText(R.string.no_description);
+                    observation_text.setText(R.string.no_description);
                 }
 
-                observeration_timestamp.setText(NatureNetUtils.toDateString(obs));
+                observation_timestamp.setText(NatureNetUtils.toDateString(obs));
 
                 FirebaseDatabase.getInstance().getReference(Users.NODE_NAME).child(obs.userId)
                         .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -136,6 +146,9 @@ public class ObservationFragment extends Fragment {
                                                 Timber.w(databaseError.toException(), "Unable to read data for site %s", user.affiliation);
                                             }
                                         });
+
+                                getComments(obs.id);
+
                             }
 
                             @Override
@@ -143,6 +156,7 @@ public class ObservationFragment extends Fragment {
                                 Timber.w(databaseError.toException(), "Unable to read data for user %s", obs.userId);
                             }
                         });
+
             }
 
             @Override
@@ -161,7 +175,7 @@ public class ObservationFragment extends Fragment {
             like.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.unlike));
         }
 
-        if (o.comments != null) {
+        if (o.comments.size() > 0) {
             Timber.d("Comments are available");
             for (Comment c : o.comments) {
                 Timber.d("Comment: s", c.toString());
@@ -192,6 +206,29 @@ public class ObservationFragment extends Fragment {
                     Toast.makeText(o, "Please login to like an observation.", Toast.LENGTH_SHORT).show();
             }
         });
+
+        observation_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isImageFitToScreen) {
+                    isImageFitToScreen=false;
+                    observation_image.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
+                    observation_image.setAdjustViewBounds(true);
+                    observation_image.setLayoutParams(params);
+                    o.getSupportActionBar().show();
+                    commentLayout.setVisibility(View.VISIBLE);
+                    comment_view.setVisibility(View.VISIBLE);
+                }else{
+                    isImageFitToScreen=true;
+                    o.getSupportActionBar().hide();
+                    commentLayout.setVisibility(View.GONE);
+                    comment_view.setVisibility(View.GONE);
+                    observation_image.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+                    observation_image.setScaleType(ImageView.ScaleType.FIT_XY);
+                }
+            }
+        });
+
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -229,5 +266,14 @@ public class ObservationFragment extends Fragment {
                 }
             }
         });
+    }
+
+    public void getComments(String observation){
+
+        Query query = FirebaseDatabase.getInstance().getReference().child(Comment.NODE_NAME).orderByChild("parent").equalTo(observation);
+        CommentsAdapter adapter = new CommentsAdapter(getActivity(), query);
+
+        lv_comments.setAdapter(adapter);
+
     }
 }

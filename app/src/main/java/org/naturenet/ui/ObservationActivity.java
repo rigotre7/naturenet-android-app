@@ -27,12 +27,14 @@ public class ObservationActivity extends AppCompatActivity {
 
     public static final String EXTRA_USER = "signed_user";
     public static final String EXTRA_OBSERVATION = "observation";
+    public static final String EXTRA_PROJECT = "project_name";
 
     Observation selectedObservation;
     GridView gridView;
     DatabaseReference mFirebase;
     List<Comment> comments;
     Users signed_user;
+    String projectName;
     Boolean like;
 
     @Override
@@ -41,6 +43,7 @@ public class ObservationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_observation);
         selectedObservation = getIntent().getParcelableExtra(EXTRA_OBSERVATION);
         signed_user = getIntent().getParcelableExtra(EXTRA_USER);
+        projectName = getIntent().getStringExtra(EXTRA_PROJECT);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -48,11 +51,14 @@ public class ObservationActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(true);
             getSupportActionBar().setTitle(R.string.observation_title);
+            if(projectName==null)
+                getSupportActionBar().setTitle("Gallery");
+            else
+                getSupportActionBar().setTitle(projectName);
         }
 
         gridView = (GridView) findViewById(R.id.observation_gallery);
         comments = null;
-
         goToSelectedObservationFragment();
     }
 

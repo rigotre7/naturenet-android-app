@@ -47,7 +47,8 @@ public class UsersAdapter extends FirebaseListAdapter<Users> {
 
         v.setTag(model);
         ImageView profilePic = (ImageView) v.findViewById(R.id.user_profile_pic_communities);
-        Picasso.with(mActivity).load(Strings.emptyToNull(model.avatar)).fit().into(profilePic);
+        Picasso.with(mActivity).load(Strings.emptyToNull(model.avatar))
+                .placeholder(R.drawable.default_avatar).fit().into(profilePic);
         TextView username = (TextView) v.findViewById(R.id.username_communities);
         TextView location = (TextView) v.findViewById(R.id.location_communities);
 

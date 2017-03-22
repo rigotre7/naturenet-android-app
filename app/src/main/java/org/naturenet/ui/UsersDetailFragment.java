@@ -84,7 +84,7 @@ public class UsersDetailFragment extends Fragment {
 
     public void getObservationCount(String s, final TextView textView){
 
-        fbRef.child(Observation.NODE_NAME).orderByChild("observer").equalTo(s).addValueEventListener(new ValueEventListener() {
+        fbRef.child(Observation.NODE_NAME).orderByChild("observer").equalTo(s).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 obsCount = dataSnapshot.getChildrenCount();
@@ -99,7 +99,7 @@ public class UsersDetailFragment extends Fragment {
     }
 
     public void getIdeasCount(String s, final TextView textView){
-        fbRef.child(Idea.NODE_NAME).orderByChild("submitter").equalTo(s).addValueEventListener(new ValueEventListener() {
+        fbRef.child(Idea.NODE_NAME).orderByChild("submitter").equalTo(s).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ideasCount = dataSnapshot.getChildrenCount();
@@ -114,7 +114,7 @@ public class UsersDetailFragment extends Fragment {
     }
 
     public void getRecentObservations(String s){
-        Query obsQuery = fbRef.child(Observation.NODE_NAME).orderByChild("observer").equalTo(s).limitToFirst(20);
+        Query obsQuery = fbRef.child(Observation.NODE_NAME).orderByChild("observer").equalTo(s).limitToLast(20);
         ObservationAdapter observationAdapter = new ObservationAdapter(detAct, obsQuery);
         recentObservationsGrid.setAdapter(observationAdapter);
 
@@ -122,7 +122,7 @@ public class UsersDetailFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent observationIntent = new Intent(getActivity(), ObservationActivity.class);
-                observationIntent.putExtra(ObservationActivity.EXTRA_OBSERVATION, (Observation)view.getTag());
+                observationIntent.putExtra(ObservationActivity.EXTRA_OBSERVATION_ID, ((Observation)view.getTag()).id);
                 startActivity(observationIntent);
             }
         });

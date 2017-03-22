@@ -6,10 +6,9 @@
     android:layout_height="match_parent"
     tools:context="org.naturenet.ui.UsersDetailActivity">
 
-    <FrameLayout
+    <include
+        layout="@layout/app_bar_user"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/user_details_container">
+        android:layout_height="match_parent"/>
 
-    </FrameLayout>
 </RelativeLayout>

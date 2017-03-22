@@ -133,15 +133,6 @@ public class Observation extends TimestampedData {
         }
     };
 
-    public PhotoCaptionContent getData() {
-        return data;
-    }
-
-    @Nullable
-    public String getWhere() {
-        return where;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

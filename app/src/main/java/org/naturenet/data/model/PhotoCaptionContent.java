@@ -13,9 +13,9 @@ public class PhotoCaptionContent implements Parcelable {
     public String image;
     public String text;
 
-    public PhotoCaptionContent(String im, String txt){
-        image = im;
-        text =txt;
+    public PhotoCaptionContent(String image, String text){
+        this.image = image;
+        this.text = text;
     }
 
     public PhotoCaptionContent() {}

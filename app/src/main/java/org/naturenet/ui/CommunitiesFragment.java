@@ -55,7 +55,7 @@ public class CommunitiesFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Query query = mFirebase.child(Users.NODE_NAME);
+        Query query = mFirebase.child(Users.NODE_NAME).orderByChild("latest_contribution");
         mAdapter = new UsersAdapter(main, query);
         mCommunitiesListView.setAdapter(mAdapter);
 

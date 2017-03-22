@@ -57,8 +57,8 @@ public class ObservationClassTests {
         assertEquals(null, parceledObservation.siteId, SITE_ID);
         assertEquals(null, parceledObservation.where, WHERE);
         assertEquals(null, parceledObservation.location, list);
-        assertEquals(null, parceledObservation.getData().text, captionContent.text);
-        assertEquals(null, parceledObservation.getData().image, captionContent.image);
+        assertEquals(null, parceledObservation.data.text, captionContent.text);
+        assertEquals(null, parceledObservation.data.image, captionContent.image);
     }
 
 }

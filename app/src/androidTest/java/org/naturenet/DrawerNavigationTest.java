@@ -184,7 +184,7 @@ public class DrawerNavigationTest {
         return new BoundedMatcher<Object, Observation>(Observation.class) {
             @Override
             protected boolean matchesSafely(Observation obs) {
-                    return name.equals(obs.getWhere());
+                    return name.equals(obs.where);
             }
 
             @Override

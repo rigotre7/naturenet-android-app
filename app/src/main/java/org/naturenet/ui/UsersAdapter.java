@@ -47,10 +47,7 @@ public class UsersAdapter extends FirebaseListAdapter<Users> {
 
         v.setTag(model);
         ImageView profilePic = (ImageView) v.findViewById(R.id.user_profile_pic_communities);
-        if(model.avatar == null || model.avatar.isEmpty()){
-        }else{
-            Picasso.with(mActivity).load(Strings.emptyToNull(model.avatar)).fit().into(profilePic);
-        }
+        Picasso.with(mActivity).load(Strings.emptyToNull(model.avatar)).fit().into(profilePic);
         TextView username = (TextView) v.findViewById(R.id.username_communities);
         TextView location = (TextView) v.findViewById(R.id.location_communities);
 
@@ -75,5 +72,9 @@ public class UsersAdapter extends FirebaseListAdapter<Users> {
         return location;
     }
 
+    @Override
+    public Users getItem(int pos) {
+        return super.getItem(getCount() - 1 - pos);
+    }
 
 }

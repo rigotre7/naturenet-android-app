@@ -51,10 +51,12 @@ public class ObservationActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(true);
             getSupportActionBar().setTitle(R.string.observation_title);
-            if(projectName==null)
+
+            if(projectName == null) {
                 getSupportActionBar().setTitle("Gallery");
-            else
+            } else {
                 getSupportActionBar().setTitle(projectName);
+            }
         }
 
         gridView = (GridView) findViewById(R.id.observation_gallery);

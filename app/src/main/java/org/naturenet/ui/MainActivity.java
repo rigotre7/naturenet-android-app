@@ -3,7 +3,6 @@ package org.naturenet.ui;
 import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentManager;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -62,7 +61,6 @@ import com.squareup.picasso.Picasso;
 
 import org.naturenet.NatureNetApplication;
 import org.naturenet.R;
-import org.naturenet.UploadService;
 import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Project;
 import org.naturenet.data.model.Site;
@@ -83,19 +81,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private final static int REQUEST_CODE_JOIN = 1;
     private final static int REQUEST_CODE_LOGIN = 2;
-    private final static int REQUEST_CODE_ADD_OBSERVATION = 3;
-    private final static int REQUEST_CODE_PROJECT_ACTIVITY = 4;
-    private final static int REQUEST_CODE_OBSERVATION_ACTIVITY = 5;
 
     static String NAME = "name";
 
     String[] affiliation_ids, affiliation_names;
-    Observation newObservation, previewSelectedObservation;
+    Observation previewSelectedObservation;
     List<String> ids, names;
     DatabaseReference mFirebase;
     Users signed_user;
     Site user_home_site;
-    Uri observationPath;
     DrawerLayout drawer;
     Toolbar toolbar;
     NavigationView navigationView;
@@ -104,15 +98,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     TextView display_name, affiliation, licenses;
     ImageView nav_iv;
     MenuItem logout;
-    ProgressDialog pd;
     private Disposable mUserAuthSubscription;
 
     /* Common submission items */
-    static final private int REQUEST_CODE_CAMERA = 6;
-    static final private int REQUEST_CODE_GALLERY = 7;
-    static final private int REQUEST_CODE_CHECK_LOCATION_SETTINGS = 8;
+    static final private int REQUEST_CODE_CAMERA = 3;
+    static final private int REQUEST_CODE_GALLERY = 4;
+    static final private int REQUEST_CODE_CHECK_LOCATION_SETTINGS = 5;
     CameraPhoto cameraPhoto;
     GalleryPhoto galleryPhoto;
+    Uri observationPath;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
     ImageButton add_observation, add_design_idea;
@@ -162,8 +156,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         );
 
         this.invalidateOptionsMenu();
-        pd = new ProgressDialog(this);
-        pd.setCancelable(false);
 
         sign_in.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -323,8 +315,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View v) {
                 Picasso.with(MainActivity.this).cancelTag(ImageGalleryAdapter.class.getSimpleName());
                 observationPath = selectedImage;
-                newObservation = new Observation();
-                newObservation.location = Lists.newArrayList(latValue, longValue);
                 setGallery();
                 goToAddObservationActivity();
             }
@@ -620,16 +610,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void goToAddObservationActivity() {
         Intent addObservation = new Intent(this, AddObservationActivity.class);
         addObservation.putExtra(AddObservationActivity.EXTRA_IMAGE_PATH, observationPath);
-        addObservation.putExtra(AddObservationActivity.EXTRA_OBSERVATION, newObservation);
+        addObservation.putExtra(AddObservationActivity.EXTRA_LATITUDE, latValue);
+        addObservation.putExtra(AddObservationActivity.EXTRA_LONGITUDE, longValue);
         addObservation.putExtra(AddObservationActivity.EXTRA_USER, signed_user);
-        startActivityForResult(addObservation, REQUEST_CODE_ADD_OBSERVATION);
+        startActivity(addObservation);
         overridePendingTransition(R.anim.slide_up, R.anim.stay);
     }
 
     public void goToProjectActivity(Project p) {
         Intent project = new Intent(this, ProjectActivity.class);
         project.putExtra(ProjectActivity.EXTRA_PROJECT, p);
-        startActivityForResult(project, REQUEST_CODE_PROJECT_ACTIVITY);
+        startActivity(project);
         overridePendingTransition(R.anim.slide_up, R.anim.stay);
     }
 
@@ -639,7 +630,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (previewSelectedObservation != null) {
             observation.putExtra(ObservationActivity.EXTRA_OBSERVATION, previewSelectedObservation);
         }
-        startActivityForResult(observation, REQUEST_CODE_OBSERVATION_ACTIVITY);
+        startActivity(observation);
         overridePendingTransition(R.anim.slide_up, R.anim.stay);
     }
 
@@ -715,25 +706,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 break;
             }
-            case(REQUEST_CODE_ADD_OBSERVATION): {
-                if(resultCode == Activity.RESULT_OK) {
-                    newObservation = data.getParcelableExtra(AddObservationActivity.EXTRA_OBSERVATION);
-                    newObservation.userId = signed_user.id;
-                    Intent uploadIntent = new Intent(MainActivity.this, UploadService.class);
-                    uploadIntent.putExtra(UploadService.EXTRA_OBSERVATION, newObservation);
-                    uploadIntent.putExtra(UploadService.EXTRA_URI_PATH, observationPath);
-                    startService(uploadIntent);
-                    goToExploreFragment();
-                }
-                break;
-            }
             case REQUEST_CODE_CAMERA: {
                 if (resultCode == MainActivity.RESULT_OK) {
                     Timber.d("Camera Path: %s", cameraPhoto.getPhotoPath());
                     observationPath = Uri.fromFile(new File(cameraPhoto.getPhotoPath()));
                     cameraPhoto.addToGallery();
-                    newObservation = new Observation();
-                    newObservation.location = Lists.newArrayList(latValue, longValue);
                     setGallery();
                     goToAddObservationActivity();
                 }
@@ -744,8 +721,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     galleryPhoto.setPhotoUri(data.getData());
                     Timber.d("Gallery Path: %s", galleryPhoto.getPath());
                     observationPath = Uri.fromFile(new File(galleryPhoto.getPath()));
-                    newObservation = new Observation();
-                    newObservation.location = Lists.newArrayList(latValue, longValue);
                     setGallery();
                     goToAddObservationActivity();
                 }

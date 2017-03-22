@@ -15,9 +15,11 @@ import android.widget.TextView;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
 import org.naturenet.data.model.Observation;
+import org.naturenet.util.NatureNetUtils;
 
 public class ObservationGalleryFragment extends Fragment {
 

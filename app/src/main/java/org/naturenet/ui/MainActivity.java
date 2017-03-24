@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         getFragmentManager()
                                 .beginTransaction()
                                 .add(R.id.fragment_container, ExploreFragment.newInstance(user_home_site))
-                                .commit();
+                                .commitAllowingStateLoss();
                     }
                 } else {
                     if (signed_user != null) {
@@ -626,9 +626,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void goToObservationActivity() {
         Intent observation = new Intent(this, ObservationActivity.class);
-        observation.putExtra(ObservationActivity.EXTRA_USER, signed_user);
         if (previewSelectedObservation != null) {
-            observation.putExtra(ObservationActivity.EXTRA_OBSERVATION, previewSelectedObservation);
+            observation.putExtra(ObservationActivity.EXTRA_OBSERVATION_ID, previewSelectedObservation.id);
         }
         startActivity(observation);
         overridePendingTransition(R.anim.slide_up, R.anim.stay);

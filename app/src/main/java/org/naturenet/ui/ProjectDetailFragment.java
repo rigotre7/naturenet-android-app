@@ -3,7 +3,6 @@ package org.naturenet.ui;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.method.MovementMethod;
 import android.support.annotation.Nullable;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
@@ -125,8 +124,7 @@ public class ProjectDetailFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent observationIntent = new Intent(getActivity(), ObservationActivity.class);
-                observationIntent.putExtra(ObservationActivity.EXTRA_OBSERVATION, (Observation)view.getTag());
-                observationIntent.putExtra(ObservationActivity.EXTRA_PROJECT, mProject.name);
+                observationIntent.putExtra(ObservationActivity.EXTRA_OBSERVATION_ID, ((Observation)view.getTag()).id);
                 startActivity(observationIntent);
             }
         });

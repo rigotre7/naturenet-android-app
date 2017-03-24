@@ -5,45 +5,29 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.GridView;
-import android.widget.Toast;
 
-import com.google.common.collect.Lists;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.common.base.Optional;
 
+import org.naturenet.NatureNetApplication;
 import org.naturenet.R;
-import org.naturenet.data.model.Comment;
-import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Users;
 
-import java.util.List;
-
-import timber.log.Timber;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 public class ObservationActivity extends AppCompatActivity {
 
-    public static final String EXTRA_USER = "signed_user";
-    public static final String EXTRA_OBSERVATION = "observation";
-    public static final String EXTRA_PROJECT = "project_name";
+    public static final String EXTRA_OBSERVATION_ID = "observation";
 
-    Observation selectedObservation;
     GridView gridView;
-    DatabaseReference mFirebase;
-    List<Comment> comments;
     Users signed_user;
-    String projectName;
-    Boolean like;
+    private Disposable mUserAuthSubscription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_observation);
-        selectedObservation = getIntent().getParcelableExtra(EXTRA_OBSERVATION);
-        signed_user = getIntent().getParcelableExtra(EXTRA_USER);
-        projectName = getIntent().getStringExtra(EXTRA_PROJECT);
+        String id = getIntent().getStringExtra(EXTRA_OBSERVATION_ID);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -51,17 +35,23 @@ public class ObservationActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(true);
             getSupportActionBar().setTitle(R.string.observation_title);
-
-            if(projectName == null) {
-                getSupportActionBar().setTitle("Gallery");
-            } else {
-                getSupportActionBar().setTitle(projectName);
-            }
         }
 
+        mUserAuthSubscription = ((NatureNetApplication)getApplication()).getCurrentUserObservable().subscribe(new Consumer<Optional<Users>>() {
+            @Override
+            public void accept(Optional<Users> user) throws Exception {
+                signed_user = user.isPresent() ? user.get() : null;
+            }
+        });
+
         gridView = (GridView) findViewById(R.id.observation_gallery);
-        comments = null;
-        goToSelectedObservationFragment();
+        goToSelectedObservationFragment(id);
+    }
+
+    @Override
+    public void onDestroy() {
+        mUserAuthSubscription.dispose();
+        super.onDestroy();
     }
 
     @Override
@@ -85,37 +75,9 @@ public class ObservationActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void goToSelectedObservationFragment() {
-        comments = null;
-        like = null;
-
-        if (selectedObservation.comments != null) { getCommentsFor(selectedObservation.id); }
-
-        if (signed_user != null) {
-            like = (selectedObservation.likes != null) && selectedObservation.likes.keySet().contains(signed_user.id);
-        }
-
+    public void goToSelectedObservationFragment(String id) {
         getFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, ObservationFragment.newInstance(selectedObservation.id), ObservationFragment.FRAGMENT_TAG)
+                .add(R.id.fragment_container, ObservationFragment.newInstance(id), ObservationFragment.FRAGMENT_TAG)
                 .commit();
-    }
-
-    private void getCommentsFor(final String parent) {
-        comments = Lists.newArrayList();
-        mFirebase = FirebaseDatabase.getInstance().getReference();
-        mFirebase.child(Comment.NODE_NAME).orderByChild("parent").equalTo(parent).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                for (DataSnapshot child : snapshot.getChildren()) {
-                    comments.add(child.getValue(Comment.class));
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Timber.w("Could not load comments for record %s, query canceled: %s", parent, databaseError.getDetails());
-                Toast.makeText(ObservationActivity.this, "Unable to load comments for this observation.", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }

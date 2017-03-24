@@ -4,11 +4,11 @@ apply plugin: 'com.google.firebase.firebase-crash'
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/PhotoUtil.jar')
-    //androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v16:2.1.2'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.android.support:support-v4:25.2.0'
     compile 'com.android.support:design:25.2.0'
+    compile 'com.android.support:recyclerview-v7:25.2.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
     compile 'com.google.android.gms:play-services-maps:10.2.0'
     compile 'com.google.android.gms:play-services-plus:10.2.0'
@@ -29,15 +29,14 @@ dependencies {
     testCompile 'org.testng:testng:6.9.12'
     testCompile 'junit:junit:4.12'
     androidTestCompile 'junit:junit:4.12'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.2'
     androidTestCompile 'com.android.support.test.espresso:espresso-contrib:2.2.2'
     androidTestCompile 'com.android.support:support-annotations:25.2.0'
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile 'com.android.support.test:rules:0.5'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
-    androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.2'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.0'
     releaseCompile 'com.google.firebase:firebase-crash:10.2.0'
-    compile 'com.android.support:recyclerview-v7:25.2.0'
 }
 
 android {
@@ -47,8 +46,8 @@ android {
         applicationId "org.naturenet"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 10
-        versionName "2.0.3"
+        versionCode 11
+        versionName "2.1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         resValue "string", "app_version", versionName
         multiDexEnabled true
@@ -74,12 +73,13 @@ android {
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/LICENSE'
     }
+
     configurations.all {
-        resolutionStrategy.force 'com.android.support:support-v4:25.1.0'
-        resolutionStrategy.force 'com.android.support:appcompat-v7:25.1.0'
-        resolutionStrategy.force 'com.android.support:design:25.1.0'
-        resolutionStrategy.force 'com.android.support:recyclerview-v7:25.1.0'
-        resolutionStrategy.force 'com.android.support:support-annotations:25.1.0'
+        resolutionStrategy.force 'com.android.support:support-v4:25.2.0'
+        resolutionStrategy.force 'com.android.support:appcompat-v7:25.2.0'
+        resolutionStrategy.force 'com.android.support:design:25.2.0'
+        resolutionStrategy.force 'com.android.support:recyclerview-v7:25.2.0'
+        resolutionStrategy.force 'com.android.support:support-annotations:25.2.0'
     }
 }
 

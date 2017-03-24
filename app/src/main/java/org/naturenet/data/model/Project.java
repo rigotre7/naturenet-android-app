@@ -3,6 +3,7 @@ package org.naturenet.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 
 import com.google.common.collect.Maps;
 import com.google.firebase.database.Exclude;
@@ -15,7 +16,8 @@ import java.util.Map;
 @IgnoreExtraProperties
 public class Project implements Parcelable {
 
-    public Project(String id, String iconUrl, String description, String name,  String status, Long latestContribution, Map<String, Boolean> sites) {
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    Project(String id, String iconUrl, String description, String name,  String status, Long latestContribution, Map<String, Boolean> sites) {
         this.sites = sites;
         this.latestContribution = latestContribution;
         this.status = status;
@@ -47,6 +49,10 @@ public class Project implements Parcelable {
     @Nullable
     public Map<String, Boolean> sites = Maps.newHashMap();
 
+    /**
+     * Private no-arg constructor needed for Firebase serialization. Do not use.
+     */
+    @SuppressWarnings("unused")
     private Project() {}
 
     private Project(Parcel in) {
@@ -85,5 +91,45 @@ public class Project implements Parcelable {
         parcel.writeString(status);
         parcel.writeLong(latestContribution == null ? 0L : latestContribution);
         parcel.writeMap(sites);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Project project = (Project) o;
+
+        if (!id.equals(project.id)) return false;
+        if (!iconUrl.equals(project.iconUrl)) return false;
+        if (!description.equals(project.description)) return false;
+        if (!name.equals(project.name)) return false;
+        if (status != null ? !status.equals(project.status) : project.status != null) return false;
+        return latestContribution != null ? latestContribution.equals(project.latestContribution) : project.latestContribution == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + iconUrl.hashCode();
+        result = 31 * result + description.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + (status != null ? status.hashCode() : 0);
+        result = 31 * result + (latestContribution != null ? latestContribution.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Project{" +
+                "id='" + id + '\'' +
+                ", iconUrl='" + iconUrl + '\'' +
+                ", description='" + description + '\'' +
+                ", name='" + name + '\'' +
+                ", status='" + status + '\'' +
+                ", latestContribution=" + latestContribution +
+                ", sites=" + sites +
+                '}';
     }
 }

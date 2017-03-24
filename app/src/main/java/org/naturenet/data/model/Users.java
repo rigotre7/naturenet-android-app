@@ -81,4 +81,45 @@ public class Users extends TimestampedData {
             return new Users[size];
         }
     };
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Users users = (Users) o;
+
+        if (!id.equals(users.id)) return false;
+        if (!displayName.equals(users.displayName)) return false;
+        if (!affiliation.equals(users.affiliation)) return false;
+        if (avatar != null ? !avatar.equals(users.avatar) : users.avatar != null) return false;
+        if (bio != null ? !bio.equals(users.bio) : users.bio != null) return false;
+        return latestContribution != null ? latestContribution.equals(users.latestContribution) : users.latestContribution == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + displayName.hashCode();
+        result = 31 * result + affiliation.hashCode();
+        result = 31 * result + (avatar != null ? avatar.hashCode() : 0);
+        result = 31 * result + (bio != null ? bio.hashCode() : 0);
+        result = 31 * result + (latestContribution != null ? latestContribution.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Users{" +
+                super.toString() +
+                ", id='" + id + '\'' +
+                ", displayName='" + displayName + '\'' +
+                ", affiliation='" + affiliation + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", bio='" + bio + '\'' +
+                ", groups=" + groups +
+                ", latestContribution=" + latestContribution +
+                '}';
+    }
 }

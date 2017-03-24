@@ -40,13 +40,17 @@ public class NatureNetApplication extends MultiDexApplication {
                 final String uid = firebaseAuth.getCurrentUser().getUid();
                 Timber.i("User logged in: %s", uid);
                 FirebaseDatabase.getInstance().getReference(Users.NODE_NAME).child(uid).keepSynced(true);
-                FirebaseDatabase.getInstance().getReference(Users.NODE_NAME).child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                FirebaseDatabase.getInstance().getReference(Users.NODE_NAME).child(uid).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Timber.d("Loaded profile data for %s" + uid);
                         Users user = dataSnapshot.getValue(Users.class);
                         usersBehaviorSubject.onNext(Optional.fromNullable(user));
-                        Toast.makeText(getApplicationContext(), String.format("Welcome, %s!", user.displayName), Toast.LENGTH_SHORT).show();
+                        if (user != null) {
+                            Timber.d("Loaded profile data for %s" + uid);
+                            Toast.makeText(getApplicationContext(), String.format("Welcome, %s!", user.displayName), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Timber.w("Could not load profile for user %s, may be during account creation", uid);
+                        }
                     }
 
                     @Override

@@ -214,8 +214,11 @@ public class ExploreFragment extends Fragment implements GoogleApiClient.Connect
 
     private void showPreview() {
 
-        Picasso.with(getActivity()).load(Strings.emptyToNull(previewSelectedObservation.data.image))
-                .fit().centerCrop().into(preview_observation_image);
+        Picasso.with(getActivity())
+                .load(Strings.emptyToNull(previewSelectedObservation.data.image))
+                .fit()
+                .centerCrop()
+                .into(preview_observation_image);
 
         preview_observation_text.setText(previewSelectedObservation.data.text);
         String likes = (previewSelectedObservation.likes == null) ? "0" : String.valueOf(previewSelectedObservation.likes.size());

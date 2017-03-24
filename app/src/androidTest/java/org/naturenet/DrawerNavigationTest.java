@@ -3,6 +3,8 @@ package org.naturenet;
 import android.support.test.espresso.matcher.BoundedMatcher;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.v7.widget.Toolbar;
+import android.widget.TextView;
 
 
 import static android.support.test.espresso.Espresso.onData;
@@ -12,8 +14,11 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.contrib.DrawerActions.open;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.Visibility.VISIBLE;
+import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
+import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 
@@ -100,7 +105,7 @@ public class DrawerNavigationTest {
         onView(allOf(withText(R.string.nav_gallery), withEffectiveVisibility(VISIBLE))).perform(click());
 
         //make sure we are on the Gallery screen
-        onView(withId(R.id.app_bar_main_tv)).check(matches(withText(GALLERY)));
+        onView(allOf(isAssignableFrom(TextView.class), withParent(isAssignableFrom(Toolbar.class)))).check(matches(withText(GALLERY)));
 
 
     }
@@ -125,6 +130,15 @@ public class DrawerNavigationTest {
         //Open specific Observation
         onData(allOf(is(instanceOf(Observation.class)), withName("Snowmass CO"))).perform(click());
 
+        //click the back button in the toolbar
+        onView(withContentDescription("Navigate up")).perform(click());
+
+        //click the back button once again
+        onView(withContentDescription("Navigate up")).perform(click());
+
+        //open the navigation drawer
+        onView(withId(R.id.drawer_layout)).perform(open());
+
         pressBack();
         pressBack();
 
@@ -135,7 +149,8 @@ public class DrawerNavigationTest {
 
         onData(allOf(is(instanceOf(Observation.class)), withSiteId("rcnc"))).atPosition(0).perform(click());
 
-
+        onView(withContentDescription("Navigate up")).perform(click());
+        onView(withContentDescription("Navigate up")).perform(click());
     }
 
     @Test
@@ -149,12 +164,11 @@ public class DrawerNavigationTest {
 
         onData(anything()).inAdapterView(withId(R.id.observation_gallery)).atPosition(0).perform(click());
 
-        pressBack();
+        onView(withContentDescription("Navigate up")).perform(click());
 
         onData(anything()).inAdapterView(withId(R.id.observation_gallery)).atPosition(6).perform(click());
 
-        //onView(withId(R.id.explore_tv_back)).perform(click());
-        pressBack();
+        onView(withContentDescription("Navigate up")).perform(click());
 
         onData(anything()).inAdapterView(withId(R.id.observation_gallery)).atPosition(10).perform(click());
 

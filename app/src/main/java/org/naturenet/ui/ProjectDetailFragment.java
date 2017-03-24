@@ -9,6 +9,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -23,6 +24,7 @@ import com.squareup.picasso.Picasso;
 import org.naturenet.R;
 import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Project;
+import org.naturenet.util.NatureNetUtils;
 
 import timber.log.Timber;
 
@@ -91,13 +93,33 @@ public class ProjectDetailFragment extends Fragment {
             mDescription.setText(mProject.description);
             mDescription.setMovementMethod(ScrollingMovementMethod.getInstance());
         }
-        if (mProject.iconUrl != null) { Picasso.with(getActivity()).load(Strings.emptyToNull(mProject.iconUrl)).fit().into(mIcon); }
+
+        if (mProject.iconUrl != null) {
+            Picasso.with(getActivity())
+                    .load(Strings.emptyToNull(mProject.iconUrl))
+                    .fit()
+                    .into(mIcon);
+        }
 
         Query query = FirebaseDatabase.getInstance().getReference(Observation.NODE_NAME)
                 .orderByChild("activity").equalTo(mProject.id).limitToLast(20);
         ObservationAdapter adapter = new ObservationAdapter(getActivity(), query);
         mGvObservations.setAdapter(adapter);
         mGvObservations.setEmptyView(mEmpty);
+
+        mGvObservations.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+                if (scrollState == SCROLL_STATE_FLING) {
+                    Picasso.with(getActivity()).pauseTag(NatureNetUtils.PICASSO_TAGS.PICASSO_TAG_OBSERVATION_LIST);
+                } else {
+                    Picasso.with(getActivity()).resumeTag(NatureNetUtils.PICASSO_TAGS.PICASSO_TAG_OBSERVATION_LIST);
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int i, int i1, int i2) {}
+        });
 
         mGvObservations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

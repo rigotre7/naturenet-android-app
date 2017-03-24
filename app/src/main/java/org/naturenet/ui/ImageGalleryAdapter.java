@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
+import org.naturenet.util.NatureNetUtils;
 
 import java.util.List;
 
@@ -48,7 +49,14 @@ public class ImageGalleryAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.gallery_gv_item, parent, false);
         }
         ImageView imageView = (ImageView) convertView.findViewById(R.id.gallery_iv);
-        Picasso.with(mContext).load(mImages.get(position)).error(R.drawable.no_image).fit().centerCrop().into(imageView);
+        Picasso.with(mContext)
+                .load(mImages.get(position))
+                .error(R.drawable.no_image)
+                .fit()
+                .centerCrop()
+                .tag(NatureNetUtils.PICASSO_TAGS.PICASSO_TAG_GALLERY)
+                .into(imageView);
+
         return convertView;
     }
 }

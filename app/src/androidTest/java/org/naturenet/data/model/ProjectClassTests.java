@@ -1,20 +1,15 @@
-package org.naturenet;
+package org.naturenet.data.model;
 
 import android.os.Parcel;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.naturenet.data.model.Project;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-
-/**
- * Created by rigot on 2/12/2017.
- */
 
 @RunWith(AndroidJUnit4.class)
 public class ProjectClassTests {
@@ -25,7 +20,6 @@ public class ProjectClassTests {
     static String NAME = "trees";
     static String STATUS = "current";
     static long LATEST_CONTRIBUTION = 34234234234L;
-
 
     @Test
     public void test_is_project_parcelable(){

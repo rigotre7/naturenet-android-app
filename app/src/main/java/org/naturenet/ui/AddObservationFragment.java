@@ -2,6 +2,7 @@ package org.naturenet.ui;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,14 +36,14 @@ public class AddObservationFragment extends Fragment {
     public static final String FRAGMENT_TAG = "add_observation_fragment";
     private static final String DEFAULT_PROJECT_ID = "-ACES_a38";
 
-    TextView toolbar_title, send, project;
+    TextView send, project;
     EditText description, whereIsIt;
     ImageView image;
-    ImageButton back;
     Button choose;
     ListView mProjectsListView;
     TextView noProjects;
     LinearLayout add_observation_ll;
+    View projectsLayout;
     AddObservationActivity add;
     DatabaseReference fbRef;
     String selectedProjectId;
@@ -57,33 +59,17 @@ public class AddObservationFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         add = ((AddObservationActivity) getActivity());
-        toolbar_title = (TextView) add.findViewById(R.id.toolbar_title);
-        toolbar_title.setText(R.string.add_observation_title);
-        back = (ImageButton) add.findViewById(R.id.toolbar_back);
-        send = (TextView) add.findViewById(R.id.toolbar_send);
-        project = (TextView) add.findViewById(R.id.add_observation_tv_project);
-        image = (ImageView) add.findViewById(R.id.add_observation_iv);
-        description = (EditText) add.findViewById(R.id.add_observation_et_description);
-        whereIsIt = (EditText) add.findViewById(R.id.add_observation_et_where);
-        choose = (Button) add.findViewById(R.id.add_observation_b_project);
-        mProjectsListView = (ListView) add.findViewById(R.id.projects_list);
-        add_observation_ll = (LinearLayout) add.findViewById(R.id.add_observation_ll);
-        noProjects = (TextView) add.findViewById(R.id.projecs_tv);
 
         Query query = FirebaseDatabase.getInstance().getReference(Project.NODE_NAME).orderByChild("latest_contribution");
         mProjectAdapter = new ProjectAdapter(getActivity(), query);
         mProjectsListView.setAdapter(mProjectAdapter);
+        mProjectsListView.setEmptyView(noProjects);
 
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                add.onBackPressed();
-            }
-        });
+        send = (TextView) getActivity().findViewById(R.id.toolbar_send);
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (add.signedUser != null) {
+                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                     send.setVisibility(View.GONE);
                     fbRef = FirebaseDatabase.getInstance().getReference();
                     PhotoCaptionContent data = new PhotoCaptionContent();
@@ -96,9 +82,8 @@ public class AddObservationFragment extends Fragment {
 
                     add.newObservation.data = data;
                     add.newObservation.projectId = selectedProjectId;
-                    add.newObservation.siteId = add.signedUser.affiliation;
 
-                    add.goBackToMainActivity();
+                    add.submitObservation();
                 } else {
                     Toast.makeText(getActivity(), "Please sign in to contribute to NatureNet", Toast.LENGTH_SHORT).show();
                     //TODO: start login activity for result, then come back to send
@@ -113,25 +98,23 @@ public class AddObservationFragment extends Fragment {
                 project.setText(p.name);
                 selectedProjectId = p.id;
                 add_observation_ll.setVisibility(View.VISIBLE);
-                mProjectsListView.setVisibility(View.GONE);
+                projectsLayout.setVisibility(View.GONE);
             }
         });
 
-        Picasso.with(AddObservationFragment.this.getActivity()).load(add.observationPath)
-                .placeholder(R.drawable.no_image).error(R.drawable.no_image).fit().centerInside().into(image);
+        Picasso.with(AddObservationFragment.this.getActivity())
+                .load(add.observationPath)
+                .placeholder(R.drawable.default_image)
+                .error(R.drawable.no_image)
+                .fit()
+                .centerInside()
+                .into(image);
 
         choose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 add_observation_ll.setVisibility(View.GONE);
-
-                if (add.signedUser != null) {
-                    mProjectsListView.setVisibility(View.VISIBLE);
-                    noProjects.setVisibility(View.GONE);
-                } else {
-                    mProjectsListView.setVisibility(View.GONE);
-                    noProjects.setVisibility(View.VISIBLE);
-                }
+                projectsLayout.setVisibility(View.VISIBLE);
             }
         });
 
@@ -148,9 +131,20 @@ public class AddObservationFragment extends Fragment {
                 Timber.e(databaseError.toException(), "Could not read default project");
             }
         });
+    }
 
-        add_observation_ll.setVisibility(View.VISIBLE);
-        mProjectsListView.setVisibility(View.GONE);
-        noProjects.setVisibility(View.GONE);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        project = (TextView) view.findViewById(R.id.add_observation_tv_project);
+        image = (ImageView) view.findViewById(R.id.add_observation_iv);
+        description = (EditText) view.findViewById(R.id.add_observation_et_description);
+        whereIsIt = (EditText) view.findViewById(R.id.add_observation_et_where);
+        choose = (Button) view.findViewById(R.id.add_observation_b_project);
+        mProjectsListView = (ListView) view.findViewById(R.id.projects_list);
+        add_observation_ll = (LinearLayout) view.findViewById(R.id.add_observation_ll);
+        noProjects = (TextView) view.findViewById(R.id.projecs_tv);
+        projectsLayout = view.findViewById(R.id.projects_layout);
     }
 }

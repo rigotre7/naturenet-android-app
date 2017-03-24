@@ -30,7 +30,6 @@ public class Idea extends TimestampedData {
 
     public String submitter;
 
-    @Nullable
     public String status;
 
     @Nullable
@@ -95,52 +94,4 @@ public class Idea extends TimestampedData {
             return new Idea[size];
         }
     };
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Idea idea = (Idea) o;
-
-        if (!id.equals(idea.id)) return false;
-        if (!content.equals(idea.content)) return false;
-        if (!submitter.equals(idea.submitter)) return false;
-        if (status != null ? !status.equals(idea.status) : idea.status != null) return false;
-        if (group != null ? !group.equals(idea.group) : idea.group != null) return false;
-        if (type != null ? !type.equals(idea.type) : idea.type != null) return false;
-        if (image != null ? !image.equals(idea.image) : idea.image != null) return false;
-        return source != null ? source.equals(idea.source) : idea.source == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + content.hashCode();
-        result = 31 * result + submitter.hashCode();
-        result = 31 * result + (status != null ? status.hashCode() : 0);
-        result = 31 * result + (group != null ? group.hashCode() : 0);
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (image != null ? image.hashCode() : 0);
-        result = 31 * result + (source != null ? source.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Idea{" +
-                super.toString() +
-                ", id='" + id + '\'' +
-                ", content='" + content + '\'' +
-                ", submitter='" + submitter + '\'' +
-                ", status='" + status + '\'' +
-                ", group='" + group + '\'' +
-                ", type='" + type + '\'' +
-                ", image='" + image + '\'' +
-                ", source='" + source + '\'' +
-                ", comments=" + comments +
-                ", likes=" + likes +
-                '}';
-    }
 }

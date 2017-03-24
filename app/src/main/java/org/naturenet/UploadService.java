@@ -143,13 +143,8 @@ public class UploadService extends IntentService {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                Picasso.with(UploadService.this)
-                        .load(mImageUri)
-                        .resize(MAX_IMAGE_DIMENSION, MAX_IMAGE_DIMENSION)
-                        .centerInside()
-                        .onlyScaleDown()
-                        .priority(Picasso.Priority.HIGH)
-                        .into(mFirebaseUploadTarget);
+                Picasso.with(UploadService.this).load(mImageUri).resize(MAX_IMAGE_DIMENSION, MAX_IMAGE_DIMENSION)
+                        .centerInside().onlyScaleDown().into(mFirebaseUploadTarget);
             }
         });
     }

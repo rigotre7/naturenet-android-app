@@ -4,27 +4,22 @@
     android:layout_height="match_parent"
     tools:context="org.naturenet.ui.AddObservationFragment">
 
-    <RelativeLayout
-        android:id="@+id/projects_layout"
+    <ListView
+        android:id="@+id/projects_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
-        <ListView
-            android:id="@+id/projects_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+        android:visibility="gone"/>
 
-        <TextView
-            android:id="@+id/projecs_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="100dp"
-            android:text="No projects in your affiliation to display!"
-            android:textStyle="bold"
-            android:textColor="@android:color/holo_red_dark"
-            android:visibility="gone"/>
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/projecs_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="100dp"
+        android:text="No projects in your affiliation to display!"
+        android:textStyle="bold"
+        android:textColor="@android:color/holo_red_dark"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/add_observation_ll"

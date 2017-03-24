@@ -1,14 +1,19 @@
-package org.naturenet.data.model;
+package org.naturenet;
 
 import android.os.Parcel;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.naturenet.data.model.Site;
 
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
+
+/**
+ * Created by rigot on 2/18/2017.
+ */
 
 @RunWith(AndroidJUnit4.class)
 public class SiteParcelizationTests {
@@ -17,7 +22,6 @@ public class SiteParcelizationTests {
     static String ID = "df8sd3AfEQFr4";
     static String NAME = "Reedy Creek";
     static String DESCRIPTION = "Park";
-    static String GEOHASH = "7zzzzzzzzz";
 
     @Test
     public void test_is_site_parcelable(){
@@ -31,7 +35,7 @@ public class SiteParcelizationTests {
         locList.add(26.3);
         locList.add(93.5);
 
-        Site site = new Site(ID, NAME, DESCRIPTION, locList, GEOHASH);
+        Site site = new Site(ID, NAME, DESCRIPTION, locList);
 
         Parcel parcel = Parcel.obtain();
 

@@ -28,12 +28,6 @@ import timber.log.Timber;
 
 public class NatureNetUtils {
 
-    public enum PICASSO_TAGS {
-        PICASSO_TAG_PROJECT_LIST,
-        PICASSO_TAG_OBSERVATION_LIST,
-        PICASSO_TAG_GALLERY,
-    }
-
     private static final Transformation mAvatarTransform = new CroppedCircleTransformation();
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.getDefault());
 
@@ -47,12 +41,12 @@ public class NatureNetUtils {
 
     public static void showUserAvatar(final Context context, final ImageView view, final String avatarUrl) {
         Picasso.with(context).load(Strings.emptyToNull(avatarUrl)).transform(mAvatarTransform)
-                .placeholder(R.drawable.default_avatar).error(R.drawable.default_avatar).noFade().fit().into(view);
+                .placeholder(R.drawable.default_avatar).fit().into(view);
     }
 
     public static void showUserAvatar(final Context context, final ImageView view, final int avatarId) {
         Picasso.with(context).load(avatarId).transform(mAvatarTransform)
-                .placeholder(R.drawable.default_avatar).error(R.drawable.default_avatar).noFade().fit().into(view);
+                .placeholder(R.drawable.default_avatar).fit().into(view);
     }
 
     public static void makeUserBadge(final Context context, final ViewGroup root, final String userId) {
@@ -69,16 +63,8 @@ public class NatureNetUtils {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Users user = dataSnapshot.getValue(Users.class);
                 name.setText(user.displayName);
-                Picasso.with(context)
-                        .load(Strings.emptyToNull(user.avatar))
-                        .transform(mAvatarTransform)
-                        .placeholder(R.drawable.default_avatar)
-                        .error(R.drawable.default_avatar)
-                        .noFade()
-                        .fit()
-                        .priority(Picasso.Priority.LOW)
-                        .tag(PICASSO_TAGS.PICASSO_TAG_OBSERVATION_LIST)
-                        .into(avatar);
+                Picasso.with(context).load(Strings.emptyToNull(user.avatar)).transform(mAvatarTransform)
+                        .placeholder(R.drawable.default_avatar).error(R.drawable.default_avatar).fit().into(avatar);
 
                 FirebaseDatabase.getInstance().getReference(Site.NODE_NAME).child(user.affiliation)
                         .addListenerForSingleValueEvent(new ValueEventListener() {

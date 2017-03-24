@@ -78,47 +78,4 @@ public class Comment extends TimestampedData {
             return new Comment[size];
         }
     };
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Comment comment1 = (Comment) o;
-
-        if (!id.equals(comment1.id)) return false;
-        if (!comment.equals(comment1.comment)) return false;
-        if (!commenter.equals(comment1.commenter)) return false;
-        if (!parent.equals(comment1.parent)) return false;
-        if (!context.equals(comment1.context)) return false;
-        if (source != null ? !source.equals(comment1.source) : comment1.source != null) return false;
-        return status != null ? status.equals(comment1.status) : comment1.status == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + comment.hashCode();
-        result = 31 * result + commenter.hashCode();
-        result = 31 * result + parent.hashCode();
-        result = 31 * result + context.hashCode();
-        result = 31 * result + (source != null ? source.hashCode() : 0);
-        result = 31 * result + (status != null ? status.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Comment{" +
-                super.toString() +
-                ", id='" + id + '\'' +
-                ", comment='" + comment + '\'' +
-                ", commenter='" + commenter + '\'' +
-                ", parent='" + parent + '\'' +
-                ", context='" + context + '\'' +
-                ", source='" + source + '\'' +
-                ", status='" + status + '\'' +
-                '}';
-    }
 }

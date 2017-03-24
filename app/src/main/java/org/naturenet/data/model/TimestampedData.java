@@ -51,12 +51,4 @@ public abstract class TimestampedData implements Parcelable {
         parcel.writeValue(getCreatedAtMillis());
         parcel.writeValue(getUpdatedAtMillis());
     }
-
-    @Override
-    public String toString() {
-        return "TimestampedData{" +
-                "createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                '}';
-    }
 }

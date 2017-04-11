@@ -1,6 +1,7 @@
 package org.naturenet.ui;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -69,7 +70,7 @@ public class AddObservationFragment extends Fragment {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                if (add.signed_user!=null) {
                     send.setVisibility(View.GONE);
                     fbRef = FirebaseDatabase.getInstance().getReference();
                     PhotoCaptionContent data = new PhotoCaptionContent();
@@ -86,7 +87,8 @@ public class AddObservationFragment extends Fragment {
                     add.submitObservation();
                 } else {
                     Toast.makeText(getActivity(), "Please sign in to contribute to NatureNet", Toast.LENGTH_SHORT).show();
-                    //TODO: start login activity for result, then come back to send
+                    Intent loginIntent = new Intent(getActivity(), LoginActivity.class);
+                    startActivityForResult(loginIntent, 2);
                 }
             }
         });

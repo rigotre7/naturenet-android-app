@@ -101,7 +101,8 @@ public class UploadService extends IntentService {
 
     private void uploadObservation() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null && user.getUid().equals(mObservation.userId)) {
+        String i = mObservation.userId;
+            if (user != null && user.getUid().equals(mObservation.userId)) {
             Timber.d("Preparing image for upload");
             mHandler.post(new Runnable() {
                 @Override

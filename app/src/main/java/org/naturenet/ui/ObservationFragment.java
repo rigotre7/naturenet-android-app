@@ -1,6 +1,7 @@
 package org.naturenet.ui;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -279,6 +280,8 @@ public class ObservationFragment extends Fragment {
                         });
                     } else {
                         Toast.makeText(getActivity(), "Please login to comment.", Toast.LENGTH_SHORT).show();
+                        Intent loginIntent = new Intent(getActivity(), LoginActivity.class);
+                        startActivityForResult(loginIntent, 2);
                     }
                 }
             }

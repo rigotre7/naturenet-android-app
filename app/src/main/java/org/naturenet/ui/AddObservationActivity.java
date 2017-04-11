@@ -7,12 +7,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
+import org.naturenet.NatureNetApplication;
 import org.naturenet.R;
 import org.naturenet.UploadService;
 import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Users;
+
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 public class AddObservationActivity extends AppCompatActivity {
 
@@ -23,6 +28,8 @@ public class AddObservationActivity extends AppCompatActivity {
 
     Uri observationPath;
     Observation newObservation;
+    private Disposable mUserAuthSubscription;
+    Users signed_user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +43,14 @@ public class AddObservationActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(true);
             getSupportActionBar().setTitle(R.string.add_observation_title);
         }
+
+        //check to see if there is a signed in user
+        mUserAuthSubscription = ((NatureNetApplication) getApplication()).getCurrentUserObservable().subscribe(new Consumer<Optional<Users>>() {
+            @Override
+            public void accept(Optional<Users> user) throws Exception {
+                signed_user = user.isPresent() ? user.get() : null;
+            }
+        });
 
         newObservation = new Observation();
         double lat = getIntent().getDoubleExtra(EXTRA_LATITUDE, 0.0);
@@ -57,6 +72,12 @@ public class AddObservationActivity extends AppCompatActivity {
     public void submitObservation() {
         findViewById(R.id.toolbar_send).setVisibility(View.GONE);
         findViewById(R.id.toolbar_busy).setVisibility(View.VISIBLE);
+
+        //here we add the user id and site id to the observation
+        if(signed_user!=null){
+            newObservation.userId = signed_user.id;
+            newObservation.siteId = signed_user.affiliation;
+        }
 
         Intent uploadIntent = new Intent(this, UploadService.class);
         uploadIntent.putExtra(UploadService.EXTRA_OBSERVATION, newObservation);

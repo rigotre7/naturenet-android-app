@@ -56,7 +56,7 @@ public class UsersAdapter extends FirebaseListAdapter<Users> {
         location.setText(getSiteName(model.affiliation));
     }
 
-    public String getSiteName(String s){
+    private String getSiteName(String s){
         databaseReference.child(Site.NODE_NAME).child(s).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

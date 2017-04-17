@@ -1,17 +1,77 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              tools:context="org.naturenet.ui.IdeasFragment">
 
-    <TextView
+    <include
+        layout="@layout/floating_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/floating_buttons" />
+
+    <ImageView
+        android:id="@+id/imageView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Design Ideas\nComing soon!"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        app:srcCompat="@drawable/fb_add_design_idea"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="150dp"
-        android:textSize="32dp"
-        android:textColor="@color/colorBackground" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
+    <TextView
+        android:id="@+id/ideas_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/imageView4"
+        android:layout_alignTop="@+id/imageView4"
+        android:layout_toRightOf="@+id/imageView4"
+        android:textColor="@color/colorButton"
+        android:gravity="center"
+        android:layout_marginLeft="5dp"
+        android:text="@string/design_ideas_title"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/design_ideas_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/imageView4"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignStart="@+id/imageView4"
+        android:layout_below="@+id/imageView4"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="10dp"
+        android:text="@string/design_ideas_info_text" />
+
+    <TextView
+        android:id="@+id/design_ideas_recent_cont_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/design_ideas_info"
+        android:layout_alignStart="@+id/design_ideas_info"
+        android:layout_below="@+id/design_ideas_info"
+        android:layout_marginTop="12dp"
+        android:textStyle="bold"
+        android:textColor="@color/colorButton"
+        android:text="@string/recent_observations" />
+
+    <ListView
+        android:id="@+id/design_ideas_lv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/floating_buttons"
+        android:layout_below="@+id/design_ideas_recent_cont_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp" />
 </RelativeLayout>

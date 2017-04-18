@@ -69,6 +69,8 @@
 
     <!-- Observation Activity -->
     <string name="observation_title">Observation</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <!-- Observation Activity -->
 
     <!-- Main Activity -->

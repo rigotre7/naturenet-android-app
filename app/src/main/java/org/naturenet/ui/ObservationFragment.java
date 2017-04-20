@@ -1,7 +1,19 @@
 package org.naturenet.ui;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -25,6 +37,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import org.naturenet.DownloadFile;
 import org.naturenet.R;
 import org.naturenet.data.model.Comment;
 import org.naturenet.data.model.Observation;
@@ -42,6 +55,8 @@ public class ObservationFragment extends Fragment {
 
     boolean isImageFitToScreen;
 
+    String observationLink;
+    Boolean filePermission = false;
     ObservationActivity o;
     Observation observation;
     ImageView observer_avatar, observation_image, like;
@@ -225,6 +240,62 @@ public class ObservationFragment extends Fragment {
             }
         });
 
+        observation_image.setOnLongClickListener(new View.OnLongClickListener() {
+            @TargetApi(Build.VERSION_CODES.M)
+            @Override
+            public boolean onLongClick(View v) {
+
+                observationLink = observation.data.image;
+
+                String[] perms = {"android.permission.WRITE_EXTERNAL_STORAGE"};
+
+                //check to see if the observation is a pdf or image
+                if(observationLink.contains("pdf")){
+                    //if above Android 6.0 Marshmallow, ask for permission to save file to memory
+                    if(canMakeSmores()){
+                        requestPermissions(perms, 200);
+                    }else{  //otherwise, simply continue with the download
+                        new AlertDialog.Builder(getActivity()).setTitle("Save")
+                                .setMessage("Would you like to download the pdf?")
+                                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        DownloadFile download = new DownloadFile(getActivity(), observation.id);
+                                        download.execute(observationLink.substring(0, observationLink.length()-4) + ".pdf");
+                                    }
+                                }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //do nothing if rejected
+                            }
+                        }).show();
+                    }
+                }else{  //in this case it's an image
+                    new AlertDialog.Builder(getActivity()).setTitle("Save")
+                            .setMessage("Save image to gallery?")
+                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    BitmapDrawable bmd = (BitmapDrawable) observation_image.getDrawable();
+                                    Bitmap bd = bmd.getBitmap();
+
+                                    MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), bd, observation.projectId , observation.data.text);
+                                    Toast.makeText(getActivity(), "Image saved to gallery!", Toast.LENGTH_SHORT).show();
+
+                                }
+                            }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //do nothing if rejected
+                        }
+                    }).show();
+                }
+
+                return false;
+            }
+        });
+
+
         observation_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -279,6 +350,8 @@ public class ObservationFragment extends Fragment {
                         });
                     } else {
                         Toast.makeText(getActivity(), "Please login to comment.", Toast.LENGTH_SHORT).show();
+                        Intent loginIntent = new Intent(getActivity(), LoginActivity.class);
+                        startActivityForResult(loginIntent, 2);
                     }
                 }
             }
@@ -298,5 +371,37 @@ public class ObservationFragment extends Fragment {
     public void onDestroyView() {
         mRef.removeEventListener(mObservationListener);
         super.onDestroyView();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case 200:
+                filePermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+
+                //if user gives permission to save pdf
+                if(filePermission) {
+                    new AlertDialog.Builder(getActivity()).setTitle("Save")
+                            .setMessage("Would you like to download the pdf?")
+                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    DownloadFile download = new DownloadFile(getActivity(), observation.id);
+                                    download.execute(observationLink.substring(0, observationLink.length()-4) + ".pdf");
+                                }
+                            }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //do nothing if rejected
+                        }
+                    }).show();
+                }
+
+                break;
+        }
+    }
+
+    private boolean canMakeSmores(){
+        return(Build.VERSION.SDK_INT> Build.VERSION_CODES.LOLLIPOP_MR1);
     }
 }

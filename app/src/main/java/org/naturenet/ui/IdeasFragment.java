@@ -5,9 +5,17 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+
 import org.naturenet.R;
+import org.naturenet.data.model.Idea;
+import org.naturenet.data.model.Users;
 
 public class IdeasFragment extends Fragment {
 
@@ -16,17 +24,38 @@ public class IdeasFragment extends Fragment {
     MainActivity main;
     TextView toolbar_title;
 
+    private DatabaseReference mFirebase = FirebaseDatabase.getInstance().getReference();
+    private ListView ideas_list = null;
+    private FirebaseListAdapter mAdapter;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_ideas, container, false);
+        View root = inflater.inflate(R.layout.fragment_ideas, container, false);
+
+        main = ((MainActivity)  this.getActivity());
+        toolbar_title = (TextView) main.findViewById(R.id.app_bar_main_tv);
+        toolbar_title.setText(R.string.design_ideas_title_design_ideas);
+
+        ideas_list = (ListView) root.findViewById(R.id.design_ideas_lv);
+
+        return root;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        main = ((MainActivity)  this.getActivity());
-        toolbar_title = (TextView) main.findViewById(R.id.app_bar_main_tv);
-        toolbar_title.setText(R.string.design_ideas_title_design_ideas);
+
+        Query query = mFirebase.child(Idea.NODE_NAME).limitToLast(20);
+        mAdapter = new IdeasAdapter(main, query);
+        ideas_list.setAdapter(mAdapter);
+
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mAdapter.cleanup();
     }
 
 }

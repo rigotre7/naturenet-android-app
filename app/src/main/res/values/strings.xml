@@ -69,6 +69,8 @@
 
     <!-- Observation Activity -->
     <string name="observation_title">Observation</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <!-- Observation Activity -->
 
     <!-- Main Activity -->
@@ -168,6 +170,8 @@
     <string name="design_ideas_text">Design Idea(s)</string>
     <string name="recent_observations">Recent Contributions</string>
     <string name="gallery_title">Gallery</string>
+    <string name="design_ideas_title">Design Ideas</string>
+    <string name="design_ideas_info_text">Your design ideas can be a new way of using NatureNet in your community, and new mobile technology for learning about sustainability or changes in the environment, or a new feature for the app.</string>
     <!-- General -->
 
 </resources>

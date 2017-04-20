@@ -7,4 +7,5 @@
     <color name="colorTheme">#1FCD6C</color>
     <color name="colorButton">#263B50</color>
     <color name="colorImageButton">#00000000</color>
+    <color name="red">#e51616</color>
 </resources>

@@ -40,14 +40,20 @@ dependencies {
 }
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "org.naturenet"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 11
-        versionName "2.1.0"
+        versionCode 12
+        versionName "2.1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         resValue "string", "app_version", versionName
         multiDexEnabled true
@@ -63,6 +69,7 @@ android {
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             resValue "string", "app_name", "NatureNet"
+            signingConfig signingConfigs.config
         }
     }
     compileOptions {
@@ -73,7 +80,6 @@ android {
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/LICENSE'
     }
-
     configurations.all {
         resolutionStrategy.force 'com.android.support:support-v4:25.2.0'
         resolutionStrategy.force 'com.android.support:appcompat-v7:25.2.0'

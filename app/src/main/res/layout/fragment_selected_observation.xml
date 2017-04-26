@@ -124,7 +124,7 @@
                 android:layout_centerVertical="true"
                 android:padding="3dp"
                 android:clickable="true"
-                android:src="@drawable/unlike"/>
+                android:src="@drawable/likes"/>
 
             <EditText
                 android:id="@+id/et_comment"

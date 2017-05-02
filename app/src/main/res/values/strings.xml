@@ -172,6 +172,7 @@
     <string name="gallery_title">Gallery</string>
     <string name="design_ideas_title">Design Ideas</string>
     <string name="design_ideas_info_text">Your design ideas can be a new way of using NatureNet in your community, and new mobile technology for learning about sustainability or changes in the environment, or a new feature for the app.</string>
+    <string name="add_design_idea_title">Add Design Idea</string>
     <!-- General -->
 
 </resources>

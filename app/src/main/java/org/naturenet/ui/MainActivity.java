@@ -292,6 +292,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        design_ideas.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToAddDesignIdeaActivity();
+            }
+        });
+
         add_observation_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -614,6 +621,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         addObservation.putExtra(AddObservationActivity.EXTRA_LONGITUDE, longValue);
         addObservation.putExtra(AddObservationActivity.EXTRA_USER, signed_user);
         startActivity(addObservation);
+        overridePendingTransition(R.anim.slide_up, R.anim.stay);
+    }
+
+    public void goToAddDesignIdeaActivity(){
+        Intent addDesignIdeaIntent = new Intent(this, AddDesignIdeaActivity.class);
+        startActivity(addDesignIdeaIntent);
         overridePendingTransition(R.anim.slide_up, R.anim.stay);
     }
 

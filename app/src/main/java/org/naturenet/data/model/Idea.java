@@ -21,6 +21,7 @@ public class Idea extends TimestampedData {
         i.submitter = submitter;
         i.status = "doing";
         i.source = "android";
+        i.group = "idea";
         return i;
     }
 
@@ -64,6 +65,7 @@ public class Idea extends TimestampedData {
         type = in.readString();
         image = in.readString();
         source = in.readString();
+        in.readMap(likes, String.class.getClassLoader());
     }
 
     @Exclude
@@ -82,6 +84,7 @@ public class Idea extends TimestampedData {
         parcel.writeString(type);
         parcel.writeString(image);
         parcel.writeString(source);
+        parcel.writeMap(likes);
     }
 
     public static final Creator<Idea> CREATOR = new Creator<Idea>() {

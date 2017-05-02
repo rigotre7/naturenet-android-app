@@ -225,7 +225,7 @@ public class ObservationFragment extends Fragment {
                     Optional<Boolean> value;
 
                     if (observation.likes != null && observation.likes.containsKey(o.signed_user.id) && observation.likes.get(o.signed_user.id)) {
-                        like.setImageDrawable(ContextCompat.getDrawable(ObservationFragment.this.getActivity(), R.drawable.unlike));
+                        like.setImageDrawable(ContextCompat.getDrawable(ObservationFragment.this.getActivity(), R.drawable.likes));
                         value = Optional.absent();
                     } else {
                         like.setImageDrawable(ContextCompat.getDrawable(ObservationFragment.this.getActivity(), R.drawable.like));

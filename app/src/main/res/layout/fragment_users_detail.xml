@@ -146,14 +146,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:numColumns="2"
-            android:layout_marginBottom="130dp"
             android:layout_below="@+id/user_details_rec_obs_label"
             android:layout_marginTop="13dp"
             android:id="@+id/user_details_recent_obs"
             android:layout_alignLeft="@+id/user_details_rec_obs_label"
             android:layout_alignStart="@+id/user_details_rec_obs_label"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="5dp"/>
 
     </RelativeLayout>
 </FrameLayout>

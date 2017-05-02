@@ -51,40 +51,31 @@
             android:layout_gravity="center"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Coming soon!"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:textSize="32dp"
-                android:textColor="@color/colorBackground" />
-
             <ImageView
-                android:visibility="gone"
+                style="@style/dialog_add_design_idea_iv"
                 android:layout_width="@dimen/dialog_add_design_idea_iv_width"
                 android:layout_height="@dimen/dialog_add_design_idea_iv_height"
                 android:layout_gravity="center_vertical"
-                style="@style/dialog_add_design_idea_iv"/>
+                android:visibility="visible" />
 
             <TextView
-                android:visibility="gone"
+                style="@style/dialog_add_design_idea_tv_choose"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:paddingLeft="@dimen/dialog_add_design_idea_tv_padding_left"
-                style="@style/dialog_add_design_idea_tv_choose" />
+                android:visibility="visible" />
 
         </LinearLayout>
 
         <Button
-            android:visibility="gone"
             android:id="@+id/dialog_add_design_idea_b_design_ideas"
+            style="@style/dialog_add_design_idea_b_design_ideas"
             android:layout_width="@dimen/dialog_add_design_idea_b_width"
             android:layout_height="@dimen/dialog_add_design_idea_b_height"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="@dimen/dialog_add_design_idea_margin_bottom"
-            style="@style/dialog_add_design_idea_b_design_ideas" />
+            android:visibility="visible" />
 
         <Button
             android:visibility="gone"

@@ -21,6 +21,7 @@ public class Idea extends TimestampedData {
         i.submitter = submitter;
         i.status = "doing";
         i.source = "android";
+        i.group = "idea";
         return i;
     }
 

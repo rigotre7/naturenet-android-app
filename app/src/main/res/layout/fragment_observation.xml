@@ -1,8 +1,9 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="10dp"
+    android:id="@+id/mainLayout"
     tools:context="org.naturenet.ui.ObservationFragment">
 
     <RelativeLayout
@@ -167,4 +168,4 @@
 
     </RelativeLayout>
 
-</FrameLayout>
+</LinearLayout>

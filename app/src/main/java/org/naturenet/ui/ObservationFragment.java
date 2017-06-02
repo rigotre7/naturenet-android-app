@@ -1,13 +1,13 @@
 package org.naturenet.ui;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
@@ -62,7 +62,9 @@ public class ObservationFragment extends Fragment {
     ImageView observer_avatar, observation_image, like;
     TextView observer_name, observer_affiliation, observation_timestamp, observation_text, send;
     RelativeLayout commentLayout;
+    LinearLayout observer_layout;
     EditText comment;
+    int height, width;
     ListView lv_comments;
     LinearLayout comment_view;
     private String mObservationId;
@@ -198,6 +200,25 @@ public class ObservationFragment extends Fragment {
         lv_comments = (ListView) view.findViewById(R.id.lv_comments);
         commentLayout = (RelativeLayout) view.findViewById(R.id.rl_comment);
         comment_view = (LinearLayout) view.findViewById(R.id.scroll_view);
+        observer_layout = (LinearLayout) view.findViewById(R.id.ll_observer);
+    }
+
+    //called when activity is changed to landscape mode
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            observation_image.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+            observation_image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            observation_text.setVisibility(View.GONE);
+            getActivity().getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE);
+        }
     }
 
     @Override
@@ -296,24 +317,50 @@ public class ObservationFragment extends Fragment {
         });
 
 
+        //single click on observation image will zoom the screen
         observation_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //if the screen is in full-screen mode
                 if(isImageFitToScreen) {
+                    //reset the screen to normal
                     isImageFitToScreen=false;
                     observation_image.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
                     observation_image.setAdjustViewBounds(true);
                     observation_image.setLayoutParams(params);
+                    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                     o.getSupportActionBar().show();
                     commentLayout.setVisibility(View.VISIBLE);
                     comment_view.setVisibility(View.VISIBLE);
-                }else{
+                    observer_layout.setVisibility(View.VISIBLE);
+                    observation_text.setVisibility(View.VISIBLE);
+                    getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                }else{  //otherwise, remove all elements from screen except the imageView
                     isImageFitToScreen=true;
                     o.getSupportActionBar().hide();
                     commentLayout.setVisibility(View.GONE);
                     comment_view.setVisibility(View.GONE);
-                    observation_image.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
-                    observation_image.setScaleType(ImageView.ScaleType.FIT_XY);
+                    observer_layout.setVisibility(View.GONE);
+                    height = observation_image.getDrawable().getIntrinsicHeight();
+                    width = observation_image.getDrawable().getIntrinsicWidth();
+
+                    //landscape image
+                    if(width>height){
+                        //flip the orientation, this will trigger onConfigurationChanged() ^^^
+                        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                    }else{  //portrait image
+                        observation_image.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
+                        observation_image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                        observation_text.setVisibility(View.GONE);
+                        getActivity().getWindow().getDecorView().setSystemUiVisibility(
+                                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                                        | View.SYSTEM_UI_FLAG_IMMERSIVE);
+                    }
+
                 }
             }
         });

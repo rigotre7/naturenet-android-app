@@ -3,10 +3,13 @@ package org.naturenet.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -31,6 +34,7 @@ public class CommunitiesFragment extends Fragment {
     private ListView mCommunitiesListView = null;
     private FirebaseListAdapter mAdapter;
     Users user;
+    EditText searchText;
 
     MainActivity main;
     TextView toolbar_title, peopleCount;
@@ -43,6 +47,7 @@ public class CommunitiesFragment extends Fragment {
         toolbar_title = (TextView) main.findViewById(R.id.app_bar_main_tv);
         toolbar_title.setText(R.string.communities_title);
         peopleCount = (TextView) root.findViewById(R.id.people_count_tv_communities);
+        searchText = (EditText) root.findViewById(R.id.searchText);
 
         mCommunitiesListView = (ListView) root.findViewById(R.id.communities_list);
 
@@ -55,7 +60,7 @@ public class CommunitiesFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Query query = mFirebase.child(Users.NODE_NAME).orderByChild("latest_contribution");
+        Query query = mFirebase.child(Users.NODE_NAME).orderByChild("latest_contribution").limitToLast(20);
         mAdapter = new UsersAdapter(main, query);
         mCommunitiesListView.setAdapter(mAdapter);
 
@@ -83,6 +88,27 @@ public class CommunitiesFragment extends Fragment {
             }
         });
 
+        searchText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String search = editable.toString();
+                if(search.length() > 0){
+                    Query q = mFirebase.child(Users.NODE_NAME).orderByChild("display_name").startAt(search).endAt(search+"\uf8ff");
+                    mAdapter = new UsersAdapter(main, q);
+                    mCommunitiesListView.setAdapter(mAdapter);
+                }
+            }
+        });
 
     }
 

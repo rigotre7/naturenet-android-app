@@ -48,29 +48,28 @@
         android:layout_alignBottom="@+id/imageView" />
 
     <TextView
+        android:id="@+id/people_count_tv_communities"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/communities_num_people"
+        android:gravity="center_vertical"
+        android:textColor="@color/colorButton"
+        android:textSize="18sp"
+        android:layout_alignBottom="@+id/communities_num_people"
+        android:layout_toRightOf="@+id/communities_num_people" />
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textSize="18sp"
         android:textColor="@color/colorButton"
-        android:layout_toRightOf="@+id/people_tv_communities"
         android:layout_toEndOf="@+id/people_tv_communities"
         android:id="@+id/communities_num_people"
         android:layout_alignParentTop="true"
-        android:layout_above="@+id/communities_list" />
-
-    <TextView
-        android:gravity="center_vertical"
-        android:textColor="@color/colorButton"
-        android:layout_width="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:textSize="18sp"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/communities_num_people"
-        android:layout_toEndOf="@+id/communities_num_people"
-        android:layout_above="@+id/communities_list"
-        android:layout_alignParentTop="true"
-        android:id="@+id/people_count_tv_communities" />
+        android:layout_alignBottom="@+id/people_tv_communities"
+        android:layout_toRightOf="@+id/people_tv_communities" />
 
     <EditText
         android:id="@+id/searchText"
@@ -81,7 +80,6 @@
         android:layout_alignParentRight="true"
         android:layout_alignStart="@+id/imageView"
         android:layout_below="@+id/imageView"
-        android:layout_toStartOf="@+id/searchButton"
         android:ems="10"
         android:hint="Search"
         android:inputType="textPersonName" />

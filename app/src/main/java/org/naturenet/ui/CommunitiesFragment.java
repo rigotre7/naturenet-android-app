@@ -32,7 +32,7 @@ public class CommunitiesFragment extends Fragment {
 
     private DatabaseReference mFirebase = FirebaseDatabase.getInstance().getReference();
     private ListView mCommunitiesListView = null;
-    private FirebaseListAdapter mAdapter;
+    private FirebaseListAdapter mAdapterOrig, mAdapter;
     Users user;
     EditText searchText;
 
@@ -61,8 +61,8 @@ public class CommunitiesFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         Query query = mFirebase.child(Users.NODE_NAME).orderByChild("latest_contribution").limitToLast(20);
-        mAdapter = new UsersAdapter(main, query);
-        mCommunitiesListView.setAdapter(mAdapter);
+        mAdapterOrig = new UsersAdapter(main, query);
+        mCommunitiesListView.setAdapter(mAdapterOrig);
 
         mCommunitiesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -106,6 +106,9 @@ public class CommunitiesFragment extends Fragment {
                     Query q = mFirebase.child(Users.NODE_NAME).orderByChild("display_name").startAt(search).endAt(search+"\uf8ff");
                     mAdapter = new UsersAdapter(main, q);
                     mCommunitiesListView.setAdapter(mAdapter);
+                }else {
+                    //when no search text is available, reuse original adapter
+                    mCommunitiesListView.setAdapter(mAdapterOrig);
                 }
             }
         });

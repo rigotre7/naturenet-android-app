@@ -54,7 +54,12 @@ public class ProjectsFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mAdapter.cleanup();
+        if(mAdapter==null)
+            mAdapterOrig.cleanup();
+        else {
+            mAdapter.cleanup();
+            mAdapterOrig.cleanup();
+        }
     }
 
     @Override
@@ -103,7 +108,7 @@ public class ProjectsFragment extends Fragment {
                 search = editable.toString();
 
                 if(search.length() > 0){
-                    search = toUpperCase(search);
+                    search = capitalizeString(search);
                     projectQuery = mFirebase.child(Project.NODE_NAME).orderByChild("name").startAt(search).endAt(search+"\uf8ff");
                     mAdapter = new ProjectAdapter(main, projectQuery);
                     mProjectsListView.setAdapter(mAdapter);
@@ -117,7 +122,7 @@ public class ProjectsFragment extends Fragment {
 
     }
 
-    public String toUpperCase(String text){
+    public String capitalizeString(String text){
         //split the given string into an array
         String [] arr = text.split(" ");
 
@@ -125,8 +130,9 @@ public class ProjectsFragment extends Fragment {
 
         //iterate over each word in the given text
         for(int j = 0; j<arr.length; j++){
-            //capitalize the first letter, append it to sb, append the rest of the word, append a space at the end
-            sb.append(Character.toUpperCase(arr[j].charAt(0))).append(arr[j].substring(1)).append(" ");
+            //capitalize the first letter, append it to sb, append the rest of the word making sure it's lowercase,
+            //append a space at the end
+            sb.append(Character.toUpperCase(arr[j].charAt(0))).append(arr[j].substring(1).toLowerCase()).append(" ");
         }
 
         //return the string and remove and leading and trailing spaces

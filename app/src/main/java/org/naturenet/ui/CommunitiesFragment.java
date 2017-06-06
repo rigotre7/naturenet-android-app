@@ -118,7 +118,12 @@ public class CommunitiesFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mAdapter.cleanup();
+        if(mAdapter==null)
+            mAdapterOrig.cleanup();
+        else {
+            mAdapter.cleanup();
+            mAdapterOrig.cleanup();
+        }
     }
 
 }

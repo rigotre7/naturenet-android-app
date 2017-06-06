@@ -33,8 +33,9 @@ public class CommunitiesFragment extends Fragment {
     private DatabaseReference mFirebase = FirebaseDatabase.getInstance().getReference();
     private ListView mCommunitiesListView = null;
     private FirebaseListAdapter mAdapterOrig, mAdapter;
-    Users user;
-    EditText searchText;
+    private Users user;
+    private EditText searchText;
+    private boolean activeSearch = false;
 
     MainActivity main;
     TextView toolbar_title, peopleCount;
@@ -67,7 +68,12 @@ public class CommunitiesFragment extends Fragment {
         mCommunitiesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                user = (Users) mAdapter.getItem(i); //get the clicked user
+                //if the user has a search query entered
+                if(activeSearch)
+                    user = (Users) mAdapter.getItem(i); //get the clicked user from mAdapter
+                else
+                    user = (Users) mAdapterOrig.getItem(i); //otherwise, get the clicked user from the original adapter
+
                 Intent userIntent = new Intent(getActivity(), UsersDetailActivity.class);
                 userIntent.putExtra(USER_EXTRA, user);
                 startActivity(userIntent);
@@ -106,9 +112,11 @@ public class CommunitiesFragment extends Fragment {
                     Query q = mFirebase.child(Users.NODE_NAME).orderByChild("display_name").startAt(search).endAt(search+"\uf8ff");
                     mAdapter = new UsersAdapter(main, q);
                     mCommunitiesListView.setAdapter(mAdapter);
+                    activeSearch = true;
                 }else {
                     //when no search text is available, reuse original adapter
                     mCommunitiesListView.setAdapter(mAdapterOrig);
+                    activeSearch = false;
                 }
             }
         });

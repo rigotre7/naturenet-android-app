@@ -1,41 +1,67 @@
 package org.naturenet.ui;
 
 import android.app.Activity;
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.firebase.ui.database.FirebaseListAdapter;
-import com.google.common.base.Strings;
-import com.google.firebase.database.Query;
 import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
 import org.naturenet.data.model.Project;
-import org.naturenet.util.NatureNetUtils;
 
-public class ProjectAdapter extends FirebaseListAdapter<Project> {
 
-    public ProjectAdapter(Activity activity, Query query) {
-        super(activity, Project.class, R.layout.project_list_item, query);
+import java.util.ArrayList;
+
+public class ProjectAdapter extends ArrayAdapter<Project> {
+
+    Activity mContext;
+    int resource;
+    ArrayList<Project> projectsList;
+
+    public ProjectAdapter(Activity context, int resource, ArrayList<Project> list) {
+        super(context, R.layout.project_list_item, list);
+
+        this.mContext = context;
+        this.resource = resource;
+        this.projectsList = list;
     }
 
+    @NonNull
     @Override
-    protected void populateView(final View v, final Project model, int position) {
-        v.setTag(model);
-        ImageView thumbnail = (ImageView) v.findViewById(R.id.project_thumbnail);
-        Picasso.with(mActivity)
-                .load(Strings.emptyToNull(model.iconUrl))
-                .fit()
-                .tag(NatureNetUtils.PICASSO_TAGS.PICASSO_TAG_PROJECT_LIST)
-                .into(thumbnail);
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        ViewHolder holder;
 
-        TextView name = (TextView) v.findViewById(R.id.project_name);
-        name.setText(model.name);
+        //if this isn't a recycled view
+        if(convertView==null){
+            holder = new ViewHolder();
+
+            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(resource, parent, false);
+            holder.projectName = (TextView) convertView.findViewById(R.id.project_name);
+            holder.projectIcon = (ImageView) convertView.findViewById(R.id.project_thumbnail);
+            convertView.setTag(holder);
+        }else
+            holder = (ViewHolder) convertView.getTag();
+
+        Project project = projectsList.get(position);
+
+        holder.projectName.setText(project.name);
+        Picasso.with(mContext).load(project.iconUrl).into(holder.projectIcon);
+
+
+        return convertView;
     }
 
-    @Override
-    public Project getItem(int pos) {
-        return super.getItem(getCount() - 1 - pos);
+
+    private static class ViewHolder{
+        ImageView projectIcon;
+        TextView projectName;
     }
 }

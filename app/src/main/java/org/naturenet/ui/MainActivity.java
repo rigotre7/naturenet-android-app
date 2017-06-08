@@ -59,6 +59,7 @@ import com.kosalgeek.android.photoutil.CameraPhoto;
 import com.kosalgeek.android.photoutil.GalleryPhoto;
 import com.squareup.picasso.Picasso;
 
+import org.naturenet.DataServices;
 import org.naturenet.NatureNetApplication;
 import org.naturenet.R;
 import org.naturenet.data.model.Observation;
@@ -142,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+        DataServices.getInstance();
 
         licenses.setOnClickListener(new View.OnClickListener() {
                 @Override

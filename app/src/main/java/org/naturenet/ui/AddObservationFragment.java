@@ -24,6 +24,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import org.naturenet.DataServices;
 import org.naturenet.R;
 import org.naturenet.data.model.PhotoCaptionContent;
 import org.naturenet.data.model.Project;
@@ -59,8 +60,7 @@ public class AddObservationFragment extends Fragment {
 
         add = ((AddObservationActivity) getActivity());
 
-        Query query = FirebaseDatabase.getInstance().getReference(Project.NODE_NAME).orderByChild("latest_contribution");
-        mProjectAdapter = new ProjectAdapter(getActivity(), query);
+        mProjectAdapter = new ProjectAdapter(getActivity(), R.layout.project_list_item, DataServices.getInstance().getProjectsList());
         mProjectsListView.setAdapter(mProjectAdapter);
         mProjectsListView.setEmptyView(noProjects);
 
@@ -94,7 +94,7 @@ public class AddObservationFragment extends Fragment {
         mProjectsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Project p = (Project) view.getTag();
+                Project p = mProjectAdapter.getItem(position);
                 project.setText(p.name);
                 selectedProjectId = p.id;
                 add_observation_ll.setVisibility(View.VISIBLE);

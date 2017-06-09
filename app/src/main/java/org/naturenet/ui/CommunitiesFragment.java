@@ -24,6 +24,8 @@ import com.google.firebase.database.ValueEventListener;
 import org.naturenet.R;
 import org.naturenet.data.model.Users;
 
+import java.util.ArrayList;
+
 
 public class CommunitiesFragment extends Fragment {
 
@@ -36,6 +38,7 @@ public class CommunitiesFragment extends Fragment {
     private Users user;
     private EditText searchText;
     private boolean activeSearch = false;
+    private ArrayList<Users> userList;
 
     MainActivity main;
     TextView toolbar_title, peopleCount;
@@ -62,6 +65,26 @@ public class CommunitiesFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         Query query = mFirebase.child(Users.NODE_NAME).orderByChild("latest_contribution").limitToLast(20);
+        userList = new ArrayList<>();
+
+        /*//get all the users
+        mFirebase.child(Users.NODE_NAME).orderByChild("latest_contribution").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //get all users and store in arraylist
+                for(DataSnapshot user: dataSnapshot.getChildren()){
+                    userList.add(user.getValue(Users.class));
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
+
         mAdapterOrig = new UsersAdapter(main, query);
         mCommunitiesListView.setAdapter(mAdapterOrig);
 
@@ -121,6 +144,10 @@ public class CommunitiesFragment extends Fragment {
             }
         });
 
+    }
+
+    private void setUsers(){
+        //mAdapterOrig
     }
 
     @Override

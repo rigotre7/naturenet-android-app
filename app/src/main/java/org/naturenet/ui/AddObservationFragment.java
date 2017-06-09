@@ -20,14 +20,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-import org.naturenet.DataServices;
 import org.naturenet.R;
 import org.naturenet.data.model.PhotoCaptionContent;
 import org.naturenet.data.model.Project;
+
+import java.util.ArrayList;
 
 import timber.log.Timber;
 
@@ -48,6 +48,8 @@ public class AddObservationFragment extends Fragment {
     DatabaseReference fbRef;
     String selectedProjectId;
     ProjectAdapter mProjectAdapter;
+    ArrayList<Project> projectList;
+    DatabaseReference dbRef;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,10 +61,28 @@ public class AddObservationFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         add = ((AddObservationActivity) getActivity());
+        dbRef = FirebaseDatabase.getInstance().getReference();
+        projectList = new ArrayList<>();
 
-        mProjectAdapter = new ProjectAdapter(getActivity(), R.layout.project_list_item, DataServices.getInstance().getProjectsList());
-        mProjectsListView.setAdapter(mProjectAdapter);
-        mProjectsListView.setEmptyView(noProjects);
+        /*
+            Populate the list of Projects.
+         */
+        dbRef.child(Project.NODE_NAME).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot project: dataSnapshot.getChildren()){
+                    projectList.add(project.getValue(Project.class));
+                }
+
+                setProjects(projectList);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
 
         send = (TextView) getActivity().findViewById(R.id.toolbar_send);
         send.setOnClickListener(new View.OnClickListener() {
@@ -131,6 +151,12 @@ public class AddObservationFragment extends Fragment {
                 Timber.e(databaseError.toException(), "Could not read default project");
             }
         });
+    }
+
+    private void setProjects(ArrayList<Project> list){
+        mProjectAdapter = new ProjectAdapter(getActivity(), R.layout.project_list_item, list);
+        mProjectsListView.setAdapter(mProjectAdapter);
+        mProjectsListView.setEmptyView(noProjects);
     }
 
     @Override

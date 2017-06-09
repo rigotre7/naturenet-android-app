@@ -8,7 +8,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +30,7 @@ public class AddDesignIdeaFragment extends Fragment {
     TextView sendButton;
     AddDesignIdeaActivity addIdeaAct;
     DatabaseReference dbRef;
+    Spinner ideaTypeSpinner;
     String ideaText;
 
     public AddDesignIdeaFragment() {
@@ -48,7 +51,11 @@ public class AddDesignIdeaFragment extends Fragment {
         addIdeaAct = (AddDesignIdeaActivity) getActivity();
         ideaTextEntry = (EditText) addIdeaAct.findViewById(R.id.design_idea_text);
         sendButton = (TextView) addIdeaAct.findViewById(R.id.design_idea_send_button);
+        ideaTypeSpinner = (Spinner) addIdeaAct.findViewById(R.id.ideaTypeSpinner);
         dbRef = FirebaseDatabase.getInstance().getReference();
+        ArrayAdapter<CharSequence> ideaTypeAdapter = ArrayAdapter.createFromResource(addIdeaAct, R.array.idea_types, android.R.layout.simple_spinner_item);
+        ideaTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ideaTypeSpinner.setAdapter(ideaTypeAdapter);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,18 +68,22 @@ public class AddDesignIdeaFragment extends Fragment {
                     if(addIdeaAct.signed_user!=null){
                         sendButton.setVisibility(View.GONE);
 
+                        //create a node for the new idea
                         DatabaseReference ideaRef = dbRef.child(Idea.NODE_NAME).push();
-                        Idea newIdea = Idea.createNew(ideaRef.getKey(), ideaText, addIdeaAct.signed_user.id);
+                        //create the new Idea object
+                        Idea newIdea = Idea.createNew(ideaRef.getKey(), ideaText, addIdeaAct.signed_user.id, ideaTypeSpinner.getSelectedItem().toString());
 
+                        //push the new idea to the newly created node
                         ideaRef.setValue(newIdea, new DatabaseReference.CompletionListener() {
                             @Override
                             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
 
+                                //if we get an error, display an appropriate message
                                 if(databaseError!=null){
                                     Toast.makeText(addIdeaAct, "Design Idea could not be submitted.", Toast.LENGTH_LONG).show();
                                     Log.d("permissionerror", databaseReference.toString());
                                 }else{
-                                    Toast.makeText(addIdeaAct, "Design Idea submitted", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(addIdeaAct, "Design Idea submitted!", Toast.LENGTH_SHORT).show();
                                     ideaTextEntry.getText().clear();
                                     sendButton.setVisibility(View.VISIBLE);
                                     addIdeaAct.finish();

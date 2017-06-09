@@ -59,7 +59,6 @@ import com.kosalgeek.android.photoutil.CameraPhoto;
 import com.kosalgeek.android.photoutil.GalleryPhoto;
 import com.squareup.picasso.Picasso;
 
-import org.naturenet.DataServices;
 import org.naturenet.NatureNetApplication;
 import org.naturenet.R;
 import org.naturenet.data.model.Observation;
@@ -116,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     LinearLayout dialog_add_observation, dialog_add_design_idea;
     FrameLayout floating_buttons;
     GridView gridview;
-    ImageView add_observation_cancel, add_design_idea_cancel, gallery_item;
+    ImageView add_observation_cancel, add_design_idea_cancel, gallery_item, add_observation_button;
     List<Uri> recentImageGallery;
     Uri selectedImage;
     double latValue, longValue;
@@ -143,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
-        DataServices.getInstance();
+        add_observation_button = (ImageView) findViewById(R.id.addObsButton);
 
         licenses.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -158,6 +157,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         );
 
         this.invalidateOptionsMenu();
+
+        add_observation_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_GALLERY);
+                } else {
+                    setGallery();
+                }
+
+                select.setVisibility(View.GONE);
+                //floating_buttons.setVisibility(View.GONE);
+                dialog_add_observation.setVisibility(View.VISIBLE);            }
+        });
 
         sign_in.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -271,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         cameraPhoto = new CameraPhoto(this);
         galleryPhoto = new GalleryPhoto(this);
 
-        add_observation.setOnClickListener(new View.OnClickListener() {
+        /*add_observation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -292,7 +305,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 floating_buttons.setVisibility(View.GONE);
                 dialog_add_design_idea.setVisibility(View.VISIBLE);
             }
-        });
+        });*/
 
         design_ideas.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -300,6 +313,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 goToAddDesignIdeaActivity();
             }
         });
+
+
 
         add_observation_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -314,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 selectedImage = null;
                 select.setVisibility(View.GONE);
-                floating_buttons.setVisibility(View.VISIBLE);
+                //floating_buttons.setVisibility(View.VISIBLE);
                 dialog_add_observation.setVisibility(View.GONE);
             }
         });
@@ -360,7 +375,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        floating_buttons.setVisibility(View.VISIBLE);
+        //floating_buttons.setVisibility(View.VISIBLE);
         dialog_add_observation.setVisibility(View.GONE);
         dialog_add_design_idea.setVisibility(View.GONE);
     }

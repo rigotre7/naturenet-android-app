@@ -2,6 +2,7 @@ package org.naturenet.ui;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -9,34 +10,37 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-import org.naturenet.DataServices;
 import org.naturenet.R;
 import org.naturenet.data.model.Project;
 import org.naturenet.util.NatureNetUtils;
 
 import java.util.ArrayList;
 
-import timber.log.Timber;
+
 
 public class ProjectsFragment extends Fragment {
 
     public static final String FRAGMENT_TAG = "projects_fragment";
 
+    ArrayList<Project> projectsList;
+    DatabaseReference dbRef;
+    FloatingActionButton addProjectButton;
     MainActivity main;
     private ListView mProjectsListView = null;
     private String search;
-    private EditText searchText;
+    private EditText searchBox;
     private ProjectAdapter  mAdapter, mAdapterSearch;
     private ArrayList<Project> searchResults;
 
@@ -47,8 +51,9 @@ public class ProjectsFragment extends Fragment {
         TextView toolbar_title = (TextView) main.findViewById(R.id.app_bar_main_tv);
         toolbar_title.setText(R.string.projects_title);
 
-        searchText = (EditText) root.findViewById(R.id.searchProjectText);
+        searchBox = (EditText) root.findViewById(R.id.searchProjectText);
         mProjectsListView = (ListView) root.findViewById(R.id.projects_list);
+        addProjectButton = (FloatingActionButton) root.findViewById(R.id.fabAddProject);
 
         return root;
     }
@@ -62,10 +67,28 @@ public class ProjectsFragment extends Fragment {
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        dbRef = FirebaseDatabase.getInstance().getReference();
+        projectsList = new ArrayList<>();
 
-        //create Adapter
-        mAdapter = new ProjectAdapter(main, R.layout.project_list_item, DataServices.getInstance().getProjectsList());
-        mProjectsListView.setAdapter(mAdapter);
+        dbRef.child(Project.NODE_NAME).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //get all the projects from the snapshot
+                Project project;
+                for(DataSnapshot data : dataSnapshot.getChildren()){
+                    project = data.getValue(Project.class);
+                    projectsList.add(project);
+                }
+
+                setProjects(projectsList);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         searchResults = new ArrayList<>();
 
         mProjectsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -73,6 +96,13 @@ public class ProjectsFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 main.goToProjectActivity(mAdapter.getItem(position));
+            }
+        });
+
+        addProjectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
 
@@ -93,7 +123,7 @@ public class ProjectsFragment extends Fragment {
         /*
             Listens to any change in the search bar.
          */
-        searchText.addTextChangedListener(new TextWatcher() {
+        searchBox.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -115,7 +145,7 @@ public class ProjectsFragment extends Fragment {
                     searchResults.clear();
 
                     //iterate over all the Projects to see if we find any matches
-                    for(Project project: DataServices.getInstance().getProjectsList()){
+                    for(Project project: projectsList){
                         if(project.name.toLowerCase().contains(search))
                             searchResults.add(project);
                     }
@@ -132,4 +162,11 @@ public class ProjectsFragment extends Fragment {
 
     }
 
+    /*
+        This method will be called when we've retrieved all the Projects.
+     */
+    public void setProjects(ArrayList<Project> p) {
+        mAdapter = new ProjectAdapter(main, R.layout.project_list_item, p);
+        mProjectsListView.setAdapter(mAdapter);
+    }
 }

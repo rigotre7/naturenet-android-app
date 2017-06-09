@@ -27,6 +27,19 @@ public class Project implements Parcelable {
         this.id = id;
     }
 
+    public static Project createNew(String id, String iconUrl, String description, String name, String status, Long latestContribution, Map<String, Boolean> sites){
+        Project project = new Project();
+        project.id = id;
+        project.iconUrl = iconUrl;
+        project.description = description;
+        project.name = name;
+        project.status = status;
+        project.latestContribution = latestContribution;
+        project.sites = sites;
+
+        return project;
+    }
+
     @Exclude
     public static final String NODE_NAME = "activities";
 

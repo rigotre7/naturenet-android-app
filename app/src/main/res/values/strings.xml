@@ -146,6 +146,10 @@
     <!-- Projects Fragment -->
     <!-- Layout -->
     <string name="projects_title">Projects</string>
+    <string name="add_project_title">Add Project</string>
+    <string name="add_project_description">To add a project, provide a title and description for your project. Also, include any relevant hashtags in your description to facilitate search.</string>
+    <string name="enter_project_title">Enter a title:</string>
+    <string name="enter_project_description">Enter a description:</string>
     <!-- Projects Fragment -->
 
     <!-- Design Ideas Fragment -->

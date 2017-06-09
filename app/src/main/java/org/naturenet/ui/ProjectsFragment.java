@@ -1,6 +1,7 @@
 package org.naturenet.ui;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.text.Editable;
@@ -102,7 +103,9 @@ public class ProjectsFragment extends Fragment {
         addProjectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent addProjectIntent = new Intent(main, AddProjectActivity.class);
+                startActivity(addProjectIntent);
+                getActivity().overridePendingTransition(R.anim.slide_up, R.anim.stay);
             }
         });
 
@@ -150,7 +153,7 @@ public class ProjectsFragment extends Fragment {
                             searchResults.add(project);
                     }
 
-                    mAdapterSearch = new ProjectAdapter(main, R.layout.project_list_item, searchResults);
+                    mAdapterSearch = new ProjectAdapter(getActivity(), R.layout.project_list_item, searchResults);
                     mProjectsListView.setAdapter(mAdapterSearch);
                 }else{
                     //when no text is available, reuse original adapter

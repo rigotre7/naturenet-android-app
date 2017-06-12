@@ -22,31 +22,6 @@
         android:layout_below="@+id/searchText"
         android:layout_alignParentBottom="true" />
 
-    <ImageView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="5dp"
-        app:srcCompat="@drawable/people"
-        android:layout_alignParentTop="true"
-        android:id="@+id/imageView" />
-
-    <TextView
-        android:text="@string/people_string"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="53dp"
-        android:layout_marginStart="53dp"
-        android:gravity="center"
-        android:id="@+id/people_tv_communities"
-
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:textAlignment="textStart"
-        android:textSize="18sp"
-        android:textColor="@color/colorButton"
-        android:layout_alignBottom="@+id/imageView" />
-
     <TextView
         android:id="@+id/people_count_tv_communities"
         android:layout_width="wrap_content"
@@ -75,13 +50,13 @@
         android:id="@+id/searchText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/imageView"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignStart="@+id/imageView"
-        android:layout_below="@+id/imageView"
         android:ems="10"
         android:hint="Search"
-        android:inputType="textPersonName" />
+        android:inputType="textPersonName"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/people_count_tv_communities"
+        android:layout_toEndOf="@+id/people_count_tv_communities" />
 
 </RelativeLayout>

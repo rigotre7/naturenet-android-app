@@ -22,6 +22,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import org.naturenet.R;
+import org.naturenet.data.model.Project;
 import org.naturenet.data.model.Users;
 
 import java.util.ArrayList;
@@ -34,11 +35,13 @@ public class CommunitiesFragment extends Fragment {
 
     private DatabaseReference mFirebase = FirebaseDatabase.getInstance().getReference();
     private ListView mCommunitiesListView = null;
-    private FirebaseListAdapter mAdapterOrig, mAdapter;
+    private UsersAdapter mAdapterOrig, mAdapter;
     private Users user;
     private EditText searchText;
     private boolean activeSearch = false;
     private ArrayList<Users> userList;
+    private String search;
+    private ArrayList<Users> searchResults;
 
     MainActivity main;
     TextView toolbar_title, peopleCount;
@@ -54,6 +57,7 @@ public class CommunitiesFragment extends Fragment {
         searchText = (EditText) root.findViewById(R.id.searchText);
 
         mCommunitiesListView = (ListView) root.findViewById(R.id.communities_list);
+        searchResults = new ArrayList<>();
 
         return root;
 
@@ -64,10 +68,9 @@ public class CommunitiesFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Query query = mFirebase.child(Users.NODE_NAME).orderByChild("latest_contribution").limitToLast(20);
         userList = new ArrayList<>();
 
-        /*//get all the users
+        //get all the users
         mFirebase.child(Users.NODE_NAME).orderByChild("latest_contribution").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -76,26 +79,24 @@ public class CommunitiesFragment extends Fragment {
                     userList.add(user.getValue(Users.class));
                 }
 
-
+                setUsers( userList);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });*/
+        });
 
-        mAdapterOrig = new UsersAdapter(main, query);
-        mCommunitiesListView.setAdapter(mAdapterOrig);
 
         mCommunitiesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //if the user has a search query entered
                 if(activeSearch)
-                    user = (Users) mAdapter.getItem(i); //get the clicked user from mAdapter
+                    user = mAdapter.getItem(i); //get the clicked user from mAdapter
                 else
-                    user = (Users) mAdapterOrig.getItem(i); //otherwise, get the clicked user from the original adapter
+                    user = mAdapterOrig.getItem(i); //otherwise, get the clicked user from the original adapter
 
                 Intent userIntent = new Intent(getActivity(), UsersDetailActivity.class);
                 userIntent.putExtra(USER_EXTRA, user);
@@ -104,18 +105,6 @@ public class CommunitiesFragment extends Fragment {
             }
         });
 
-        mFirebase.child(Users.NODE_NAME).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                long i = dataSnapshot.getChildrenCount();
-                peopleCount.setText("(" + String.valueOf(i) + ")");
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
         searchText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -130,14 +119,25 @@ public class CommunitiesFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                String search = editable.toString();
+                //make the search query lowercase
+                search = editable.toString().toLowerCase();
+
+                //make sure the search bar isn't empty
                 if(search.length() > 0){
-                    Query q = mFirebase.child(Users.NODE_NAME).orderByChild("display_name").startAt(search).endAt(search+"\uf8ff");
-                    mAdapter = new UsersAdapter(main, q);
-                    mCommunitiesListView.setAdapter(mAdapter);
+                    //clear the arraylist of results
                     activeSearch = true;
-                }else {
-                    //when no search text is available, reuse original adapter
+                    searchResults.clear();
+
+                    //iterate over all the Projects to see if we find any matches
+                    for(Users user: userList){
+                        if(user.displayName.toLowerCase().contains(search))
+                            searchResults.add(user);
+                    }
+
+                    mAdapter = new UsersAdapter(getActivity(), R.layout.communities_row_layout, searchResults);
+                    mCommunitiesListView.setAdapter(mAdapter);
+                }else{
+                    //when no text is available, reuse original adapter
                     mCommunitiesListView.setAdapter(mAdapterOrig);
                     activeSearch = false;
                 }
@@ -146,18 +146,19 @@ public class CommunitiesFragment extends Fragment {
 
     }
 
-    private void setUsers(){
-        //mAdapterOrig
+    private void setUsers(ArrayList<Users> list){
+        mAdapterOrig = new UsersAdapter(main, R.layout.communities_row_layout, list);
+        mCommunitiesListView.setAdapter(mAdapterOrig);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         if(mAdapter==null)
-            mAdapterOrig.cleanup();
+            mAdapterOrig.clear();
         else {
-            mAdapter.cleanup();
-            mAdapterOrig.cleanup();
+            mAdapter.clear();
+            mAdapterOrig.clear();
         }
     }
 

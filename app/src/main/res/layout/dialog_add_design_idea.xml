@@ -13,14 +13,6 @@
         android:padding="@dimen/dialog_add_design_idea_ll_padding"
         android:clickable="true">
 
-        <!--<TextView-->
-            <!--android:id="@+id/dialog_add_design_idea_tv_cancel"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="right"-->
-            <!--android:layout_marginBottom="@dimen/dialog_add_design_idea_margin_bottom"-->
-            <!--style="@style/dialog_add_design_idea_tv_cancel" />-->
-
         <ImageView
             android:id="@+id/dialog_add_design_idea_iv_cancel"
             android:layout_width="36dp"

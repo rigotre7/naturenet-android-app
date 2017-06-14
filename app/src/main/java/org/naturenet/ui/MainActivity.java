@@ -114,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Uri observationPath;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
-    ImageButton add_observation, add_design_idea;
     Button camera, gallery, design_ideas, design_challenges;
     TextView select;
     LinearLayout dialog_add_observation, dialog_add_design_idea;
@@ -174,7 +173,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
 
                 select.setVisibility(View.GONE);
-                //floating_buttons.setVisibility(View.GONE);
                 dialog_add_observation.setVisibility(View.VISIBLE);            }
         });
 
@@ -273,9 +271,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         latValue = 0.0;
         longValue = 0.0;
 
-        floating_buttons = (FrameLayout) findViewById(R.id.fl_floating_buttons);
-        add_observation = (ImageButton) findViewById(R.id.floating_buttons_ib_add_observation);
-        add_design_idea = (ImageButton) findViewById(R.id.floating_buttons_ib_add_design_idea);
         dialog_add_observation = (LinearLayout) findViewById(R.id.ll_dialog_add_observation);
         add_observation_cancel = (ImageView) findViewById(R.id.dialog_add_observation_iv_cancel);
         camera = (Button) findViewById(R.id.dialog_add_observation_b_camera);
@@ -312,7 +307,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 selectedImage = null;
                 select.setVisibility(View.GONE);
-                //floating_buttons.setVisibility(View.VISIBLE);
                 dialog_add_observation.setVisibility(View.GONE);
             }
         });
@@ -358,7 +352,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        //floating_buttons.setVisibility(View.VISIBLE);
         dialog_add_observation.setVisibility(View.GONE);
         dialog_add_design_idea.setVisibility(View.GONE);
     }

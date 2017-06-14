@@ -30,7 +30,7 @@ import java.util.Map;
 public class AddProjectFragment extends Fragment {
 
     public static final String ADD_PROJECT_FRAGMENT = "add_project_fragment";
-    public static final String PROJECT_ICON = "https://res.cloudinary.com/university-of-colorado/image/upload/v1486742181/static/Love_Environment.png";
+    public static final String PROJECT_ICON = "https://res.cloudinary.com/university-of-colorado/image/upload/v1464880363/static/Backyard_bd5me8.png";
 
     private EditText projectTitle, projectDescription;
     private TextView submitButton;

@@ -50,11 +50,6 @@
         android:gravity="bottom|end"
         android:orientation="vertical">
 
-        <!--<include
-            layout="@layout/floating_buttons"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />-->
-
         <include
             layout="@layout/dialog_add_observation"
             android:layout_width="match_parent"

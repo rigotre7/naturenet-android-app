@@ -65,6 +65,11 @@
     <string name="project_back_left_arrows">&#60;&#60; %1$s</string>
     <string name="project_tv_no_recent_contributions">No Recent Contributions</string>
     <string name="project_tv_recent_contributions">Recent Contributions</string>
+    <string name="acesLabel">Aspen</string>
+    <string name="awsLabel">Anacostia</string>
+    <string name="elseLabel">Elsewhere</string>
+    <string name="rcncLabel">Reedy Creek</string>
+    <string name="are_you_sure">Are you sure?</string>
     <!-- Project Activity -->
 
     <!-- Observation Activity -->
@@ -160,6 +165,8 @@
     <!-- Communities Fragment -->
     <!-- Layout -->
     <string name="communities_title">Communities</string>
+    <string name="load_more">Load More</string>
+    <string name="no_more_users">No more users to load.</string>
     <!-- Communities Fragment -->
 
     <!-- General -->
@@ -184,6 +191,7 @@
     <string name="design_ideas_title">Design Ideas</string>
     <string name="design_ideas_info_text">Your design ideas can be a new way of using NatureNet in your community, and new mobile technology for learning about sustainability or changes in the environment, or a new feature for the app.</string>
     <string name="add_design_idea_title">Add Design Idea</string>
+    <string name="sitesLabel">Sites:</string>
     <!-- General -->
 
 </resources>

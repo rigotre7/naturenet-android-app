@@ -290,29 +290,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         cameraPhoto = new CameraPhoto(this);
         galleryPhoto = new GalleryPhoto(this);
 
-        /*add_observation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_GALLERY);
-                } else {
-                    setGallery();
-                }
-
-                select.setVisibility(View.GONE);
-                floating_buttons.setVisibility(View.GONE);
-                dialog_add_observation.setVisibility(View.VISIBLE);
-            }
-        });
-
-        add_design_idea.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                floating_buttons.setVisibility(View.GONE);
-                dialog_add_design_idea.setVisibility(View.VISIBLE);
-            }
-        });*/
-
         design_ideas.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

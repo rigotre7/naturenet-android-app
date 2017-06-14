@@ -8,4 +8,5 @@
     <color name="colorButton">#263B50</color>
     <color name="colorImageButton">#00000000</color>
     <color name="red">#e51616</color>
+    <color name="showMore">#E0DCDB</color>
 </resources>

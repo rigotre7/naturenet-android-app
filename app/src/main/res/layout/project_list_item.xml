@@ -8,13 +8,19 @@
         android:id="@+id/project_thumbnail"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_margin="10dp"
+        android:layout_marginTop="11dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
     <TextView
         android:id="@+id/project_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/project_thumbnail"
+        android:layout_toRightOf="@+id/project_thumbnail"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:layout_centerInParent="true"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
 </RelativeLayout>

@@ -25,6 +25,8 @@
         android:text="@string/enter_project_title"
         android:layout_below="@+id/addProjectDescription"
         android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:padding="3dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -39,13 +41,15 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/addProjectTitleLabel"
         android:ems="10"
-        android:inputType="textPersonName" />
+        android:inputType="textCapWords" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/projectTitle"
@@ -71,11 +75,114 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/projectDescription"
-        android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
         android:padding="3dp"
         android:text="Submit"
         android:textColor="@color/colorTheme"
         android:textStyle="bold" />
+
+    <Switch
+        android:id="@+id/acesSwitchButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/projectSubmitButton"
+        android:layout_below="@id/projectDescription"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_toEndOf="@+id/sitesLabel"
+        android:layout_toRightOf="@+id/sitesLabel" />
+
+    <Switch
+        android:id="@+id/awsSwitchButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/acesSwitchButton"
+        android:layout_alignStart="@+id/acesSwitchButton"
+        android:layout_below="@+id/acesSwitchButton"
+        android:layout_marginTop="14dp" />
+
+    <Switch
+        android:id="@+id/elseSwitchButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/awsSwitchButton"
+        android:layout_alignRight="@+id/awsSwitchButton"
+        android:layout_below="@+id/awsSwitchButton"
+        android:layout_marginTop="12dp" />
+
+    <Switch
+        android:id="@+id/rcncSwitchButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/elseSwitchButton"
+        android:layout_alignStart="@+id/elseSwitchButton"
+        android:layout_below="@+id/elseSwitchButton"
+        android:layout_marginTop="12dp" />
+
+    <TextView
+        android:id="@+id/sitesLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sitesLabel"
+        android:layout_alignTop="@+id/acesSwitchButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp" />
+
+    <TextView
+        android:id="@+id/acesLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/awsSwitchButton"
+        android:gravity="center"
+        android:layout_alignTop="@+id/acesSwitchButton"
+        android:layout_toEndOf="@+id/awsSwitchButton"
+        android:layout_toRightOf="@+id/awsSwitchButton"
+        android:text="@string/acesLabel" />
+
+    <TextView
+        android:id="@+id/awsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_above="@+id/elseSwitchButton"
+        android:layout_alignTop="@+id/awsSwitchButton"
+        android:layout_toEndOf="@+id/awsSwitchButton"
+        android:layout_toRightOf="@+id/awsSwitchButton"
+        android:text="@string/awsLabel" />
+
+    <TextView
+        android:id="@+id/elseLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_above="@+id/rcncSwitchButton"
+        android:layout_alignTop="@+id/elseSwitchButton"
+        android:layout_toEndOf="@+id/elseSwitchButton"
+        android:layout_toRightOf="@+id/elseSwitchButton"
+        android:text="@string/elseLabel" />
+
+    <TextView
+        android:id="@+id/rcncLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_alignBottom="@+id/rcncSwitchButton"
+        android:layout_alignTop="@+id/rcncSwitchButton"
+        android:layout_toEndOf="@+id/rcncSwitchButton"
+        android:layout_toRightOf="@+id/rcncSwitchButton"
+        android:text="@string/rcncLabel" />
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/elseLabel"
+        android:layout_marginLeft="36dp"
+        android:layout_marginStart="36dp"
+        android:layout_toEndOf="@+id/rcncLabel"
+        android:layout_toRightOf="@+id/rcncLabel" />
+
 </RelativeLayout>

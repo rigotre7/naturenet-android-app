@@ -71,7 +71,7 @@ public class ProjectsFragment extends Fragment {
         dbRef = FirebaseDatabase.getInstance().getReference();
         projectsList = new ArrayList<>();
 
-        dbRef.child(Project.NODE_NAME).addListenerForSingleValueEvent(new ValueEventListener() {
+        dbRef.child(Project.NODE_NAME).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //get all the projects from the snapshot

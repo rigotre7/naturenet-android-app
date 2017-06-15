@@ -1,5 +1,6 @@
 package org.naturenet.ui;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -12,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -46,12 +48,16 @@ import org.naturenet.data.model.Site;
 import org.naturenet.data.model.Users;
 import org.naturenet.util.NatureNetUtils;
 
+import java.io.File;
+
 import timber.log.Timber;
 
 public class ObservationFragment extends Fragment {
 
     public static final String FRAGMENT_TAG = "observation_fragment";
     private static final String ARG_OBSERVATION = "ARG_OBSERVATION";
+    private static final int REQUEST_PDF_SAVE = 200;
+    private static final int REQUEST_IMAGE_SAVE = 100;
 
     boolean isImageFitToScreen;
 
@@ -278,7 +284,7 @@ public class ObservationFragment extends Fragment {
                 if(observationLink.contains("pdf")){
                     //if above Android 6.0 Marshmallow, ask for permission to save file to memory
                     if(canMakeSmores()){
-                        requestPermissions(perms, 200);
+                        requestPermissions(perms, REQUEST_PDF_SAVE);
                     }else{  //otherwise, simply continue with the download
                         new AlertDialog.Builder(getActivity()).setTitle("Save")
                                 .setMessage("Would you like to download the pdf?")
@@ -296,24 +302,32 @@ public class ObservationFragment extends Fragment {
                         }).show();
                     }
                 }else{  //in this case it's an image
-                    new AlertDialog.Builder(getActivity()).setTitle("Save")
-                            .setMessage("Save image to gallery?")
-                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    BitmapDrawable bmd = (BitmapDrawable) observation_image.getDrawable();
-                                    Bitmap bd = bmd.getBitmap();
+                    //check to see if user has given us the permission to save images OR if Android version < Marshmallow, simply continue
+                    if(isStoragePermitted() || !canMakeSmores()){   //if they have, we continue with saving the image
+                        new AlertDialog.Builder(getActivity()).setTitle("Save")
+                                .setMessage("Save image to gallery?")
+                                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        BitmapDrawable bmd = (BitmapDrawable) observation_image.getDrawable();
+                                        Bitmap bd = bmd.getBitmap();
 
-                                    MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), bd, observation.projectId , observation.data.text);
-                                    Toast.makeText(getActivity(), "Image saved to gallery!", Toast.LENGTH_SHORT).show();
+                                        String isSaved = MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), bd, observation.projectId , observation.data.text);
+                                        if(isSaved==null){
+                                            Toast.makeText(getActivity(), "Image could not be saved.", Toast.LENGTH_SHORT).show();
+                                        }else
+                                            Toast.makeText(getActivity(), "Image saved to gallery!", Toast.LENGTH_SHORT).show();
 
-                                }
-                            }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            //do nothing if rejected
-                        }
-                    }).show();
+                                    }
+                                }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //do nothing if rejected
+                            }
+                        }).show();
+                    }else{  //if they haven't given permission, ask for permission
+                        requestPermissions(perms, 100);
+                    }
                 }
 
                 return false;
@@ -429,10 +443,13 @@ public class ObservationFragment extends Fragment {
         super.onDestroyView();
     }
 
+    /*
+        This method is called when the user either gives or rejects specific permissions.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
-            case 200:
+            case REQUEST_PDF_SAVE:
                 filePermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
 
                 //if user gives permission to save pdf
@@ -452,7 +469,34 @@ public class ObservationFragment extends Fragment {
                         }
                     }).show();
                 }
+                break;
+            case REQUEST_IMAGE_SAVE:
+                filePermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
 
+                //if user has given permission to save image
+                if(filePermission){
+                    new AlertDialog.Builder(getActivity()).setTitle("Save")
+                            .setMessage("Save image to gallery?")
+                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    BitmapDrawable bmd = (BitmapDrawable) observation_image.getDrawable();
+                                    Bitmap bd = bmd.getBitmap();
+
+                                    String isSaved = MediaStore.Images.Media.insertImage(getActivity().getContentResolver(), bd, observation.projectId , observation.data.text);
+                                    if(isSaved==null){
+                                        Toast.makeText(getActivity(), "Image could not be saved.", Toast.LENGTH_SHORT).show();
+                                    }else
+                                        Toast.makeText(getActivity(), "Image saved to gallery!", Toast.LENGTH_SHORT).show();
+
+                                }
+                            }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //do nothing if rejected
+                        }
+                    }).show();
+                }
                 break;
         }
     }
@@ -463,5 +507,22 @@ public class ObservationFragment extends Fragment {
 
     private boolean isAboveKitKat(){
         return(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT);
+    }
+
+    /*
+        This method checks to see if the user has already given permission to write to storage.
+     */
+    private boolean isStoragePermitted(){
+
+        boolean isPermissionGiven = false;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                    getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+                isPermissionGiven = true;
+            }
+        }
+
+        return isPermissionGiven;
     }
 }

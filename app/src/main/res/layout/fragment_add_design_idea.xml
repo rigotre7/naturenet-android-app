@@ -73,6 +73,7 @@
         android:id="@+id/participatory_design_link"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingLeft="3dp"
         android:text="@string/participatory_design"
         android:layout_below="@+id/designIdeaDescription"
         android:layout_alignLeft="@+id/designIdeaDescription"

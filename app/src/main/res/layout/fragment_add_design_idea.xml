@@ -15,6 +15,8 @@
         android:layout_alignParentTop="true"
         android:padding="3dp"
         android:layout_marginTop="15dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
         android:text="@string/design_ideas_info_text" />
 
 
@@ -26,7 +28,7 @@
         android:inputType="textMultiLine"
         android:backgroundTint="@color/colorPrimary"
         android:layout_marginTop="15dp"
-        android:layout_below="@+id/designIdeaDescription"
+        android:layout_below="@+id/participatory_design_link"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -37,6 +39,8 @@
         android:text="@string/choose_idea_type"
         android:padding="3dp"
         android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
         android:layout_below="@+id/design_idea_text"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -65,7 +69,14 @@
         android:textStyle="bold"
         android:textColor="@color/colorTheme"/>
 
-
+    <TextView
+        android:id="@+id/participatory_design_link"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/participatory_design"
+        android:layout_below="@+id/designIdeaDescription"
+        android:layout_alignLeft="@+id/designIdeaDescription"
+        android:layout_alignStart="@+id/designIdeaDescription" />
 
 
 </RelativeLayout>

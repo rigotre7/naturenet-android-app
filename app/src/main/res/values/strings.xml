@@ -152,7 +152,7 @@
     <!-- Layout -->
     <string name="projects_title">Projects</string>
     <string name="add_project_title">Add Project</string>
-    <string name="add_project_description">To add a project, provide a title and description for your project. Also, include any relevant hashtags in your description to facilitate search.</string>
+    <string name="add_project_description">Projects in NatureNet are a call to action! They identify a question, a problem, or a topic that contributions can shed light on. Examples might include: examples of rainwater run&#8211;off, how many geese are present in our park, which non&#8211;native plants are invasive in our park. Please give your project a short name (1&#8211;3 words) and a description. We suggest you add hashtags to your description such as: #capstone #subproject #water #pollution</string>
     <string name="enter_project_title">Enter a title:</string>
     <string name="enter_project_description">Enter a description:</string>
     <!-- Projects Fragment -->
@@ -189,8 +189,9 @@
     <string name="recent_observations">Recent Contributions</string>
     <string name="gallery_title">Gallery</string>
     <string name="design_ideas_title">Design Ideas</string>
-    <string name="design_ideas_info_text">Your design ideas can be a new way of using NatureNet in your community, and new mobile technology for learning about sustainability or changes in the environment, or a new feature for the app.</string>
+    <string name="design_ideas_info_text">Design Ideas in NatureNet directs the technology towards your suggestions and needs. Examples of design ideas include a new feature for using NatureNet in your community, a new way to use mobile technology for learning about sustainability or changes in the environment, or a new function for this mobile app.</string>
     <string name="add_design_idea_title">Add Design Idea</string>
+    <string name="participatory_design"><a href="https://en.wikipedia.org/wiki/Participatory_design">Learn more about participatory design.</a></string>
     <string name="sitesLabel">Sites:</string>
     <!-- General -->
 

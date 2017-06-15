@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.Nullable;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +28,7 @@ public class AddDesignIdeaFragment extends Fragment {
     public static final String ADD_DESIGN_IDEA_FRAGMENT = "add_design_idea_fragment";
 
     EditText ideaTextEntry;
-    TextView sendButton;
+    TextView sendButton, participatoryLink;
     AddDesignIdeaActivity addIdeaAct;
     DatabaseReference dbRef;
     Spinner ideaTypeSpinner;
@@ -56,6 +57,8 @@ public class AddDesignIdeaFragment extends Fragment {
         ArrayAdapter<CharSequence> ideaTypeAdapter = ArrayAdapter.createFromResource(addIdeaAct, R.array.idea_types, android.R.layout.simple_spinner_item);
         ideaTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         ideaTypeSpinner.setAdapter(ideaTypeAdapter);
+        participatoryLink = (TextView) addIdeaAct.findViewById(R.id.participatory_design_link);
+        participatoryLink.setMovementMethod(LinkMovementMethod.getInstance());
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -533,11 +533,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 goToExploreFragment();
                 drawer.closeDrawer(GravityCompat.START);
                 break;
-            case R.id.nav_gallery:
-                selectionStack.add(R.id.nav_gallery);
-                goToGalleryFragment();
-                drawer.closeDrawer(GravityCompat.START);
-                break;
             case R.id.nav_projects:
                 selectionStack.add(R.id.nav_projects);
                 goToProjectsFragment();
@@ -566,14 +561,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, new LaunchFragment())
-                .commit();
-    }
-
-    public void goToGalleryFragment() {
-        getFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, new ObservationGalleryFragment())
-                .addToBackStack(ObservationGalleryFragment.FRAGMENT_TAG)
                 .commit();
     }
 

@@ -149,7 +149,8 @@ public class ProjectsFragment extends Fragment {
 
                     //iterate over all the Projects to see if we find any matches
                     for(Project project: projectsList){
-                        if(project.name.toLowerCase().contains(search))
+                        //TODO come here and add search functionality based on hashtags
+                        if(project.name.toLowerCase().contains(search) || project.description.contains("#" + search))
                             searchResults.add(project);
                     }
 

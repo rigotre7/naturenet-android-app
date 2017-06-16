@@ -102,7 +102,7 @@ public class AddProjectFragment extends Fragment {
                                                 //make sure there isn't an error
                                                 if(databaseError!=null){
                                                     Toast.makeText(activity, "Project could not be submitted.", Toast.LENGTH_LONG).show();
-                                                    Log.d("permissionerror", databaseReference.toString());
+                                                    Log.d("permissionerror", databaseError.toString());
                                                 }else{
                                                     Toast.makeText(activity, "Project submitted!", Toast.LENGTH_LONG).show();
                                                     projectTitle.getText().clear();
@@ -144,12 +144,23 @@ public class AddProjectFragment extends Fragment {
 
         if(acesSwitch.isChecked())
             sites.put(ACES, true);
+        else
+            sites.put(ACES, false);
+
         if(awsSwitch.isChecked())
             sites.put(ANACOSTIA, true);
+        else
+            sites.put(ANACOSTIA, false);
+
         if(elseSwitch.isChecked())
             sites.put(ELSEWHERE, true);
+        else
+            sites.put(ELSEWHERE, false);
+
         if(rcncSwitch.isChecked())
             sites.put(RCNC, true);
+        else
+            sites.put(RCNC, false);
 
         //set the sites
         p.sites = sites;

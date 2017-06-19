@@ -99,7 +99,6 @@ public class UsersExpandableAdapter extends BaseExpandableListAdapter {
 
         if(convertView == null){
             holder = new GroupViewHolder();
-            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.communities_group_title, null);
             holder.groupTitle = (TextView) convertView.findViewById(R.id.listTitle);
             convertView.setTag(holder);

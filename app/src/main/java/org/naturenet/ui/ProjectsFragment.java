@@ -71,7 +71,7 @@ public class ProjectsFragment extends Fragment {
         dbRef = FirebaseDatabase.getInstance().getReference();
         projectsList = new ArrayList<>();
 
-        dbRef.child(Project.NODE_NAME).addValueEventListener(new ValueEventListener() {
+        /*dbRef.child(Project.NODE_NAME).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //get all the projects from the snapshot
@@ -88,7 +88,7 @@ public class ProjectsFragment extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        });*/
 
         searchResults = new ArrayList<>();
 
@@ -172,5 +172,31 @@ public class ProjectsFragment extends Fragment {
     public void setProjects(ArrayList<Project> p) {
         mAdapter = new ProjectAdapter(main, R.layout.project_list_item, p);
         mProjectsListView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        dbRef.child(Project.NODE_NAME).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //clear the projectslist prior to checking for projects
+                projectsList.clear();
+                //get all the projects from the snapshot
+                Project project;
+                for(DataSnapshot data : dataSnapshot.getChildren()){
+                    project = data.getValue(Project.class);
+                    projectsList.add(project);
+                }
+
+                setProjects(projectsList);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

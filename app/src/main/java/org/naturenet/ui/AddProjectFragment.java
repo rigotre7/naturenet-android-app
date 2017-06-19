@@ -92,9 +92,11 @@ public class AddProjectFragment extends Fragment {
 
                                         //create new Project object
                                         Project project = Project.createNew(projectRef.getKey(), PROJECT_ICON,
-                                                description, capitalizeAll(title), null, null, null);
+                                                description, capitalizeAll(title), null, null, null, activity.signed_user.id);
 
                                         setSites(project);
+
+                                        Log.d("printProject", project.toString());
 
                                         projectRef.setValue(project, new DatabaseReference.CompletionListener() {
                                             @Override

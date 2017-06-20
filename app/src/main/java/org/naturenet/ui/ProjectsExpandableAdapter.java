@@ -26,6 +26,7 @@ public class ProjectsExpandableAdapter extends BaseExpandableListAdapter {
     private LayoutInflater inflater;
     private HashMap<String, String> locations;
     private int acesMax, awsMax, elsewhereMax, rcncMax;
+    Picasso picasso;
 
     public ProjectsExpandableAdapter(Context context, int res, String[] titles, HashMap<String, List<Project>> list, int aces,
                                      int aws, int elsewhere, int rcnc) {
@@ -39,6 +40,8 @@ public class ProjectsExpandableAdapter extends BaseExpandableListAdapter {
         awsMax = aws;
         elsewhereMax = elsewhere;
         rcncMax = rcnc;
+        picasso = Picasso.with(context);
+        picasso.setIndicatorsEnabled(false);
     }
 
     /*
@@ -139,7 +142,7 @@ public class ProjectsExpandableAdapter extends BaseExpandableListAdapter {
                 convertView.setTag(holder);
                 //populate the views
                 holder.projectName.setText(getChild(titlePosition, projectPosition).name);
-                Picasso.with(mContext).load(getChild(titlePosition, projectPosition).iconUrl).into(holder.projectIcon);
+                picasso.load(getChild(titlePosition, projectPosition).iconUrl).into(holder.projectIcon);
             }else    //otherwise, we know it's the last child
                 convertView = inflater.inflate(R.layout.show_more_button, viewGroup, false);
 
@@ -152,7 +155,7 @@ public class ProjectsExpandableAdapter extends BaseExpandableListAdapter {
 
                 if(holder!=null){
                     holder.projectName.setText(getChild(titlePosition, projectPosition).name);
-                    Picasso.with(mContext).load(getChild(titlePosition, projectPosition).iconUrl).into(holder.projectIcon);
+                    picasso.load(getChild(titlePosition, projectPosition).iconUrl).into(holder.projectIcon);
                 }else{
                     holder = new ViewHolder();
                     convertView = inflater.inflate(rowResource, viewGroup, false);
@@ -160,7 +163,7 @@ public class ProjectsExpandableAdapter extends BaseExpandableListAdapter {
                     holder.projectIcon = (ImageView) convertView.findViewById(R.id.project_thumbnail);
 
                     holder.projectName.setText(getChild(titlePosition, projectPosition).name);
-                    Picasso.with(mContext).load(getChild(titlePosition, projectPosition).iconUrl).into(holder.projectIcon);
+                    picasso.load(getChild(titlePosition, projectPosition).iconUrl).into(holder.projectIcon);
 
                     convertView.setTag(holder);
                 }
@@ -182,7 +185,7 @@ public class ProjectsExpandableAdapter extends BaseExpandableListAdapter {
                             }
 
                             holder.projectName.setText(getChild(titlePosition, projectPosition).name);
-                            Picasso.with(mContext).load(getChild(titlePosition, projectPosition).iconUrl).into(holder.projectIcon);
+                            picasso.load(getChild(titlePosition, projectPosition).iconUrl).into(holder.projectIcon);
                         }else
                             convertView = inflater.inflate(R.layout.show_more_button, viewGroup, false);
 
@@ -198,7 +201,7 @@ public class ProjectsExpandableAdapter extends BaseExpandableListAdapter {
                             }
 
                             holder.projectName.setText(getChild(titlePosition, projectPosition).name);
-                            Picasso.with(mContext).load(getChild(titlePosition, projectPosition).iconUrl).into(holder.projectIcon);
+                            picasso.load(getChild(titlePosition, projectPosition).iconUrl).into(holder.projectIcon);
                         }else
                             convertView = inflater.inflate(R.layout.show_more_button, viewGroup, false);
 
@@ -214,7 +217,7 @@ public class ProjectsExpandableAdapter extends BaseExpandableListAdapter {
                             }
 
                             holder.projectName.setText(getChild(titlePosition, projectPosition).name);
-                            Picasso.with(mContext).load(getChild(titlePosition, projectPosition).iconUrl).into(holder.projectIcon);
+                            picasso.load(getChild(titlePosition, projectPosition).iconUrl).into(holder.projectIcon);
                         }else
                             convertView = inflater.inflate(R.layout.show_more_button, viewGroup, false);
 
@@ -230,7 +233,7 @@ public class ProjectsExpandableAdapter extends BaseExpandableListAdapter {
                             }
 
                             holder.projectName.setText(getChild(titlePosition, projectPosition).name);
-                            Picasso.with(mContext).load(getChild(titlePosition, projectPosition).iconUrl).into(holder.projectIcon);
+                            picasso.load(getChild(titlePosition, projectPosition).iconUrl).into(holder.projectIcon);
                         }else
                             convertView = inflater.inflate(R.layout.show_more_button, viewGroup, false);
 

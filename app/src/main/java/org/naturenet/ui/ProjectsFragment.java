@@ -55,7 +55,6 @@ public class ProjectsFragment extends Fragment {
     private EditText searchBox;
     private ProjectsExpandableAdapter  mAdapter;
     private ProjectsExpandableSearchAdapter mAdapterSearch;
-    private ArrayList<Project> searchResults;
     private int numToShowAces, numToShowAws, numToShowElse, numToShowRcnc, totalAces, totalAws, totalElse, totalRcnc;
     private HashMap<String, List<Project>> resultsMap;
     private boolean activeSearch, isExpanded;
@@ -79,8 +78,6 @@ public class ProjectsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         dbRef = FirebaseDatabase.getInstance().getReference();
         projectsList = new HashMap<>();
-
-        searchResults = new ArrayList<>();
 
         //initializations
         acesList = new ArrayList<>();

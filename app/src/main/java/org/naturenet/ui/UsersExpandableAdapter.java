@@ -26,6 +26,7 @@ public class UsersExpandableAdapter extends BaseExpandableListAdapter {
     private HashMap<String, String> locations;
     private LayoutInflater inflater;
     private int acesMax, awsMax, elseMax, rcncMax;
+    private Picasso picasso;
 
     public UsersExpandableAdapter(Context context, int resource, String[] titles, HashMap<String, List<Users>> lists, int acesMax, int awsMax, int elseMax, int rcncMax){
         mContext = context;
@@ -37,6 +38,8 @@ public class UsersExpandableAdapter extends BaseExpandableListAdapter {
         this.awsMax = awsMax;
         this.elseMax = elseMax;
         this.rcncMax = rcncMax;
+        picasso = Picasso.with(context);
+        picasso.setIndicatorsEnabled(false);
         setSiteNames();
     }
 
@@ -143,7 +146,7 @@ public class UsersExpandableAdapter extends BaseExpandableListAdapter {
                 holder.affiliation.setText(locations.get(getGroup(titlePosition)));
                 holder.userName.setText(getChild(titlePosition, usersListPosition).displayName);
                 if (getChild(titlePosition, usersListPosition).avatar != null && !getChild(titlePosition, usersListPosition).avatar.equals(""))
-                    Picasso.with(mContext).load(userLists.get(getGroup(titlePosition)).get(usersListPosition).avatar).placeholder(R.drawable.default_avatar).into(holder.profileImage);
+                    picasso.load(userLists.get(getGroup(titlePosition)).get(usersListPosition).avatar).placeholder(R.drawable.default_avatar).into(holder.profileImage);
 
             }else{  //otherwise, inflate the show more button layout
                 convertView = inflater.inflate(R.layout.show_more_button, viewGroup, false);
@@ -158,7 +161,7 @@ public class UsersExpandableAdapter extends BaseExpandableListAdapter {
                     holder.userName.setText(getChild(titlePosition, usersListPosition).displayName);
                     holder.affiliation.setText(locations.get(getGroup(titlePosition)));
                     if (getChild(titlePosition, usersListPosition).avatar != null && !getChild(titlePosition, usersListPosition).avatar.equals(""))
-                        Picasso.with(mContext).load(userLists.get(getGroup(titlePosition)).get(usersListPosition).avatar).placeholder(R.drawable.default_avatar).into(holder.profileImage);
+                        picasso.load(userLists.get(getGroup(titlePosition)).get(usersListPosition).avatar).placeholder(R.drawable.default_avatar).into(holder.profileImage);
                 }else{
                     holder = new UserViewHolder();
                     convertView = inflater.inflate(userRowResource, viewGroup, false);
@@ -169,7 +172,7 @@ public class UsersExpandableAdapter extends BaseExpandableListAdapter {
                     holder.userName.setText(getChild(titlePosition, usersListPosition).displayName);
                     holder.affiliation.setText(locations.get(getGroup(titlePosition)));
                     if (getChild(titlePosition, usersListPosition).avatar != null && !getChild(titlePosition, usersListPosition).avatar.equals(""))
-                        Picasso.with(mContext).load(userLists.get(getGroup(titlePosition)).get(usersListPosition).avatar).placeholder(R.drawable.default_avatar).into(holder.profileImage);
+                        picasso.load(userLists.get(getGroup(titlePosition)).get(usersListPosition).avatar).placeholder(R.drawable.default_avatar).into(holder.profileImage);
 
                     convertView.setTag(holder);
                 }
@@ -191,7 +194,7 @@ public class UsersExpandableAdapter extends BaseExpandableListAdapter {
                             holder.userName.setText(getChild(titlePosition, usersListPosition).displayName);
                             holder.affiliation.setText(locations.get(getGroup(titlePosition)));
                             if (getChild(titlePosition, usersListPosition).avatar != null && !getChild(titlePosition, usersListPosition).avatar.equals(""))
-                                Picasso.with(mContext).load(userLists.get(getGroup(titlePosition)).get(usersListPosition).avatar).placeholder(R.drawable.default_avatar).into(holder.profileImage);
+                                picasso.load(userLists.get(getGroup(titlePosition)).get(usersListPosition).avatar).placeholder(R.drawable.default_avatar).into(holder.profileImage);
                         }else
                             convertView = inflater.inflate(R.layout.show_more_button, viewGroup, false);
 
@@ -211,7 +214,7 @@ public class UsersExpandableAdapter extends BaseExpandableListAdapter {
                             holder.userName.setText(getChild(titlePosition, usersListPosition).displayName);
                             holder.affiliation.setText(locations.get(getGroup(titlePosition)));
                             if (getChild(titlePosition, usersListPosition).avatar != null && !getChild(titlePosition, usersListPosition).avatar.equals(""))
-                                Picasso.with(mContext).load(userLists.get(getGroup(titlePosition)).get(usersListPosition).avatar).placeholder(R.drawable.default_avatar).into(holder.profileImage);
+                                picasso.load(userLists.get(getGroup(titlePosition)).get(usersListPosition).avatar).placeholder(R.drawable.default_avatar).into(holder.profileImage);
                         }else
                             convertView = inflater.inflate(R.layout.show_more_button, viewGroup, false);
 
@@ -231,7 +234,7 @@ public class UsersExpandableAdapter extends BaseExpandableListAdapter {
                             holder.userName.setText(getChild(titlePosition, usersListPosition).displayName);
                             holder.affiliation.setText(locations.get(getGroup(titlePosition)));
                             if (getChild(titlePosition, usersListPosition).avatar != null && !getChild(titlePosition, usersListPosition).avatar.equals(""))
-                                Picasso.with(mContext).load(userLists.get(getGroup(titlePosition)).get(usersListPosition).avatar).placeholder(R.drawable.default_avatar).into(holder.profileImage);
+                                picasso.load(userLists.get(getGroup(titlePosition)).get(usersListPosition).avatar).placeholder(R.drawable.default_avatar).into(holder.profileImage);
                         }else
                             convertView = inflater.inflate(R.layout.show_more_button, viewGroup, false);
 
@@ -251,7 +254,7 @@ public class UsersExpandableAdapter extends BaseExpandableListAdapter {
                             holder.userName.setText(getChild(titlePosition, usersListPosition).displayName);
                             holder.affiliation.setText(locations.get(getGroup(titlePosition)));
                             if (getChild(titlePosition, usersListPosition).avatar != null && !getChild(titlePosition, usersListPosition).avatar.equals(""))
-                                Picasso.with(mContext).load(userLists.get(getGroup(titlePosition)).get(usersListPosition).avatar).placeholder(R.drawable.default_avatar).into(holder.profileImage);
+                                picasso.load(userLists.get(getGroup(titlePosition)).get(usersListPosition).avatar).placeholder(R.drawable.default_avatar).into(holder.profileImage);
                         }else
                             convertView = inflater.inflate(R.layout.show_more_button, viewGroup, false);
 

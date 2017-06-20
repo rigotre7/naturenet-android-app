@@ -156,6 +156,7 @@
     <string name="enter_project_title">Enter a title:</string>
     <string name="enter_project_description">Enter a description:</string>
     <string name="no_more_projects">No more projects to load.</string>
+    <string name="no_projects">No projects in your affiliation to display!</string>
     <!-- Projects Fragment -->
 
     <!-- Design Ideas Fragment -->

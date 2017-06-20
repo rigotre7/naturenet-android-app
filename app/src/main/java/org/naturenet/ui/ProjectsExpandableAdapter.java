@@ -143,10 +143,67 @@ public class ProjectsExpandableAdapter extends BaseExpandableListAdapter {
                 //populate the views
                 holder.projectName.setText(getChild(titlePosition, projectPosition).name);
                 picasso.load(getChild(titlePosition, projectPosition).iconUrl).into(holder.projectIcon);
-            }else    //otherwise, we know it's the last child
-                convertView = inflater.inflate(R.layout.show_more_button, viewGroup, false);
+            }else {   //otherwise, we know it's the last child
+                switch (titlePosition){
+                    case 0:
+                        //if we've reached the end of the aces list
+                        if(projectsList.get(getGroup(titlePosition)).size() == acesMax){
 
+                            holder = new ViewHolder();
+                            convertView = inflater.inflate(rowResource, viewGroup, false);
+                            holder.projectName = (TextView) convertView.findViewById(R.id.project_name);
+                            holder.projectIcon = (ImageView) convertView.findViewById(R.id.project_thumbnail);
 
+                            holder.projectName.setText(getChild(titlePosition, projectPosition).name);
+                            picasso.load(getChild(titlePosition, projectPosition).iconUrl).into(holder.projectIcon);
+                        }else
+                            convertView = inflater.inflate(R.layout.show_more_button, viewGroup, false);
+
+                        break;
+                    case 1:
+                        if(projectsList.get(getGroup(titlePosition)).size() == awsMax){
+
+                            holder = new ViewHolder();
+                            convertView = inflater.inflate(rowResource, viewGroup, false);
+                            holder.projectName = (TextView) convertView.findViewById(R.id.project_name);
+                            holder.projectIcon = (ImageView) convertView.findViewById(R.id.project_thumbnail);
+
+                            holder.projectName.setText(getChild(titlePosition, projectPosition).name);
+                            picasso.load(getChild(titlePosition, projectPosition).iconUrl).into(holder.projectIcon);
+                        }else
+                            convertView = inflater.inflate(R.layout.show_more_button, viewGroup, false);
+
+                        break;
+                    case 2:
+                        if(projectsList.get(getGroup(titlePosition)).size() == elsewhereMax){
+
+                            holder = new ViewHolder();
+                            convertView = inflater.inflate(rowResource, viewGroup, false);
+                            holder.projectName = (TextView) convertView.findViewById(R.id.project_name);
+                            holder.projectIcon = (ImageView) convertView.findViewById(R.id.project_thumbnail);
+
+                            holder.projectName.setText(getChild(titlePosition, projectPosition).name);
+                            picasso.load(getChild(titlePosition, projectPosition).iconUrl).into(holder.projectIcon);
+                        }else
+                            convertView = inflater.inflate(R.layout.show_more_button, viewGroup, false);
+
+                        break;
+                    case 3:
+                        if(projectsList.get(getGroup(titlePosition)).size() == rcncMax){
+
+                            holder = new ViewHolder();
+                            convertView = inflater.inflate(rowResource, viewGroup, false);
+                            holder.projectName = (TextView) convertView.findViewById(R.id.project_name);
+                            holder.projectIcon = (ImageView) convertView.findViewById(R.id.project_thumbnail);
+
+                            holder.projectName.setText(getChild(titlePosition, projectPosition).name);
+                            picasso.load(getChild(titlePosition, projectPosition).iconUrl).into(holder.projectIcon);
+                        }else
+                            convertView = inflater.inflate(R.layout.show_more_button, viewGroup, false);
+
+                        break;
+                }
+            }
             //convertView isn't null so we can recycle it
         }else{
             //check to see if it's the last child

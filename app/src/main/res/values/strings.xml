@@ -155,6 +155,7 @@
     <string name="add_project_description">Projects in NatureNet are a call to action! They identify a question, a problem, or a topic that contributions can shed light on. Examples might include: examples of rainwater run&#8211;off, how many geese are present in our park, which non&#8211;native plants are invasive in our park. Please give your project a short name (1&#8211;3 words) and a description. We suggest you add hashtags to your description such as: #capstone #subproject #water #pollution</string>
     <string name="enter_project_title">Enter a title:</string>
     <string name="enter_project_description">Enter a description:</string>
+    <string name="no_more_projects">No more projects to load.</string>
     <!-- Projects Fragment -->
 
     <!-- Design Ideas Fragment -->

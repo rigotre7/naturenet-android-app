@@ -25,13 +25,18 @@ public class UsersExpandableAdapter extends BaseExpandableListAdapter {
     private int userRowResource;
     private HashMap<String, String> locations;
     private LayoutInflater inflater;
+    private int acesMax, awsMax, elseMax, rcncMax;
 
-    public UsersExpandableAdapter(Context context, int resource, String[] titles, HashMap<String, List<Users>> lists){
+    public UsersExpandableAdapter(Context context, int resource, String[] titles, HashMap<String, List<Users>> lists, int acesMax, int awsMax, int elseMax, int rcncMax){
         mContext = context;
         expandableListTitle = titles;
         userLists = lists;
         userRowResource = resource;
         inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.acesMax = acesMax;
+        this.awsMax = awsMax;
+        this.elseMax = elseMax;
+        this.rcncMax = rcncMax;
         setSiteNames();
     }
 
@@ -99,7 +104,7 @@ public class UsersExpandableAdapter extends BaseExpandableListAdapter {
 
         if(convertView == null){
             holder = new GroupViewHolder();
-            convertView = inflater.inflate(R.layout.communities_group_title, null);
+            convertView = inflater.inflate(R.layout.communities_group_title, parent, false);
             holder.groupTitle = (TextView) convertView.findViewById(R.id.listTitle);
             convertView.setTag(holder);
         }else
@@ -168,8 +173,90 @@ public class UsersExpandableAdapter extends BaseExpandableListAdapter {
 
                     convertView.setTag(holder);
                 }
-            }else{
-                convertView = inflater.inflate(R.layout.show_more_button, viewGroup, false);
+            }else{  //here we know it's the last child view, so we check to see if it's the very last child in which case we don't need a show more button
+                holder = (UserViewHolder) convertView.getTag();
+
+                switch (titlePosition){
+                    case 0:
+                        //if we've reached the end of the aces list
+                        if(userLists.get(getGroup(titlePosition)).size() == acesMax){
+                            if(holder==null){
+                                holder = new UserViewHolder();
+                                convertView = inflater.inflate(userRowResource, viewGroup, false);
+                                holder.userName = (TextView) convertView.findViewById(R.id.username_communities);
+                                holder.profileImage = (ImageView) convertView.findViewById(R.id.user_profile_pic_communities);
+                                holder.affiliation = (TextView) convertView.findViewById(R.id.location_communities);
+                            }
+
+                            holder.userName.setText(getChild(titlePosition, usersListPosition).displayName);
+                            holder.affiliation.setText(locations.get(getGroup(titlePosition)));
+                            if (getChild(titlePosition, usersListPosition).avatar != null && !getChild(titlePosition, usersListPosition).avatar.equals(""))
+                                Picasso.with(mContext).load(userLists.get(getGroup(titlePosition)).get(usersListPosition).avatar).placeholder(R.drawable.default_avatar).into(holder.profileImage);
+                        }else
+                            convertView = inflater.inflate(R.layout.show_more_button, viewGroup, false);
+
+                        break;
+
+                    case 1:
+                        //if we've reached the end of the aws list
+                        if(userLists.get(getGroup(titlePosition)).size() == awsMax){
+                            if(holder==null){
+                                holder = new UserViewHolder();
+                                convertView = inflater.inflate(userRowResource, viewGroup, false);
+                                holder.userName = (TextView) convertView.findViewById(R.id.username_communities);
+                                holder.profileImage = (ImageView) convertView.findViewById(R.id.user_profile_pic_communities);
+                                holder.affiliation = (TextView) convertView.findViewById(R.id.location_communities);
+                            }
+
+                            holder.userName.setText(getChild(titlePosition, usersListPosition).displayName);
+                            holder.affiliation.setText(locations.get(getGroup(titlePosition)));
+                            if (getChild(titlePosition, usersListPosition).avatar != null && !getChild(titlePosition, usersListPosition).avatar.equals(""))
+                                Picasso.with(mContext).load(userLists.get(getGroup(titlePosition)).get(usersListPosition).avatar).placeholder(R.drawable.default_avatar).into(holder.profileImage);
+                        }else
+                            convertView = inflater.inflate(R.layout.show_more_button, viewGroup, false);
+
+                        break;
+
+                    case 2:
+                        //if we've reached the end of the elsewhere list
+                        if(userLists.get(getGroup(titlePosition)).size() == elseMax){
+                            if(holder==null){
+                                holder = new UserViewHolder();
+                                convertView = inflater.inflate(userRowResource, viewGroup, false);
+                                holder.userName = (TextView) convertView.findViewById(R.id.username_communities);
+                                holder.profileImage = (ImageView) convertView.findViewById(R.id.user_profile_pic_communities);
+                                holder.affiliation = (TextView) convertView.findViewById(R.id.location_communities);
+                            }
+
+                            holder.userName.setText(getChild(titlePosition, usersListPosition).displayName);
+                            holder.affiliation.setText(locations.get(getGroup(titlePosition)));
+                            if (getChild(titlePosition, usersListPosition).avatar != null && !getChild(titlePosition, usersListPosition).avatar.equals(""))
+                                Picasso.with(mContext).load(userLists.get(getGroup(titlePosition)).get(usersListPosition).avatar).placeholder(R.drawable.default_avatar).into(holder.profileImage);
+                        }else
+                            convertView = inflater.inflate(R.layout.show_more_button, viewGroup, false);
+
+                        break;
+
+                    case 3:
+                        //if we've reached the end of the rcnc list
+                        if(userLists.get(getGroup(titlePosition)).size() == rcncMax){
+                            if(holder==null){
+                                holder = new UserViewHolder();
+                                convertView = inflater.inflate(userRowResource, viewGroup, false);
+                                holder.userName = (TextView) convertView.findViewById(R.id.username_communities);
+                                holder.profileImage = (ImageView) convertView.findViewById(R.id.user_profile_pic_communities);
+                                holder.affiliation = (TextView) convertView.findViewById(R.id.location_communities);
+                            }
+
+                            holder.userName.setText(getChild(titlePosition, usersListPosition).displayName);
+                            holder.affiliation.setText(locations.get(getGroup(titlePosition)));
+                            if (getChild(titlePosition, usersListPosition).avatar != null && !getChild(titlePosition, usersListPosition).avatar.equals(""))
+                                Picasso.with(mContext).load(userLists.get(getGroup(titlePosition)).get(usersListPosition).avatar).placeholder(R.drawable.default_avatar).into(holder.profileImage);
+                        }else
+                            convertView = inflater.inflate(R.layout.show_more_button, viewGroup, false);
+
+                        break;
+                }
             }
         }
 
@@ -194,7 +281,7 @@ public class UsersExpandableAdapter extends BaseExpandableListAdapter {
         TextView userName, affiliation;
     }
 
-    private static class GroupViewHolder{
+    public static class GroupViewHolder{
         TextView groupTitle;
     }
 }

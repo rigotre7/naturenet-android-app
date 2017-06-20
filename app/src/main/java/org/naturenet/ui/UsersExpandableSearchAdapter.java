@@ -8,8 +8,6 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
@@ -24,7 +22,6 @@ public class UsersExpandableSearchAdapter extends BaseExpandableListAdapter {
     private String[] expandableListTitle;
     private HashMap<String, List<Users>> userLists;
     private int userRowResource;
-    private DatabaseReference databaseReference;
     private HashMap<String, String> locations;
     private LayoutInflater inflater;
 
@@ -33,7 +30,6 @@ public class UsersExpandableSearchAdapter extends BaseExpandableListAdapter {
         expandableListTitle = titles;
         userLists = lists;
         userRowResource = resource;
-        databaseReference = FirebaseDatabase.getInstance().getReference();
         inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         setSiteNames();
     }

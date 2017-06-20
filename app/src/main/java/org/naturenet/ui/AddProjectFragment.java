@@ -1,6 +1,7 @@
 package org.naturenet.ui;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -109,6 +110,7 @@ public class AddProjectFragment extends Fragment {
                                                     Toast.makeText(activity, "Project submitted!", Toast.LENGTH_LONG).show();
                                                     projectTitle.getText().clear();
                                                     projectDescription.getText().clear();
+                                                    activity.setResult(Activity.RESULT_OK);
                                                     activity.finish();
                                                 }
                                             }

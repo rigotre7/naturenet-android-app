@@ -50,6 +50,8 @@ public class CommunitiesFragment extends Fragment {
     private String search;
     private HashMap<String, List<Users>> userListMap;
     private List<Users> acesResults, awsResults, elseResults, rcncResults;
+    private HashMap<String, List<Users>> resultsMap;
+    private int acesMax, awsMax, elseMax, rcncMax;
 
     MainActivity main;
     TextView toolbar_title;
@@ -84,6 +86,8 @@ public class CommunitiesFragment extends Fragment {
         acesResults = new ArrayList<>();
         userListMap = new HashMap<>();
         numToShowAces = numToShowAws = numToShowElse = numToShowRcnc = INITIAL_USERS_COUNT;
+        acesMax = awsMax = elseMax = rcncMax = 0;
+        resultsMap = new HashMap<>();
 
 
         //get all the users
@@ -106,8 +110,14 @@ public class CommunitiesFragment extends Fragment {
                         default: elseList.add(u);
                     }
                 }
+
+                acesMax = acesList.size();
+                awsMax = awsList.size();
+                elseMax = elseList.size();
+                rcncMax = rcncList.size();
+
                 //set the Users in the ExpandableListView
-                setUsers(acesList, awsList, elseList, rcncList, INITIAL_USERS_COUNT);
+                setUsers(acesList, awsList, elseList, rcncList, INITIAL_USERS_COUNT, acesMax, awsMax, elseMax, rcncMax);
             }
 
             @Override
@@ -260,7 +270,7 @@ public class CommunitiesFragment extends Fragment {
                 }
                 //replace the ArrayList in the Map with the updated one
                 userListMap.put(titles[listPos], list.subList(0, numToShowAces));
-                mAdapterOrig = new UsersExpandableAdapter(main, R.layout.communities_row_layout, titles, userListMap);
+                mAdapterOrig = new UsersExpandableAdapter(main, R.layout.communities_row_layout, titles, userListMap, acesMax, awsMax, elseMax, rcncMax);
                 mCommunitiesListView.setAdapter(mAdapterOrig);
                 mCommunitiesListView.expandGroup(0);
                 mCommunitiesListView.setSelectedChild(0, numToShowAces, true);
@@ -272,7 +282,7 @@ public class CommunitiesFragment extends Fragment {
                     Toast.makeText(main, R.string.no_more_users, Toast.LENGTH_SHORT).show();
                 }
                 userListMap.put(titles[listPos], list.subList(0, numToShowAws));
-                mAdapterOrig = new UsersExpandableAdapter(main, R.layout.communities_row_layout, titles, userListMap);
+                mAdapterOrig = new UsersExpandableAdapter(main, R.layout.communities_row_layout, titles, userListMap, acesMax, awsMax, elseMax, rcncMax);
                 mCommunitiesListView.setAdapter(mAdapterOrig);
                 mCommunitiesListView.expandGroup(1);
                 mCommunitiesListView.setSelectedChild(1, numToShowAws, true);
@@ -284,7 +294,7 @@ public class CommunitiesFragment extends Fragment {
                     Toast.makeText(main, R.string.no_more_users, Toast.LENGTH_SHORT).show();
                 }
                 userListMap.put(titles[listPos], list.subList(0, numToShowElse));
-                mAdapterOrig = new UsersExpandableAdapter(main, R.layout.communities_row_layout, titles, userListMap);
+                mAdapterOrig = new UsersExpandableAdapter(main, R.layout.communities_row_layout, titles, userListMap, acesMax, awsMax, elseMax, rcncMax);
                 mCommunitiesListView.setAdapter(mAdapterOrig);
                 mCommunitiesListView.expandGroup(2);
                 mCommunitiesListView.setSelectedChild(2, numToShowElse, true);
@@ -297,7 +307,7 @@ public class CommunitiesFragment extends Fragment {
                 }
 
                 userListMap.put(titles[listPos], list.subList(0, numToShowRcnc));
-                mAdapterOrig = new UsersExpandableAdapter(main, R.layout.communities_row_layout, titles, userListMap);
+                mAdapterOrig = new UsersExpandableAdapter(main, R.layout.communities_row_layout, titles, userListMap, acesMax, awsMax, elseMax, rcncMax);
                 mCommunitiesListView.setAdapter(mAdapterOrig);
                 mCommunitiesListView.expandGroup(3);
                 mCommunitiesListView.setSelectedChild(3, numToShowRcnc, true);
@@ -310,7 +320,7 @@ public class CommunitiesFragment extends Fragment {
         This method is called when we first populate the user list.
         It accepts each ArrayList for each site and the number of users to display (numShow).
      */
-    private void setUsers(ArrayList<Users> aces, ArrayList<Users> aws, ArrayList<Users> elsewhere, ArrayList<Users> rcnc, int numShow){
+    private void setUsers(ArrayList<Users> aces, ArrayList<Users> aws, ArrayList<Users> elsewhere, ArrayList<Users> rcnc, int numShow, int aceMax, int awsMax, int elseMax, int rcncMax){
 
         //populate the HashMap with the user lists for each site
         userListMap.put(titles[0], aces.subList(0,numShow));
@@ -318,7 +328,7 @@ public class CommunitiesFragment extends Fragment {
         userListMap.put(titles[2], elsewhere.subList(0, numShow));
         userListMap.put(titles[3], rcnc.subList(0, numShow));
 
-        mAdapterOrig = new UsersExpandableAdapter(main, R.layout.communities_row_layout, titles, userListMap);
+        mAdapterOrig = new UsersExpandableAdapter(main, R.layout.communities_row_layout, titles, userListMap, aceMax, awsMax, elseMax, rcncMax);
         mCommunitiesListView.setAdapter(mAdapterOrig);
         mCommunitiesListView.expandGroup(0);
         mCommunitiesListView.expandGroup(1);
@@ -331,15 +341,14 @@ public class CommunitiesFragment extends Fragment {
         It accepts each ArrayList for each site.
      */
     private void setUsersSearchResults(List<Users> aces, List<Users> aws, List<Users> elsewhere, List<Users> rcnc){
-        //initialize and populate the HashMap with the lists
-        HashMap<String, List<Users>> map = new HashMap<>();
-        map.put(titles[0], aces);
-        map.put(titles[1], aws);
-        map.put(titles[2], elsewhere);
-        map.put(titles[3], rcnc);
+        //populate the HashMap with the lists
+        resultsMap.put(titles[0], aces);
+        resultsMap.put(titles[1], aws);
+        resultsMap.put(titles[2], elsewhere);
+        resultsMap.put(titles[3], rcnc);
 
         //initailize and set the adapter to display the search results
-        mAdapter = new UsersExpandableSearchAdapter(main, R.layout.communities_row_layout, titles, map);
+        mAdapter = new UsersExpandableSearchAdapter(main, R.layout.communities_row_layout, titles, resultsMap);
         mCommunitiesListView.setAdapter(mAdapter);
         mCommunitiesListView.expandGroup(0);
         mCommunitiesListView.expandGroup(1);

@@ -21,7 +21,7 @@ import java.util.Date;
 
 public class CommentsAdapter extends FirebaseListAdapter<Comment> {
 
-    TextView commenter, comment, time;
+    private TextView commenter, comment, time;
     Query query;
     PrettyTime prettyTime;
 
@@ -58,7 +58,8 @@ public class CommentsAdapter extends FirebaseListAdapter<Comment> {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Users u = dataSnapshot.getValue(Users.class);
-                textView.setText(u.displayName);
+                if(u!=null)
+                    textView.setText(u.displayName);
             }
 
             @Override

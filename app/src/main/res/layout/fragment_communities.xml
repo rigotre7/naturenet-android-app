@@ -5,15 +5,6 @@
              android:layout_height="match_parent"
              tools:context="org.naturenet.ui.CommunitiesFragment">
 
-    <!--<include
-        layout="@layout/floating_buttons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/floating_buttons" />-->
-
     <EditText
         android:id="@+id/searchText"
         android:layout_width="wrap_content"
@@ -34,6 +25,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/searchText" />
+        android:layout_below="@+id/searchText"
+        android:divider="@null"/>
 
 </RelativeLayout>

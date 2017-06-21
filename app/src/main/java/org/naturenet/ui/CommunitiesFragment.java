@@ -246,6 +246,11 @@ public class CommunitiesFragment extends Fragment {
                     //when no text is available, reuse original adapter
                     mCommunitiesListView.setAdapter(mAdapterOrig);
                     activeSearch = false;
+                    mCommunitiesListView.expandGroup(0);
+                    mCommunitiesListView.expandGroup(1);
+                    mCommunitiesListView.expandGroup(2);
+                    mCommunitiesListView.expandGroup(3);
+
                 }
             }
         });

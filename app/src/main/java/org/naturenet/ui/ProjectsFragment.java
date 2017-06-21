@@ -231,6 +231,11 @@ public class ProjectsFragment extends Fragment {
                     //when no text is available, reuse original adapter
                     mProjectsListView.setAdapter(mAdapter);
                     activeSearch = false;
+                    mProjectsListView.expandGroup(0);
+                    mProjectsListView.expandGroup(1);
+                    mProjectsListView.expandGroup(2);
+                    mProjectsListView.expandGroup(3);
+
                 }
 
             }

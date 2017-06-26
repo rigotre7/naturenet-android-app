@@ -67,7 +67,6 @@
         android:id="@+id/design_ideas_lv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/floating_buttons"
         android:layout_below="@+id/design_ideas_recent_cont_title"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="10dp"

@@ -10,21 +10,37 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
 
-import java.io.Serializable;
 import java.util.Map;
 
 @IgnoreExtraProperties
-public class Project implements Parcelable {
+public class Project extends TimestampedData implements Parcelable {
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
-    Project(String id, String iconUrl, String description, String name,  String status, Long latestContribution, Map<String, Boolean> sites) {
+    Project(String id, String iconUrl, String description, String name,  String status, Long latestContribution, Map<String, Boolean> sites, String submitter) {
         this.sites = sites;
         this.latestContribution = latestContribution;
         this.status = status;
         this.name = name;
         this.description = description;
         this.iconUrl = iconUrl;
+        this.submitter = submitter;
+        this.source = "android";
         this.id = id;
+    }
+
+    public static Project createNew(String id, String iconUrl, String description, String name, String status, Long latestContribution, Map<String, Boolean> sites, String submitter){
+        Project project = new Project();
+        project.id = id;
+        project.iconUrl = iconUrl;
+        project.description = description;
+        project.name = name;
+        project.status = status;
+        project.latestContribution = latestContribution;
+        project.sites = sites;
+        project.source = "android";
+        project.submitter = submitter;
+
+        return project;
     }
 
     @Exclude
@@ -41,6 +57,10 @@ public class Project implements Parcelable {
 
     @Nullable
     public String status;
+
+    public String submitter;
+
+    public String source;
 
     @Nullable
     @PropertyName("latest_contribution")
@@ -62,6 +82,8 @@ public class Project implements Parcelable {
         this.name = in.readString();
         this.status = in.readString();
         this.latestContribution = in.readLong();
+        this.submitter = in.readString();
+        this.source = in.readString();
         in.readMap(this.sites, null);
     }
 
@@ -90,6 +112,8 @@ public class Project implements Parcelable {
         parcel.writeString(name);
         parcel.writeString(status);
         parcel.writeLong(latestContribution == null ? 0L : latestContribution);
+        parcel.writeString(submitter);
+        parcel.writeString(source);
         parcel.writeMap(sites);
     }
 
@@ -105,6 +129,8 @@ public class Project implements Parcelable {
         if (!description.equals(project.description)) return false;
         if (!name.equals(project.name)) return false;
         if (status != null ? !status.equals(project.status) : project.status != null) return false;
+        if (!submitter.equals(project.submitter)) return false;
+        if (!source.equals(project.source)) return false;
         return latestContribution != null ? latestContribution.equals(project.latestContribution) : project.latestContribution == null;
 
     }
@@ -117,6 +143,8 @@ public class Project implements Parcelable {
         result = 31 * result + name.hashCode();
         result = 31 * result + (status != null ? status.hashCode() : 0);
         result = 31 * result + (latestContribution != null ? latestContribution.hashCode() : 0);
+        result = 31 * result + submitter.hashCode();
+        result = 31 * result + source.hashCode();
         return result;
     }
 
@@ -129,7 +157,10 @@ public class Project implements Parcelable {
                 ", name='" + name + '\'' +
                 ", status='" + status + '\'' +
                 ", latestContribution=" + latestContribution +
+                ", submitter=" + submitter +
                 ", sites=" + sites +
+                ", submitter=" + submitter +
+                ", source=" + source +
                 '}';
     }
 }

@@ -24,22 +24,20 @@
             android:layout_height="60dp">
 
             <TextView
-                android:text="TextView"
+                android:id="@+id/username_communities"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:id="@+id/username_communities"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:textAlignment="textStart"
                 android:textSize="18sp" />
 
             <TextView
-                android:text="TextView"
+                android:id="@+id/location_communities"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:id="@+id/location_communities"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:textAlignment="textStart"
                 android:textSize="18sp" />
         </LinearLayout>

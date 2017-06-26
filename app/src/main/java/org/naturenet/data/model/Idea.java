@@ -14,11 +14,12 @@ public class Idea extends TimestampedData {
     @Exclude
     public static final String NODE_NAME = "ideas";
 
-    public static Idea createNew(String id, String content, String submitter) {
+    public static Idea createNew(String id, String content, String submitter, String type) {
         Idea i = new Idea();
         i.id = id;
         i.content = content;
         i.submitter = submitter;
+        i.type = type;
         i.status = "doing";
         i.source = "android";
         i.group = "idea";

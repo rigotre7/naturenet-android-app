@@ -9,10 +9,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
-        <ListView
+
+        <EditText
+            android:id="@+id/searchAddObs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:hint="Search"
+            android:layout_below="@+id/projecs_tv"
+            android:layout_toRightOf="@+id/projecs_tv"
+            android:layout_toEndOf="@+id/projecs_tv" />
+
+        <ExpandableListView
             android:id="@+id/projects_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layout_below="@+id/searchAddObs"
+            android:divider="@null"/>
 
         <TextView
             android:id="@+id/projecs_tv"
@@ -20,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="100dp"
-            android:text="No projects in your affiliation to display!"
+            android:text="@string/no_projects"
             android:textStyle="bold"
             android:textColor="@android:color/holo_red_dark"
             android:visibility="gone"/>

@@ -87,6 +87,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.ObservationActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait">
             <meta-data
@@ -138,7 +139,8 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".ui.IdeaDetailsActivity" />
-        <activity android:name=".ui.AddDesignIdeaActivity"></activity>
+        <activity android:name=".ui.AddDesignIdeaActivity" />
+        <activity android:name=".ui.AddProjectActivity"></activity>
     </application>
 
 </manifest>

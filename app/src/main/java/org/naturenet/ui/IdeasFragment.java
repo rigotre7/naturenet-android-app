@@ -3,6 +3,7 @@ package org.naturenet.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ public class IdeasFragment extends Fragment {
     MainActivity main;
     TextView toolbar_title;
     Idea idea;
+    FloatingActionButton addIdeaButton;
 
     private DatabaseReference mFirebase = FirebaseDatabase.getInstance().getReference();
     private ListView ideas_list = null;
@@ -40,6 +42,7 @@ public class IdeasFragment extends Fragment {
         toolbar_title.setText(R.string.design_ideas_title_design_ideas);
 
         ideas_list = (ListView) root.findViewById(R.id.design_ideas_lv);
+        addIdeaButton = (FloatingActionButton) root.findViewById(R.id.fabAddIdea);
 
         return root;
     }
@@ -59,6 +62,13 @@ public class IdeasFragment extends Fragment {
                 Intent ideaDetailIntent = new Intent(main, IdeaDetailsActivity.class);
                 ideaDetailIntent.putExtra(IDEA_EXTRA, idea);
                 startActivity(ideaDetailIntent);
+            }
+        });
+
+        addIdeaButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                main.goToAddDesignIdeaActivity();
             }
         });
 

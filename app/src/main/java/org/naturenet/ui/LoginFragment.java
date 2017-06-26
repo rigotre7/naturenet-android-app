@@ -78,7 +78,7 @@ public class LoginFragment extends Fragment {
                                 log.continueAsSignedUser();
                             } else {
                                 pd.dismiss();
-                                signIn.setVisibility(View.GONE);
+                                signIn.setVisibility(View.VISIBLE);
                                 Toast.makeText(log, LoginFragment.this.getResources().getString(R.string.login_error_message_firebase_login) + task.getException(), Toast.LENGTH_SHORT).show();
                             }
                         }

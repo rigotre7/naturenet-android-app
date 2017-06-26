@@ -65,6 +65,11 @@
     <string name="project_back_left_arrows">&#60;&#60; %1$s</string>
     <string name="project_tv_no_recent_contributions">No Recent Contributions</string>
     <string name="project_tv_recent_contributions">Recent Contributions</string>
+    <string name="acesLabel">Aspen</string>
+    <string name="awsLabel">Anacostia</string>
+    <string name="elseLabel">Elsewhere</string>
+    <string name="rcncLabel">Reedy Creek</string>
+    <string name="are_you_sure">Are you sure?</string>
     <!-- Project Activity -->
 
     <!-- Observation Activity -->
@@ -127,18 +132,31 @@
     <string name="image_upload_error">Your photo could not be uploaded. Please try again later or choose another photo.</string>
     <!-- Add Observation Dialog -->
 
-    <!-- Add Design Idea Dialog -->
+    <!-- Add Design Idea-->
     <string name="dialog_add_design_idea_tv_cancel">Cancel</string>
     <string name="dialog_add_design_idea_tv_para1">Crowdsourcing design is a way for anyone to contribute to the NatureNet experience. Designers change the world and the NatureNet project gives everyone a chance to be a designer. Your design ideas can be a new way of using NatureNet in your community, and new to use mobile technology for learning about sustainability or changes in the environment, or a new feature on the web site.</string>
     <string name="dialog_add_design_idea_tv_para2">Join the discussion below with an idea or challenge of your own, comment on someone else\'s idea, or vote for your favorite idea.</string>
     <string name="dialog_add_design_idea_tv_choose">Choose Idea</string>
     <string name="dialog_add_design_idea_b_design_ideas">Design Ideas</string>
     <string name="dialog_add_design_idea_b_design_challenges">Design Challenges</string>
+    <string name="choose_idea_type">Choose Idea Type:</string>
+    <string-array name="idea_types">
+        <item>New Features</item>
+        <item>Project Ideas</item>
+        <item>Community Ideas</item>
+        <item>Improvement Ideas</item>
+    </string-array>
     <!-- Add Design Idea Dialog -->
 
     <!-- Projects Fragment -->
     <!-- Layout -->
     <string name="projects_title">Projects</string>
+    <string name="add_project_title">Add Project</string>
+    <string name="add_project_description">Projects in NatureNet are a call to action! They identify a question, a problem, or a topic that contributions can shed light on. Examples might include: examples of rainwater run&#8211;off, how many geese are present in our park, which non&#8211;native plants are invasive in our park. Please give your project a short name (1&#8211;3 words) and a description. We suggest you add hashtags to your description such as: #capstone #subproject #water #pollution</string>
+    <string name="enter_project_title">Enter a title:</string>
+    <string name="enter_project_description">Enter a description:</string>
+    <string name="no_more_projects">No more projects to load.</string>
+    <string name="no_projects">No projects in your affiliation to display!</string>
     <!-- Projects Fragment -->
 
     <!-- Design Ideas Fragment -->
@@ -149,6 +167,8 @@
     <!-- Communities Fragment -->
     <!-- Layout -->
     <string name="communities_title">Communities</string>
+    <string name="load_more">Load More</string>
+    <string name="no_more_users">No more users to load.</string>
     <!-- Communities Fragment -->
 
     <!-- General -->
@@ -171,8 +191,10 @@
     <string name="recent_observations">Recent Contributions</string>
     <string name="gallery_title">Gallery</string>
     <string name="design_ideas_title">Design Ideas</string>
-    <string name="design_ideas_info_text">Your design ideas can be a new way of using NatureNet in your community, and new mobile technology for learning about sustainability or changes in the environment, or a new feature for the app.</string>
+    <string name="design_ideas_info_text">Design Ideas in NatureNet directs the technology towards your suggestions and needs. Examples of design ideas include a new feature for using NatureNet in your community, a new way to use mobile technology for learning about sustainability or changes in the environment, or a new function for this mobile app.</string>
     <string name="add_design_idea_title">Add Design Idea</string>
+    <string name="participatory_design"><a href="https://en.wikipedia.org/wiki/Participatory_design">Learn more about participatory design.</a></string>
+    <string name="sitesLabel">Sites:</string>
     <!-- General -->
 
 </resources>

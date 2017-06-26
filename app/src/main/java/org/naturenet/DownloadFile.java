@@ -16,9 +16,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
 
-/**
- * Created by rigot on 4/16/2017.
- */
 
 public class DownloadFile extends AsyncTask<String, String, String>{
 

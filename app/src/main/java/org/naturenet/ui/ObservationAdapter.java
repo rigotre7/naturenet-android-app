@@ -16,8 +16,12 @@ import org.naturenet.util.NatureNetUtils;
 
 public class ObservationAdapter extends FirebaseListAdapter<Observation> {
 
+    Picasso picasso;
+
     ObservationAdapter(Activity activity, Query query) {
         super(activity, Observation.class, R.layout.observation_list_item, query);
+        picasso = Picasso.with(activity);
+        picasso.setIndicatorsEnabled(false);
     }
 
     @Override
@@ -27,8 +31,7 @@ public class ObservationAdapter extends FirebaseListAdapter<Observation> {
         //TODO: instead of recreating a new layout, make a Badge class and clear contents individually
         badge.removeAllViews();
         NatureNetUtils.makeUserBadge(mActivity, badge, model.userId);
-        Picasso.with(mActivity)
-                .load(Strings.emptyToNull(model.data.image))
+        picasso.load(Strings.emptyToNull(model.data.image))
                 .placeholder(R.drawable.default_image)
                 .error(R.drawable.no_image)
                 .fit()

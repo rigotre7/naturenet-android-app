@@ -35,7 +35,7 @@ public class NatureNetUtils {
     }
 
     private static final Transformation mAvatarTransform = new CroppedCircleTransformation();
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.getDefault());
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy", Locale.getDefault());
 
     public static String toDateString(TimestampedData data) {
         Long timestamp = data.getUpdatedAtMillis();

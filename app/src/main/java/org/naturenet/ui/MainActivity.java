@@ -24,6 +24,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -71,6 +72,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -99,6 +101,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ImageView nav_iv;
     MenuItem logout;
     private Disposable mUserAuthSubscription;
+    int pastSelection = 0;
+    int currentSelection =0;
+    Stack<Integer> selectionStack;
 
     /* Common submission items */
     static final private int REQUEST_CODE_CAMERA = 3;
@@ -109,13 +114,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Uri observationPath;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
-    ImageButton add_observation, add_design_idea;
     Button camera, gallery, design_ideas, design_challenges;
     TextView select;
     LinearLayout dialog_add_observation, dialog_add_design_idea;
     FrameLayout floating_buttons;
     GridView gridview;
-    ImageView add_observation_cancel, add_design_idea_cancel, gallery_item;
+    ImageView add_observation_cancel, add_design_idea_cancel, gallery_item, add_observation_button;
     List<Uri> recentImageGallery;
     Uri selectedImage;
     double latValue, longValue;
@@ -142,6 +146,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+        add_observation_button = (ImageView) findViewById(R.id.addObsButton);
+        selectionStack = new Stack<>();
 
         licenses.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -156,6 +162,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         );
 
         this.invalidateOptionsMenu();
+
+        add_observation_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_GALLERY);
+                } else {
+                    setGallery();
+                }
+
+                select.setVisibility(View.GONE);
+                dialog_add_observation.setVisibility(View.VISIBLE);            }
+        });
 
         sign_in.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -252,9 +271,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         latValue = 0.0;
         longValue = 0.0;
 
-        floating_buttons = (FrameLayout) findViewById(R.id.fl_floating_buttons);
-        add_observation = (ImageButton) findViewById(R.id.floating_buttons_ib_add_observation);
-        add_design_idea = (ImageButton) findViewById(R.id.floating_buttons_ib_add_design_idea);
         dialog_add_observation = (LinearLayout) findViewById(R.id.ll_dialog_add_observation);
         add_observation_cancel = (ImageView) findViewById(R.id.dialog_add_observation_iv_cancel);
         camera = (Button) findViewById(R.id.dialog_add_observation_b_camera);
@@ -269,35 +285,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         cameraPhoto = new CameraPhoto(this);
         galleryPhoto = new GalleryPhoto(this);
 
-        add_observation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_GALLERY);
-                } else {
-                    setGallery();
-                }
-
-                select.setVisibility(View.GONE);
-                floating_buttons.setVisibility(View.GONE);
-                dialog_add_observation.setVisibility(View.VISIBLE);
-            }
-        });
-
-        add_design_idea.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                floating_buttons.setVisibility(View.GONE);
-                dialog_add_design_idea.setVisibility(View.VISIBLE);
-            }
-        });
-
         design_ideas.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 goToAddDesignIdeaActivity();
             }
         });
+
+
 
         add_observation_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -312,7 +307,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 selectedImage = null;
                 select.setVisibility(View.GONE);
-                floating_buttons.setVisibility(View.VISIBLE);
                 dialog_add_observation.setVisibility(View.GONE);
             }
         });
@@ -358,7 +352,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        floating_buttons.setVisibility(View.VISIBLE);
         dialog_add_observation.setVisibility(View.GONE);
         dialog_add_design_idea.setVisibility(View.GONE);
     }
@@ -493,14 +486,42 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        //if we have at least something in our selectionStack
+        if(pastSelection!=0){
+            //remove the highlight of the past selection
+            navigationView.getMenu().findItem(pastSelection).setChecked(false);
+            //if we have something left in our stack
+            if(currentSelection!=0)
+                //set it as the currently highlighted item
+                navigationView.getMenu().findItem(currentSelection).setChecked(true);
+        }
+
+        return true;
+    }
+
+    @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if(getFragmentManager().getBackStackEntryCount() == 0) {
             finish();
-        } else {
+        } else if(getFragmentManager().getBackStackEntryCount() > 0){
+            //we must redraw the menu
+            this.invalidateOptionsMenu();
+            //store id of menu item that we will be un-highlighting
+            pastSelection = selectionStack.pop();
+            //if we still have items in our stack
+            if(selectionStack.size()>0){
+                //store the current selection
+                currentSelection = selectionStack.peek();
+            }else
+                currentSelection = 0;   //otherwise, set the current selection as 0 so we know we've reached the end of our stack
             super.onBackPressed();
-        }
+        }else
+            super.onBackPressed();
     }
 
     @Override
@@ -508,26 +529,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         switch(id) {
             case R.id.nav_explore:
+                selectionStack.add(R.id.nav_explore);
                 goToExploreFragment();
                 drawer.closeDrawer(GravityCompat.START);
                 break;
-            case R.id.nav_gallery:
-                goToGalleryFragment();
-                drawer.closeDrawer(GravityCompat.START);
-                break;
             case R.id.nav_projects:
+                selectionStack.add(R.id.nav_projects);
                 goToProjectsFragment();
                 drawer.closeDrawer(GravityCompat.START);
                 break;
             case R.id.nav_design_ideas:
+                selectionStack.add(R.id.nav_design_ideas);
                 goToDesignIdeasFragment();
                 drawer.closeDrawer(GravityCompat.START);
                 break;
             case R.id.nav_communities:
+                selectionStack.add(R.id.nav_communities);
                 goToCommunitiesFragment();
                 drawer.closeDrawer(GravityCompat.START);
                 break;
             case R.id.nav_logout:
+                //set current selection as 0 so we know there isn't anything selected from the menu
+                currentSelection=0;
                 FirebaseAuth.getInstance().signOut();
                 break;
         }
@@ -538,14 +561,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, new LaunchFragment())
-                .commit();
-    }
-
-    public void goToGalleryFragment() {
-        getFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, new ObservationGalleryFragment())
-                .addToBackStack(ObservationGalleryFragment.FRAGMENT_TAG)
                 .commit();
     }
 

@@ -68,7 +68,7 @@ public class UsersDetailFragment extends Fragment {
 
         //if there is an avatar associated with this user
         if(detAct.user.avatar != null && !detAct.user.avatar.equals("")){
-            Picasso.with(detAct).load(detAct.user.avatar).fit().into(profilePic);
+            Picasso.with(detAct).load(detAct.user.avatar).fit().placeholder(R.drawable.default_avatar).into(profilePic);
         }
         //if there is a bio associated with this user
         if(detAct.user.bio != null && !detAct.user.bio.equals("")){

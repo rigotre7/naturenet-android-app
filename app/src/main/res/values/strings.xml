@@ -79,6 +79,7 @@
     <!-- Observation Activity -->
 
     <!-- Main Activity -->
+    <string name="no_network">No network connection.</string>
     <!-- Main Activity -->
 
     <!-- Navigation Panel -->

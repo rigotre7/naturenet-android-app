@@ -1,6 +1,9 @@
 package org.naturenet.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.text.Editable;
@@ -52,6 +55,8 @@ public class CommunitiesFragment extends Fragment {
     private List<Users> acesResults, awsResults, elseResults, rcncResults;
     private HashMap<String, List<Users>> resultsMap;
     private int acesMax, awsMax, elseMax, rcncMax;
+    private boolean isDataLoaded;
+    private TextWatcher textWatcher;
 
     MainActivity main;
     TextView toolbar_title;
@@ -72,23 +77,8 @@ public class CommunitiesFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        //initializations
-        acesList = new ArrayList<>();
-        rcncList = new ArrayList<>();
-        awsList = new ArrayList<>();
-        elseList = new ArrayList<>();
-        rcncResults = new ArrayList<>();
-        awsResults = new ArrayList<>();
-        elseResults = new ArrayList<>();
-        acesResults = new ArrayList<>();
-        userListMap = new HashMap<>();
-        numToShowAces = numToShowAws = numToShowElse = numToShowRcnc = INITIAL_USERS_COUNT;
-        acesMax = awsMax = elseMax = rcncMax = 0;
-        resultsMap = new HashMap<>();
-
+    public void onResume() {
+        super.onResume();
 
         //get all the users
         mFirebase.child(Users.NODE_NAME).orderByChild("display_name").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -123,9 +113,116 @@ public class CommunitiesFragment extends Fragment {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Toast.makeText(main, "There's been an error retrieving the data.", Toast.LENGTH_SHORT).show();
+                isDataLoaded = false;
             }
         });
 
+        //Create TextWatcher that will handle any search queries.
+        textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                //make the search query lowercase
+                search = editable.toString().toLowerCase();
+
+                //Check to see if data was set in the adapter.
+                if(isDataLoaded) {
+                    //make sure the search bar isn't empty
+                    if (search.length() > 0) {
+                        //clear the ArrayLists of results
+                        acesResults.clear();
+                        elseResults.clear();
+                        awsResults.clear();
+                        rcncResults.clear();
+                        //set activeSearch flag to true
+                        activeSearch = true;
+
+                        //iterate over each location arrayList and populate the respective result list with matching results
+                        for (int j = 0; j < 4; j++) {
+                            switch (j) {
+                                case 0:
+                                    for (Users user : acesList) {
+                                        if (user.displayName.toLowerCase().contains(search))
+                                            acesResults.add(user);
+                                    }
+                                    break;
+                                case 1:
+                                    for (Users user : awsList) {
+                                        if (user.displayName.toLowerCase().contains(search))
+                                            awsResults.add(user);
+                                    }
+                                    break;
+                                case 2:
+                                    for (Users user : elseList) {
+                                        if (user.displayName.toLowerCase().contains(search))
+                                            elseResults.add(user);
+                                    }
+                                    break;
+                                case 3:
+                                    for (Users user : rcncList) {
+                                        if (user.displayName.toLowerCase().contains(search))
+                                            rcncResults.add(user);
+                                    }
+                                    break;
+
+                            }
+                        }
+
+                        //set the adapter with updated lists to reflect the search results
+                        setUsersSearchResults(acesResults, awsResults, elseResults, rcncResults);
+                    } else {
+                        //when no text is available, reuse original adapter
+                        mCommunitiesListView.setAdapter(mAdapterOrig);
+                        activeSearch = false;
+                        mCommunitiesListView.expandGroup(0);
+                        mCommunitiesListView.expandGroup(1);
+                        mCommunitiesListView.expandGroup(2);
+                        mCommunitiesListView.expandGroup(3);
+
+                    }
+                    //If data was never set in the adapter, display a message explaining this. Also, remove "this" TextChangedListener so we don't keep displaying
+                    //after every character that's entered
+                }else{
+                    Toast.makeText(main, "User data may not have been loaded. Make sure you are connected to the Internet and try again.", Toast.LENGTH_LONG).show();
+                    searchText.removeTextChangedListener(this);
+                }
+            }
+        };
+
+        //Set TextChangedListener
+        searchText.addTextChangedListener(textWatcher);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        //initializations
+        acesList = new ArrayList<>();
+        rcncList = new ArrayList<>();
+        awsList = new ArrayList<>();
+        elseList = new ArrayList<>();
+        rcncResults = new ArrayList<>();
+        awsResults = new ArrayList<>();
+        elseResults = new ArrayList<>();
+        acesResults = new ArrayList<>();
+        userListMap = new HashMap<>();
+        numToShowAces = numToShowAws = numToShowElse = numToShowRcnc = INITIAL_USERS_COUNT;
+        acesMax = awsMax = elseMax = rcncMax = 0;
+        resultsMap = new HashMap<>();
+        isDataLoaded = false;
+
+        if(!isConnectedToInternet())
+            Toast.makeText(main, R.string.no_network, Toast.LENGTH_SHORT).show();
 
         /*
             Click listener for the ExpandableListView
@@ -179,79 +276,6 @@ public class CommunitiesFragment extends Fragment {
                 }
 
                 return false;
-            }
-        });
-
-
-        searchText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                //make the search query lowercase
-                search = editable.toString().toLowerCase();
-
-                //make sure the search bar isn't empty
-                if(search.length() > 0){
-                    //clear the ArrayLists of results
-                    acesResults.clear();
-                    elseResults.clear();
-                    awsResults.clear();
-                    rcncResults.clear();
-                    //set activeSearch flag to true
-                    activeSearch = true;
-
-                    //iterate over each location arrayList and populate the respective result list with matching results
-                    for(int j = 0; j < 4; j++){
-                        switch (j){
-                            case 0:
-                                for(Users user: acesList){
-                                    if(user.displayName.toLowerCase().contains(search))
-                                        acesResults.add(user);
-                                }
-                                break;
-                            case 1:
-                                for(Users user: awsList){
-                                    if(user.displayName.toLowerCase().contains(search))
-                                        awsResults.add(user);
-                                }
-                                break;
-                            case 2:
-                                for(Users user: elseList){
-                                    if(user.displayName.toLowerCase().contains(search))
-                                        elseResults.add(user);
-                                }
-                                break;
-                            case 3:
-                                for(Users user: rcncList){
-                                    if(user.displayName.toLowerCase().contains(search))
-                                        rcncResults.add(user);
-                                }
-                                break;
-
-                        }
-                    }
-
-                    //set the adapter with updated lists to reflect the search results
-                    setUsersSearchResults(acesResults, awsResults, elseResults, rcncResults);
-                }else{
-                    //when no text is available, reuse original adapter
-                    mCommunitiesListView.setAdapter(mAdapterOrig);
-                    activeSearch = false;
-                    mCommunitiesListView.expandGroup(0);
-                    mCommunitiesListView.expandGroup(1);
-                    mCommunitiesListView.expandGroup(2);
-                    mCommunitiesListView.expandGroup(3);
-
-                }
             }
         });
 
@@ -339,6 +363,10 @@ public class CommunitiesFragment extends Fragment {
         mCommunitiesListView.expandGroup(1);
         mCommunitiesListView.expandGroup(2);
         mCommunitiesListView.expandGroup(3);
+
+        //If we get this far, we know we actually pulled data from Firebase. So, we set our variable to true and add a TextChangedListener to our EditText.
+        isDataLoaded = true;
+        searchText.addTextChangedListener(textWatcher);
     }
 
     /*
@@ -359,6 +387,15 @@ public class CommunitiesFragment extends Fragment {
         mCommunitiesListView.expandGroup(1);
         mCommunitiesListView.expandGroup(2);
         mCommunitiesListView.expandGroup(3);
+    }
+
+    /*
+        This method detects if we are connected to the internet.
+     */
+    private boolean isConnectedToInternet(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) main.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
     }
 
 }

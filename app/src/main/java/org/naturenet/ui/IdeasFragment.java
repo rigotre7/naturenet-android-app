@@ -1,6 +1,9 @@
 package org.naturenet.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.design.widget.FloatingActionButton;
@@ -10,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.database.DatabaseReference;
@@ -51,6 +55,10 @@ public class IdeasFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        if(!isConnectedToInternet())
+            Toast.makeText(main, R.string.no_network, Toast.LENGTH_SHORT).show();
+
+
         Query query = mFirebase.child(Idea.NODE_NAME).limitToLast(20);
         mAdapter = new IdeasAdapter(main, query);
         ideas_list.setAdapter(mAdapter);
@@ -78,6 +86,15 @@ public class IdeasFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         mAdapter.cleanup();
+    }
+
+    /*
+        This method detects if we are connected to the internet.
+     */
+    private boolean isConnectedToInternet(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) main.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
     }
 
 }

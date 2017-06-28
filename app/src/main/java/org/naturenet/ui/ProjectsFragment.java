@@ -1,7 +1,10 @@
 package org.naturenet.ui;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.text.Editable;
@@ -57,7 +60,8 @@ public class ProjectsFragment extends Fragment {
     private ProjectsExpandableSearchAdapter mAdapterSearch;
     private int numToShowAces, numToShowAws, numToShowElse, numToShowRcnc, totalAces, totalAws, totalElse, totalRcnc;
     private HashMap<String, List<Project>> resultsMap;
-    private boolean activeSearch, isExpanded;
+    private boolean activeSearch, isExpanded, isDataLoaded;
+    private TextWatcher textWatcher;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -93,6 +97,10 @@ public class ProjectsFragment extends Fragment {
         resultsMap = new HashMap<>();
         activeSearch = false;
         isExpanded = false;
+        isDataLoaded = false;
+
+        if(!isConnectedToInternet())
+            Toast.makeText(main, R.string.no_network, Toast.LENGTH_SHORT).show();
 
         mProjectsListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
@@ -164,81 +172,6 @@ public class ProjectsFragment extends Fragment {
 
             @Override
             public void onScroll(AbsListView absListView, int i, int i1, int i2) {}
-        });
-
-        /*
-            Listens to any change in the search bar.
-         */
-        searchBox.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                //make the search query lowercase
-                search = editable.toString().toLowerCase();
-
-                //make sure the search bar isn't empty
-                if(search.length() > 0){
-                    //clear the arraylist of results
-                    acesResults.clear();
-                    awsResults.clear();
-                    elseResults.clear();
-                    rcncResults.clear();
-
-                    activeSearch = true;
-
-                    //iterate over each list of projects and populate the results lists
-                    for(int j = 0; j<4; j++){
-                        switch (j){
-                            case 0:
-                                for(Project p: acesList){
-                                    if(p.name.toLowerCase().contains(search) || p.description.toLowerCase().contains(search))
-                                        acesResults.add(p);
-                                }
-                                break;
-                            case 1:
-                                for(Project p: awsList){
-                                    if(p.name.toLowerCase().contains(search) || p.description.toLowerCase().contains(search))
-                                        awsResults.add(p);
-                                }
-                                break;
-                            case 2:
-                                for(Project p: elseList){
-                                    if(p.name.toLowerCase().contains(search) || p.description.toLowerCase().contains(search))
-                                        elseResults.add(p);
-                                }
-                                break;
-                            case 3:
-                                for(Project p: rcncList){
-                                    if(p.name.toLowerCase().contains(search) || p.description.toLowerCase().contains(search))
-                                        rcncResults.add(p);
-                                }
-                                break;
-                        }
-                    }
-
-                    //set the search results
-                    setProjectSearchResults(acesResults, awsResults, elseResults, rcncResults);
-                }else{
-                    //when no text is available, reuse original adapter
-                    mProjectsListView.setAdapter(mAdapter);
-                    activeSearch = false;
-                    mProjectsListView.expandGroup(0);
-                    mProjectsListView.expandGroup(1);
-                    mProjectsListView.expandGroup(2);
-                    mProjectsListView.expandGroup(3);
-
-                }
-
-            }
         });
 
     }
@@ -360,6 +293,10 @@ public class ProjectsFragment extends Fragment {
         mProjectsListView.expandGroup(1);
         mProjectsListView.expandGroup(2);
         mProjectsListView.expandGroup(3);
+
+        //If we get this far, we know we actually pulled data from Firebase. So, we set our variable to true and add a TextChangedListener to our EditText.
+        isDataLoaded = true;
+        searchBox.addTextChangedListener(textWatcher);
     }
 
     @Override
@@ -423,6 +360,89 @@ public class ProjectsFragment extends Fragment {
                 }
             });
         }
+
+        //Create TextWatcher to listen for queries.
+        textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                //make the search query lowercase
+                search = editable.toString().toLowerCase();
+
+                //make sure we actually have data loaded into the adapter
+                if(isDataLoaded) {
+                    //make sure the search bar isn't empty
+                    if (search.length() > 0) {
+                        //clear the arraylist of results
+                        acesResults.clear();
+                        awsResults.clear();
+                        elseResults.clear();
+                        rcncResults.clear();
+
+                        activeSearch = true;
+
+                        //iterate over each list of projects and populate the results lists
+                        for (int j = 0; j < 4; j++) {
+                            switch (j) {
+                                case 0:
+                                    for (Project p : acesList) {
+                                        if (p.name.toLowerCase().contains(search) || p.description.toLowerCase().contains(search))
+                                            acesResults.add(p);
+                                    }
+                                    break;
+                                case 1:
+                                    for (Project p : awsList) {
+                                        if (p.name.toLowerCase().contains(search) || p.description.toLowerCase().contains(search))
+                                            awsResults.add(p);
+                                    }
+                                    break;
+                                case 2:
+                                    for (Project p : elseList) {
+                                        if (p.name.toLowerCase().contains(search) || p.description.toLowerCase().contains(search))
+                                            elseResults.add(p);
+                                    }
+                                    break;
+                                case 3:
+                                    for (Project p : rcncList) {
+                                        if (p.name.toLowerCase().contains(search) || p.description.toLowerCase().contains(search))
+                                            rcncResults.add(p);
+                                    }
+                                    break;
+                            }
+                        }
+
+                        //set the search results
+                        setProjectSearchResults(acesResults, awsResults, elseResults, rcncResults);
+                    } else {
+                        //when no text is available, reuse original adapter
+                        mProjectsListView.setAdapter(mAdapter);
+                        activeSearch = false;
+                        mProjectsListView.expandGroup(0);
+                        mProjectsListView.expandGroup(1);
+                        mProjectsListView.expandGroup(2);
+                        mProjectsListView.expandGroup(3);
+
+                    }
+                    //If data was never set in the adapter, display a message explaining this. Also, remove "this" TextChangedListener so we don't keep displaying
+                    //after every character that's entered
+                }else{
+                    Toast.makeText(main, "Project data may not have been loaded. Make sure you are connected to the Internet and try again.", Toast.LENGTH_LONG).show();
+                    searchBox.removeTextChangedListener(this);
+                }
+            }
+        };
+
+        //Listens to any change in the search bar.
+        searchBox.addTextChangedListener(textWatcher);
 
     }
 
@@ -488,5 +508,14 @@ public class ProjectsFragment extends Fragment {
                 });
             }
         }
+    }
+
+    /*
+        This method detects if we are connected to the internet.
+     */
+    private boolean isConnectedToInternet(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) main.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
     }
 }

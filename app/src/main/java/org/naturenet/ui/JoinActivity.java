@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -59,7 +60,11 @@ public class JoinActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_join);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        back = (ImageButton) findViewById(R.id.join_back);
+
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         et_affiliation = (EditText) findViewById(R.id.join_et_affiliation);
         join = (Button) findViewById(R.id.join_b_join);
         setSupportActionBar(toolbar);
@@ -90,12 +95,6 @@ public class JoinActivity extends AppCompatActivity {
             }
         });
 
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
         join.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -220,5 +219,16 @@ public class JoinActivity extends AppCompatActivity {
         doneIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(doneIntent);
         overridePendingTransition(R.anim.stay, R.anim.slide_down);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: //handles back button presses on toolbar
+                finish();
+                overridePendingTransition(R.anim.stay, R.anim.slide_down);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

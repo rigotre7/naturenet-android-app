@@ -93,7 +93,7 @@ public class JoinActivity extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                JoinActivity.this.goBackToLaunchFragment();
+                finish();
             }
         });
         join.setOnClickListener(new View.OnClickListener() {
@@ -202,26 +202,23 @@ public class JoinActivity extends AppCompatActivity {
         join = null;
     }
 
-    public void goBackToLaunchFragment() {
-        affiliation_ids = null;
-        affiliation_names = null;
-        Intent resultIntent = new Intent(this, MainActivity.class);
-        resultIntent.putExtra(EXTRA_JOIN, EXTRA_LAUNCH);
-        setResult(Activity.RESULT_OK, resultIntent);
-        clearResources();
-        finish();
-        overridePendingTransition(R.anim.stay, R.anim.slide_down);
-    }
-
+    /*
+        This method is called when a user has joined. It sets the result for the Activity activating onActivityResult() in MainActivity and logs the user in.
+        Furthermore, it starts MainActivity and clears the Activity backstack.
+     */
     public void continueAsSignedUser(Users createdUser) {
         affiliation_ids = null;
         affiliation_names = null;
+        //Create intent to set the result of the Activity which effectively logs in the newly created user.
         Intent resultIntent = new Intent(this, MainActivity.class);
         resultIntent.putExtra(EXTRA_JOIN, EXTRA_LOGIN);
         resultIntent.putExtra(EXTRA_NEW_USER, createdUser);
         setResult(Activity.RESULT_OK, resultIntent);
         clearResources();
-        finish();
+        //Create intent to start MainActivity. Set flags to clear backstack.
+        Intent doneIntent = new Intent(this, MainActivity.class);
+        doneIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(doneIntent);
         overridePendingTransition(R.anim.stay, R.anim.slide_down);
     }
 }

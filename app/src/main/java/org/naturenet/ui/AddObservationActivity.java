@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.google.common.base.Optional;
@@ -85,5 +86,16 @@ public class AddObservationActivity extends AppCompatActivity {
         startService(uploadIntent);
 
         finish();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                overridePendingTransition(R.anim.stay, R.anim.slide_down);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -31,7 +31,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -114,14 +113,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Uri observationPath;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
-    Button camera, gallery, design_ideas, design_challenges;
+    Button camera, gallery;
     TextView select;
-    LinearLayout dialog_add_observation, dialog_add_design_idea;
-    FrameLayout floating_buttons;
+    LinearLayout dialog_add_observation;
     GridView gridview;
-    ImageView add_observation_cancel, add_design_idea_cancel, gallery_item, add_observation_button;
-    List<Uri> recentImageGallery;
-    Uri selectedImage;
+    ImageView add_observation_cancel, gallery_item, add_observation_button;
+    List<Uri> recentImageGallery, observationPaths;
+    ArrayList<Uri> selectedImages;
     double latValue, longValue;
 
     @Override
@@ -148,6 +146,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
         add_observation_button = (ImageView) findViewById(R.id.addObsButton);
         selectionStack = new Stack<>();
+        selectedImages = new ArrayList<>();
+
 
         licenses.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -163,6 +163,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         this.invalidateOptionsMenu();
 
+        /**
+         * When user selects the camera icon, check to see if we have permission to view their images.
+         */
         add_observation_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -278,44 +281,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         select = (TextView) findViewById(R.id.dialog_add_observation_tv_select);
         gridview = (GridView) findViewById(R.id.dialog_add_observation_gv);
         gallery_item = (ImageView) findViewById(R.id.gallery_iv);
-        dialog_add_design_idea = (LinearLayout) findViewById(R.id.ll_dialog_add_design_idea);
-        add_design_idea_cancel = (ImageView) findViewById(R.id.dialog_add_design_idea_iv_cancel);
-        design_ideas = (Button) findViewById(R.id.dialog_add_design_idea_b_design_ideas);
-        design_challenges = (Button) findViewById(R.id.dialog_add_design_idea_b_design_challenges);
         cameraPhoto = new CameraPhoto(this);
         galleryPhoto = new GalleryPhoto(this);
-
-        design_ideas.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToAddDesignIdeaActivity();
-            }
-        });
-
-
 
         add_observation_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (recentImageGallery != null) {
-                    int index = recentImageGallery.indexOf(selectedImage);
-                    if (index >= 0) {
-                        gridview.getChildAt(index).findViewById(R.id.gallery_iv).setBackgroundResource(0);
-                    }
-                }
-
-                selectedImage = null;
+                selectedImages.clear();
                 select.setVisibility(View.GONE);
                 dialog_add_observation.setVisibility(View.GONE);
             }
         });
 
+        /**
+         * Click listener for when user selects images they want to upload.
+         */
         select.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Picasso.with(MainActivity.this).cancelTag(ImageGalleryAdapter.class.getSimpleName());
-                observationPath = selectedImage;
+                observationPaths = selectedImages;
                 setGallery();
                 goToAddObservationActivity();
             }
@@ -344,18 +330,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        add_design_idea_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                floating_buttons.setVisibility(View.VISIBLE);
-                dialog_add_design_idea.setVisibility(View.GONE);
-            }
-        });
-
         dialog_add_observation.setVisibility(View.GONE);
-        dialog_add_design_idea.setVisibility(View.GONE);
     }
 
+    /**
+     * Sets the gallery of recent images when the user selects 'add observation' button.
+     */
     public void setGallery() {
         Picasso.with(MainActivity.this).cancelTag(ImageGalleryAdapter.class.getSimpleName());
         recentImageGallery = getRecentImagesUris();
@@ -363,30 +343,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (recentImageGallery.size() != 0) {
             gridview.setAdapter(new ImageGalleryAdapter(this, recentImageGallery));
 
+            //Here we handle clicks to the recent images. Let user select as many images as they want to submit.
             gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                     ImageView iv = (ImageView) v.findViewById(R.id.gallery_iv);
 
-                    if (selectedImage == null) {
-                        selectedImage = recentImageGallery.get(position);
+                    //if the image the user selects hasn't been selected yet
+                    if (!selectedImages.contains(recentImageGallery.get(position))) {
+                        //add the clicked image to the selectedImages List
+                        selectedImages.add(recentImageGallery.get(position));
                         iv.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.border_selected_image));
                         select.setVisibility(View.VISIBLE);
-                    } else if (selectedImage.equals(recentImageGallery.get(position))) {
-                        selectedImage = null;
+                    //here we handle the case of selecting an image that's already been selected
+                    } else if (selectedImages.contains(recentImageGallery.get(position))) {
+                        selectedImages.remove(recentImageGallery.get(position));
                         iv.setBackgroundResource(0);
-                        select.setVisibility(View.GONE);
-                    } else {
-                        int index = recentImageGallery.indexOf(selectedImage);
-
-                        if (index >= 0) {
-                            gridview.getChildAt(index).findViewById(R.id.gallery_iv).setBackgroundResource(0);
-                        }
-
-                        selectedImage = recentImageGallery.get(position);
-                        iv.setBackground(ContextCompat.getDrawable(MainActivity.this, R.drawable.border_selected_image));
-                        select.setVisibility(View.VISIBLE);
                     }
+
+                    //check to see if there are no selected images. if so, make select button 'unselectable'
+                    if(selectedImages.size() == 0)
+                        select.setVisibility(View.GONE);
+
                 }
             });
         }
@@ -455,6 +433,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onResume() {
         Picasso.with(MainActivity.this).resumeTag(NatureNetUtils.PICASSO_TAGS.PICASSO_TAG_GALLERY);
+        selectedImages.clear();
         if (mGoogleApiClient.isConnected()) {
             requestLocationUpdates();
         }
@@ -502,6 +481,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    /**
+    *   Override back button action.
+     */
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -631,7 +613,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public void goToAddObservationActivity() {
         Intent addObservation = new Intent(this, AddObservationActivity.class);
-        addObservation.putExtra(AddObservationActivity.EXTRA_IMAGE_PATH, observationPath);
+        addObservation.putParcelableArrayListExtra(AddObservationActivity.EXTRA_IMAGE_PATH, selectedImages);
         addObservation.putExtra(AddObservationActivity.EXTRA_LATITUDE, latValue);
         addObservation.putExtra(AddObservationActivity.EXTRA_LONGITUDE, longValue);
         addObservation.putExtra(AddObservationActivity.EXTRA_USER, signed_user);
@@ -661,6 +643,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         overridePendingTransition(R.anim.slide_up, R.anim.stay);
     }
 
+    /**
+     * This method gets all the recent images the user has taken.
+     * @return listOfAllImages - the list of all the most recent images taken on the phone.
+     */
     public List<Uri> getRecentImagesUris() {
         Uri uri;
         Cursor cursor;

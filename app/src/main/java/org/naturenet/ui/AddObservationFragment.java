@@ -2,6 +2,7 @@ package org.naturenet.ui;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
@@ -162,6 +163,8 @@ public class AddObservationFragment extends Fragment {
             public void onClick(View v) {
                 if (add.signed_user!=null) {
                     send.setVisibility(View.GONE);
+
+
                     PhotoCaptionContent data = new PhotoCaptionContent();
                     data.text = description.getText().toString();
                     String where = whereIsIt.getText().toString().trim();
@@ -172,8 +175,9 @@ public class AddObservationFragment extends Fragment {
 
                     add.newObservation.data = data;
                     add.newObservation.projectId = selectedProjectId;
-
                     add.submitObservation();
+
+
                 } else {
                     Toast.makeText(getActivity(), "Please sign in to contribute to NatureNet", Toast.LENGTH_SHORT).show();
                     Intent loginIntent = new Intent(getActivity(), LoginActivity.class);
@@ -323,7 +327,7 @@ public class AddObservationFragment extends Fragment {
         });
 
         Picasso.with(AddObservationFragment.this.getActivity())
-                .load(add.observationPath)
+                .load(add.observationPaths.get(0))
                 .placeholder(R.drawable.default_image)
                 .error(R.drawable.no_image)
                 .fit()

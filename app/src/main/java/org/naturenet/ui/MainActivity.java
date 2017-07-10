@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -24,12 +25,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -108,6 +109,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     static final private int REQUEST_CODE_CAMERA = 3;
     static final private int REQUEST_CODE_GALLERY = 4;
     static final private int REQUEST_CODE_CHECK_LOCATION_SETTINGS = 5;
+    static final private int IMAGE_PICKER_RESULTS = 6;
+    static final private int GALLERY_IMAGES = 100;
     CameraPhoto cameraPhoto;
     GalleryPhoto galleryPhoto;
     Uri observationPath;
@@ -326,7 +329,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View v) {
                 setGallery();
                 select.setVisibility(View.GONE);
-                startActivityForResult(galleryPhoto.openGalleryIntent(), REQUEST_CODE_GALLERY);
+
+                //Check to see if the user is on API 18 or above.
+                if(usingApiEighteenAndAbove()){
+                    Intent intent = new Intent();
+                    intent.setType("image/*");
+                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(intent,"Select Picture"), GALLERY_IMAGES);
+                }else{
+                    //If not on 18 or above, go to the custom Gallery Activity
+                    Intent intent = new Intent(getApplicationContext(), ImagePicker.class);
+                    startActivityForResult(intent, IMAGE_PICKER_RESULTS);
+                }
+
+
             }
         });
 
@@ -739,6 +756,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 break;
             }
+            //This case is for retrieving images from the phone's Gallery app.
+            case GALLERY_IMAGES: {
+                //First, make sure the the user actually chose something.
+                if(data != null){
+                    //In this case, the user selected multiple images
+                    if(data.getClipData() != null){
+
+                        for(int j = 0; j<data.getClipData().getItemCount(); j++){
+                            selectedImages.add(data.getClipData().getItemAt(j).getUri());
+                            Log.d("images", "selected image: " + data.getClipData().getItemAt(j).toString());
+                        }
+                    }
+                    //in this case, the user selected just one image
+                    else if(data.getData() != null){
+                        selectedImages.add(data.getData());
+                    }
+
+                    //Here we should have our selected images
+                    goToAddObservationActivity();
+                }
+                break;
+            }
+            //This case is for retrieving images from the custom Gallery (phones using api <18).
+            case IMAGE_PICKER_RESULTS: {
+                if(resultCode == MainActivity.RESULT_OK){
+                    selectedImages = data.getParcelableArrayListExtra("images");
+                    goToAddObservationActivity();
+                }
+            }
         }
     }
     public void onUserSignIn(@NonNull Users user) {
@@ -794,5 +840,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         sign_in.setVisibility(View.GONE);
         join.setVisibility(View.GONE);
         drawer.openDrawer(GravityCompat.START);
+    }
+
+    public boolean usingApiEighteenAndAbove(){
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
     }
 }

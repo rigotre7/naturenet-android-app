@@ -2,21 +2,20 @@ package org.naturenet.ui;
 
 import android.app.Fragment;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.AdapterViewFlipper;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +24,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
 import org.naturenet.data.model.PhotoCaptionContent;
@@ -46,9 +44,11 @@ public class AddObservationFragment extends Fragment {
     private static final int NUM_TO_SHOW = 4;
 
 
+
+
     private TextView send, project;
     private EditText description, whereIsIt, searchBox;
-    private ImageView image;
+    private AdapterViewFlipper imageFlipper;
     private Button choose;
     private ExpandableListView mProjectsListView;
     private TextView noProjects;
@@ -69,6 +69,7 @@ public class AddObservationFragment extends Fragment {
     private HashMap<String, List<Project>> resultsMap;
     private boolean activeSearch;
     private Project p;
+    private GestureDetector gestureDetector;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -326,13 +327,27 @@ public class AddObservationFragment extends Fragment {
             }
         });
 
-        Picasso.with(AddObservationFragment.this.getActivity())
-                .load(add.observationPaths.get(0))
-                .placeholder(R.drawable.default_image)
-                .error(R.drawable.no_image)
-                .fit()
-                .centerInside()
-                .into(image);
+        //create adapter with images the user wants to submit
+        AddObservationImageAdapter adapter = new AddObservationImageAdapter(add, add.observationPaths);
+
+        imageFlipper.setAdapter(adapter);
+        imageFlipper.setFlipInterval(4*1000);
+        imageFlipper.setAutoStart(true);
+
+        //Create gesture detector
+        gestureDetector = new GestureDetector(add, new MyGestureDetector(imageFlipper));
+
+        //Create listener that triggers on touch events.
+        View.OnTouchListener listener = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                //simply call gestureDetector's own onTouchEvent method
+                return gestureDetector.onTouchEvent(motionEvent);
+            }
+        };
+
+        //Set the on touch listener
+        imageFlipper.setOnTouchListener(listener);
 
         choose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -481,7 +496,7 @@ public class AddObservationFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         project = (TextView) view.findViewById(R.id.add_observation_tv_project);
-        image = (ImageView) view.findViewById(R.id.add_observation_iv);
+        imageFlipper = (AdapterViewFlipper) view.findViewById(R.id.add_observation_iv);
         description = (EditText) view.findViewById(R.id.add_observation_et_description);
         whereIsIt = (EditText) view.findViewById(R.id.add_observation_et_where);
         choose = (Button) view.findViewById(R.id.add_observation_b_project);
@@ -490,5 +505,41 @@ public class AddObservationFragment extends Fragment {
         noProjects = (TextView) view.findViewById(R.id.projecs_tv);
         projectsLayout = view.findViewById(R.id.projects_layout);
         searchBox = (EditText) view.findViewById(R.id.searchAddObs);
+    }
+
+}
+
+class MyGestureDetector extends GestureDetector.SimpleOnGestureListener {
+
+    private static final int SWIPE_MIN_DISTANCE = 120;
+    private static final int SWIPE_MAX_OFF_PATH = 250;
+    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+
+    private AdapterViewFlipper flipper;
+
+    public MyGestureDetector(AdapterViewFlipper flipper) {
+        this.flipper = flipper;
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        try {
+            if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
+                return false;
+
+            if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                flipper.showPrevious();
+            } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                flipper.showNext();
+            }
+        } catch (Exception e) {
+
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return true;
     }
 }

@@ -451,6 +451,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onResume() {
         Picasso.with(MainActivity.this).resumeTag(NatureNetUtils.PICASSO_TAGS.PICASSO_TAG_GALLERY);
         selectedImages.clear();
+        select.setVisibility(View.GONE);
         if (mGoogleApiClient.isConnected()) {
             requestLocationUpdates();
         }

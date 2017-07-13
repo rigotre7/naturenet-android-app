@@ -91,8 +91,9 @@ public class UploadService extends IntentService {
                 config.put("cloud_name", "university-of-colorado");
                 Cloudinary cloudinary = new Cloudinary(config);
 
+                //Try to upload the image to Cloudinary. In case this isn't possible, upload to Firebase Storage.
                 try {
-                    Map results = cloudinary.uploader().unsignedUpload(new File(observationUris.get(j).getPath()), "android-preset", ObjectUtils.emptyMap());
+                    Map results = cloudinary.uploader().unsignedUpload(getContentResolver().openInputStream(observationUris.get(j)), "android-preset", ObjectUtils.emptyMap());
                     continueWithCloudinaryUpload(results);
                     targets.add(null);
                 } catch (IOException ex) {

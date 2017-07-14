@@ -45,15 +45,29 @@
                     <TextView
                         android:id="@+id/design_ideas_user_name"
                         android:layout_width="match_parent"
-                        android:layout_height="30dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:textSize="12sp"
                         android:layout_marginLeft="5dp"
                         android:textColor="@color/colorPrimary"
                         android:gravity="center_vertical" />
 
                     <TextView
+                        android:id="@+id/ideaDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textSize="12sp"
+                        android:gravity="center_vertical"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1" />
+
+                    <TextView
                         android:id="@+id/design_ideas_affiliation"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:textSize="12sp"
+                        android:layout_weight="1"
                         android:layout_marginLeft="5dp"
                         android:gravity="center_vertical" />
 

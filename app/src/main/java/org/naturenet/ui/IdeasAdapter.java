@@ -24,6 +24,7 @@ import org.naturenet.R;
 import org.naturenet.data.model.Idea;
 import org.naturenet.data.model.Site;
 import org.naturenet.data.model.Users;
+import org.naturenet.util.NatureNetUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -78,6 +79,7 @@ public class IdeasAdapter extends ArrayAdapter<Idea> {
             holder.likesNum = (TextView) convertView.findViewById(R.id.design_idea_likes_number);
             holder.dislikeNum = (TextView) convertView.findViewById(R.id.design_ideas_dislike_number);
             holder.commentNum = (TextView) convertView.findViewById(R.id.design_ideas_comment_number);
+            holder.ideaDate = (TextView) convertView.findViewById(R.id.ideaDate);
 
             convertView.setTag(holder);
 
@@ -89,6 +91,9 @@ public class IdeasAdapter extends ArrayAdapter<Idea> {
 
         //set profile pic, username, affiliation here
         setUserInformation(idea.submitter, holder.profile_pic, holder.username, holder.affiliation);
+
+        //set idea date
+        holder.ideaDate.setText(NatureNetUtils.toDateString(idea));
 
         //set idea content here
         holder.ideaContent.setText(ideas.get(position).content);
@@ -173,6 +178,6 @@ public class IdeasAdapter extends ArrayAdapter<Idea> {
 
     private static class ViewHolder{
         ImageView profile_pic, status;
-        TextView username, affiliation, ideaContent, likesNum, dislikeNum, commentNum;
+        TextView username, affiliation, ideaContent, likesNum, dislikeNum, commentNum, ideaDate;
     }
 }

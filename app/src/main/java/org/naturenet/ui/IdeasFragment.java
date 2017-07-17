@@ -51,6 +51,9 @@ public class IdeasFragment extends Fragment {
     private IdeasAdapter mAdapter, mAdapterSearch;
     private ArrayList<Idea> ideas, searchResults;
     private List<Users> users;
+    private View showMoreButton;
+    private int numToShow;
+    private boolean moreIdeasToShow;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -75,12 +78,18 @@ public class IdeasFragment extends Fragment {
             Toast.makeText(main, R.string.no_network, Toast.LENGTH_SHORT).show();
 
         isDataLoaded = false;
+        numToShow = 25;
 
         //initialize
+        moreIdeasToShow = true;
         ideas = new ArrayList<>();
         searchResults = new ArrayList<>();
         //retrieve users from Singleton instance
         users = FetchData.getInstance().getUsers();
+
+        LayoutInflater inflater = (LayoutInflater) main.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        showMoreButton = inflater.inflate(R.layout.show_more_button, null);
 
         mFirebase.child(Idea.NODE_NAME).orderByChild("created_at").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -134,11 +143,15 @@ public class IdeasFragment extends Fragment {
                             if(idea.content.toLowerCase().contains(search) || getUserName(idea.submitter).contains(search))
                                 searchResults.add(ideas.get(i));
                         }
-                    }else
-                        ideas_list.setAdapter(mAdapter);
-                }
 
-                setSearchResults();
+                        //we have all the matches, so show the results and remove "show more" button from footer
+                        setSearchResults();
+                        ideas_list.removeFooterView(showMoreButton);
+
+                    }else {
+                        setIdeas();
+                    }
+                }
 
             }
         };
@@ -155,53 +168,104 @@ public class IdeasFragment extends Fragment {
      */
     private String getUserName(String id){
 
-        //set left index
-        int low = 0;
+        String name = "";
 
-        //set right index
-        int high = users.size() -1;
+        //make sure users didn't return null and size of users list is greater than 0
+        if(users != null && users.size() != 0){
 
-        //set middle index
-        int mid = 0;
+            //set left index
+            int low = 0;
 
-        String name = null;
+            //set right index
+            int high = users.size() -1;
 
-        while(low <= high) {
-            //id is in users[low..high] or not present
-            mid = low + (high - low) / 2;
+            //set middle index
+            int mid = 0;
 
-            if (users.get(mid).id.compareTo(id) > 0)
-                high = mid - 1;
-            else if(users.get(mid).id.compareTo(id) < 0)
-                low = mid + 1;
-            else {
-                name = users.get(mid).displayName;
-                break;
+            while(low <= high) {
+                //id is in users[low..high] or not present
+                mid = low + (high - low) / 2;
+
+                if (users.get(mid).id.compareTo(id) > 0)
+                    high = mid - 1;
+                else if(users.get(mid).id.compareTo(id) < 0)
+                    low = mid + 1;
+                else {
+                    name = users.get(mid).displayName;
+                    break;
+                }
+
             }
 
+            return name;
         }
 
         return name;
     }
 
     /**
-     * This function is called when our query for all the ideas has completed. It sets the adpater and ListView.
+     * This function is called when our query for all the ideas has completed. It sets the adapter and ListView.
      */
     private void setIdeas(){
-        mAdapter = new IdeasAdapter(main, R.layout.design_ideas_row_layout, ideas.subList(0, 25));
+        mAdapter = new IdeasAdapter(main, R.layout.design_ideas_row_layout, ideas.subList(0, numToShow));
         ideas_list.setAdapter(mAdapter);
+
+        //add show more button at the bottom of the list
+        ideas_list.addFooterView(showMoreButton);
 
         ideas_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                idea = mAdapter.getItem(i);  //get clicked idea
-                Intent ideaDetailIntent = new Intent(main, IdeaDetailsActivity.class);
-                ideaDetailIntent.putExtra(IDEA_EXTRA, idea);
-                startActivity(ideaDetailIntent);
+
+                if(numToShow == i){
+                    showMoreIdeas();
+                }else {
+                    idea = mAdapter.getItem(i);  //get clicked idea
+                    Intent ideaDetailIntent = new Intent(main, IdeaDetailsActivity.class);
+                    ideaDetailIntent.putExtra(IDEA_EXTRA, idea);
+                    startActivity(ideaDetailIntent);
+                }
             }
         });
 
         isDataLoaded = true;
+    }
+
+    /**
+     * This function is called when the user selects "Load More" button.
+     */
+    private void showMoreIdeas(){
+
+        //check to see if there are more ideas
+        if(moreIdeasToShow){
+            numToShow += 15;
+
+            //check to see if we've reached the end of the ideas
+            if(numToShow > ideas.size()){
+                numToShow = ideas.size();
+                Toast.makeText(main, "No more ideas to show", Toast.LENGTH_SHORT).show();
+                moreIdeasToShow = false;
+            }
+
+            final IdeasAdapter updatedAdapter = new IdeasAdapter(main, R.layout.design_ideas_row_layout, ideas.subList(0, numToShow));
+            ideas_list.setAdapter(updatedAdapter);
+            ideas_list.setSelection(numToShow);
+
+            ideas_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    if(numToShow == i)
+                        showMoreIdeas();
+                    else{
+                        idea = updatedAdapter.getItem(i);   //get clicked idea
+                        Intent ideaDetailIntent = new Intent(main, IdeaDetailsActivity.class);
+                        ideaDetailIntent.putExtra(IDEA_EXTRA, idea);
+                        startActivity(ideaDetailIntent);
+                    }
+                }
+            });
+        }
+
     }
 
     /**

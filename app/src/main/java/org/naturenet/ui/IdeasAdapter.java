@@ -171,11 +171,6 @@ public class IdeasAdapter extends ArrayAdapter<Idea> {
         return location;
     }
 
-    /*@Override
-    public Idea getItem(int position) {
-        return super.getItem(getCount() - 1 - position);
-    }*/
-
     private static class ViewHolder{
         ImageView profile_pic, status;
         TextView username, affiliation, ideaContent, likesNum, dislikeNum, commentNum, ideaDate;

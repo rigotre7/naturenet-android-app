@@ -91,7 +91,7 @@ public class IdeasFragment extends Fragment {
 
         showMoreButton = inflater.inflate(R.layout.show_more_button, null);
 
-        mFirebase.child(Idea.NODE_NAME).orderByChild("created_at").addListenerForSingleValueEvent(new ValueEventListener() {
+        mFirebase.child(Idea.NODE_NAME).orderByChild("created_at").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 

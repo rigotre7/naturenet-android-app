@@ -31,7 +31,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -114,12 +113,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Uri observationPath;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
-    Button camera, gallery, design_ideas, design_challenges;
+    Button camera, gallery;
     TextView select;
-    LinearLayout dialog_add_observation, dialog_add_design_idea;
-    FrameLayout floating_buttons;
+    LinearLayout dialog_add_observation;;
     GridView gridview;
-    ImageView add_observation_cancel, add_design_idea_cancel, gallery_item, add_observation_button;
+    ImageView add_observation_cancel, gallery_item, add_observation_button;
     List<Uri> recentImageGallery;
     Uri selectedImage;
     double latValue, longValue;
@@ -278,21 +276,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         select = (TextView) findViewById(R.id.dialog_add_observation_tv_select);
         gridview = (GridView) findViewById(R.id.dialog_add_observation_gv);
         gallery_item = (ImageView) findViewById(R.id.gallery_iv);
-        dialog_add_design_idea = (LinearLayout) findViewById(R.id.ll_dialog_add_design_idea);
-        add_design_idea_cancel = (ImageView) findViewById(R.id.dialog_add_design_idea_iv_cancel);
-        design_ideas = (Button) findViewById(R.id.dialog_add_design_idea_b_design_ideas);
-        design_challenges = (Button) findViewById(R.id.dialog_add_design_idea_b_design_challenges);
         cameraPhoto = new CameraPhoto(this);
         galleryPhoto = new GalleryPhoto(this);
-
-        design_ideas.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToAddDesignIdeaActivity();
-            }
-        });
-
-
 
         add_observation_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -344,16 +329,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        add_design_idea_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                floating_buttons.setVisibility(View.VISIBLE);
-                dialog_add_design_idea.setVisibility(View.GONE);
-            }
-        });
-
         dialog_add_observation.setVisibility(View.GONE);
-        dialog_add_design_idea.setVisibility(View.GONE);
     }
 
     public void setGallery() {

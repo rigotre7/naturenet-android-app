@@ -95,10 +95,17 @@ public class IdeasFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
+                //clear any ideas that we may have already stored
+                ideas.clear();
+                //get all the ideas
                 for(DataSnapshot idea : dataSnapshot.getChildren()){
                     ideas.add(idea.getValue(Idea.class));
                 }
+                //reset these variables
+                numToShow = 25;
+                moreIdeasToShow = true;
 
+                //reverse ideas list to have the most recent first
                 Collections.reverse(ideas);
                 setIdeas();
             }
@@ -211,7 +218,8 @@ public class IdeasFragment extends Fragment {
         ideas_list.setAdapter(mAdapter);
 
         //add show more button at the bottom of the list
-        ideas_list.addFooterView(showMoreButton);
+        if(ideas_list.getFooterViewsCount() != 1)
+            ideas_list.addFooterView(showMoreButton);
 
         ideas_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -245,6 +253,7 @@ public class IdeasFragment extends Fragment {
                 numToShow = ideas.size();
                 Toast.makeText(main, "No more ideas to show", Toast.LENGTH_SHORT).show();
                 moreIdeasToShow = false;
+                ideas_list.removeFooterView(showMoreButton);
             }
 
             final IdeasAdapter updatedAdapter = new IdeasAdapter(main, R.layout.design_ideas_row_layout, ideas.subList(0, numToShow));

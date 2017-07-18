@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,6 +81,7 @@ public class IdeasAdapter extends ArrayAdapter<Idea> {
             holder.dislikeNum = (TextView) convertView.findViewById(R.id.design_ideas_dislike_number);
             holder.commentNum = (TextView) convertView.findViewById(R.id.design_ideas_comment_number);
             holder.ideaDate = (TextView) convertView.findViewById(R.id.ideaDate);
+            holder.statusText = (TextView) convertView.findViewById(R.id.status_text);
 
             convertView.setTag(holder);
 
@@ -123,13 +125,25 @@ public class IdeasAdapter extends ArrayAdapter<Idea> {
 
         if (idea.status != null) {
             switch (idea.status){
-                case "developing": picasso.load(R.drawable.developing).into(holder.status);
+                case "developing":
+                    picasso.load(R.drawable.developing).into(holder.status);
+                    holder.statusText.setText(R.string.developing);
+                    holder.statusText.setTextColor(ContextCompat.getColor(mContext, R.color.colorButton));
                     break;
-                case "testing": picasso.load(R.drawable.testing).into(holder.status);
+                case "testing":
+                    picasso.load(R.drawable.testing).into(holder.status);
+                    holder.statusText.setText(R.string.testing);
+                    holder.statusText.setTextColor(ContextCompat.getColor(mContext, R.color.colorButton));
                     break;
-                case "done": picasso.load(R.drawable.completed).into(holder.status);
+                case "done":
+                    picasso.load(R.drawable.completed).into(holder.status);
+                    holder.statusText.setText(R.string.done);
+                    holder.statusText.setTextColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
                     break;
-                default: picasso.load(R.drawable.discussing).into(holder.status);
+                default:
+                    picasso.load(R.drawable.discussing).into(holder.status);
+                    holder.statusText.setText(R.string.discussing);
+                    holder.statusText.setTextColor(ContextCompat.getColor(mContext, R.color.colorButton));
                     break;
             }
         }
@@ -173,6 +187,6 @@ public class IdeasAdapter extends ArrayAdapter<Idea> {
 
     private static class ViewHolder{
         ImageView profile_pic, status;
-        TextView username, affiliation, ideaContent, likesNum, dislikeNum, commentNum, ideaDate;
+        TextView username, affiliation, ideaContent, likesNum, dislikeNum, commentNum, ideaDate, statusText;
     }
 }

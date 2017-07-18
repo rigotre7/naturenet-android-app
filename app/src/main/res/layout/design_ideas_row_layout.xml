@@ -19,10 +19,9 @@
 
         <LinearLayout
             android:id="@+id/layout_whole"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="145dp"
-            android:orientation="vertical"
-            android:layout_weight="0.95">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/user_details_linear_layout"
@@ -38,7 +37,7 @@
                     app:srcCompat="@drawable/default_avatar" />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="200dp"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
@@ -70,6 +69,33 @@
                         android:layout_weight="1"
                         android:layout_marginLeft="5dp"
                         android:gravity="center_vertical" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+
+                    <TextView
+                        android:id="@+id/status_text"
+                        android:layout_width="113dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textColor="@color/colorButton"
+                        android:textStyle="bold"/>
+
+                    <ImageView
+                        android:id="@+id/design_idea_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:srcCompat="@drawable/discussing"
+                        android:scaleType="fitCenter">
+
+
+                    </ImageView>
 
                 </LinearLayout>
 
@@ -148,15 +174,7 @@
 
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/design_idea_status"
-            android:layout_width="0dp"
-            android:layout_height="145dp"
-            android:layout_weight=".05"
-            app:srcCompat="@drawable/discussing">
 
-
-        </ImageView>
 
     </LinearLayout>
 

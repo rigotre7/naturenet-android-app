@@ -163,6 +163,10 @@
     <!-- Design Ideas Fragment -->
     <!-- Layout -->
     <string name="design_ideas_title_design_ideas">Design Ideas</string>
+    <string name="discussing">Discussing</string>
+    <string name="developing">Developing</string>
+    <string name="testing">Testing</string>
+    <string name="done">Completed</string>
     <!-- Design Ideas Fragment -->
 
     <!-- Communities Fragment -->

@@ -95,6 +95,8 @@ public class IdeasFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
+                searchBar.getText().clear();
+
                 //clear any ideas that we may have already stored
                 ideas.clear();
                 //get all the ideas
@@ -147,7 +149,7 @@ public class IdeasFragment extends Fragment {
                         for(int i = 0; i<ideas.size(); i++){
                             Idea idea = ideas.get(i);
                             //check to see if the search query matches any content OR usernames
-                            if(idea.content.toLowerCase().contains(search) || getUserName(idea.submitter).contains(search))
+                            if(idea.content.toLowerCase().contains(search) || getUserName(idea.submitter).toLowerCase().contains(search))
                                 searchResults.add(ideas.get(i));
                         }
 

@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     int pastSelection = 0;
     int currentSelection =0;
     Stack<Integer> selectionStack;
+    ArrayList<Users> userList;
 
     /* Common submission items */
     static final private int REQUEST_CODE_CAMERA = 3;
@@ -126,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        userList = FetchData.getInstance().getUsers();
         setContentView(R.layout.activity_main);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toolbar = (Toolbar) findViewById(R.id.toolbar);

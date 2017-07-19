@@ -17,6 +17,8 @@ import org.naturenet.UploadService;
 import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Users;
 
+import java.util.ArrayList;
+
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
@@ -27,7 +29,7 @@ public class AddObservationActivity extends AppCompatActivity {
     public static final String EXTRA_LATITUDE = "latitude";
     public static final String EXTRA_LONGITUDE = "longitude";
 
-    Uri observationPath;
+    ArrayList<Uri> observationPaths;
     Observation newObservation;
     private Disposable mUserAuthSubscription;
     Users signed_user;
@@ -62,7 +64,7 @@ public class AddObservationActivity extends AppCompatActivity {
             newObservation.userId = user.id;
             newObservation.siteId = user.affiliation;
         }
-        observationPath = getIntent().getParcelableExtra(EXTRA_IMAGE_PATH);
+        observationPaths = getIntent().getParcelableArrayListExtra(EXTRA_IMAGE_PATH);
 
         getFragmentManager().
                 beginTransaction().
@@ -82,7 +84,7 @@ public class AddObservationActivity extends AppCompatActivity {
 
         Intent uploadIntent = new Intent(this, UploadService.class);
         uploadIntent.putExtra(UploadService.EXTRA_OBSERVATION, newObservation);
-        uploadIntent.putExtra(UploadService.EXTRA_URI_PATH, observationPath);
+        uploadIntent.putParcelableArrayListExtra(UploadService.EXTRA_URI_PATH, observationPaths);
         startService(uploadIntent);
 
         finish();

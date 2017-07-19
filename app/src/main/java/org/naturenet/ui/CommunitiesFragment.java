@@ -107,6 +107,12 @@ public class CommunitiesFragment extends Fragment {
             mFirebase.child(Users.NODE_NAME).orderByChild("display_name").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    acesList.clear();
+                    awsList.clear();
+                    rcncList.clear();
+                    elseList.clear();
+
                     //get all users and store in their respective ArrayList
                     for(DataSnapshot user: dataSnapshot.getChildren()){
                         Users u = user.getValue(Users.class);

@@ -144,7 +144,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         affiliation = (TextView) header.findViewById(R.id.nav_tv_affiliation);
         licenses = (TextView) navigationView.findViewById(R.id.licenses);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
@@ -152,6 +151,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         add_observation_button = (ImageView) findViewById(R.id.addObsButton);
         selectionStack = new Stack<>();
         selectedImages = new ArrayList<>();
+
+        if(getSupportActionBar() != null)
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
 
 
         licenses.setOnClickListener(new View.OnClickListener() {

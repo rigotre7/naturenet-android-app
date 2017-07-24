@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     LinearLayout dialog_add_observation;
     GridView gridview;
     ImageView add_observation_cancel, gallery_item, add_observation_button;
-    List<Uri> recentImageGallery, observationPaths;
+    List<Uri> recentImageGallery;
     ArrayList<Uri> selectedImages;
     double latValue, longValue;
 
@@ -308,7 +308,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View v) {
                 Picasso.with(MainActivity.this).cancelTag(ImageGalleryAdapter.class.getSimpleName());
-                observationPaths = selectedImages;
                 setGallery();
                 goToAddObservationActivity();
             }
@@ -744,7 +743,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case REQUEST_CODE_CAMERA: {
                 if (resultCode == MainActivity.RESULT_OK) {
                     Timber.d("Camera Path: %s", cameraPhoto.getPhotoPath());
-                    observationPath = Uri.fromFile(new File(cameraPhoto.getPhotoPath()));
+                    selectedImages.add(Uri.fromFile(new File(cameraPhoto.getPhotoPath())));
                     cameraPhoto.addToGallery();
                     setGallery();
                     goToAddObservationActivity();

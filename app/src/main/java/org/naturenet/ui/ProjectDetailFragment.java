@@ -6,19 +6,16 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +28,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.location.LocationServices;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.firebase.database.FirebaseDatabase;
@@ -221,7 +217,7 @@ public class ProjectDetailFragment extends Fragment {
                         startActivityForResult(intent, IMAGE_PICKER_RESULTS);
                     }
                 }else
-                    Toast.makeText(getActivity(), "Permission was rejected", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.permission_rejected, Toast.LENGTH_LONG).show();
 
 
             }
@@ -241,9 +237,9 @@ public class ProjectDetailFragment extends Fragment {
                     } catch (IOException e) {
                         Toast.makeText(getActivity(), "Something Wrong while taking photo", Toast.LENGTH_SHORT).show();
                     }
-                }else{
+                }else
+                    Toast.makeText(getActivity(), R.string.permission_rejected, Toast.LENGTH_LONG).show();
 
-                }
             }
         });
 
@@ -408,7 +404,8 @@ public class ProjectDetailFragment extends Fragment {
 
     @Override
     public void onResume() {
-        setGallery();
+        if(isStoragePermitted())
+            setGallery();
         selectedImages.clear();
         select.setVisibility(View.GONE);
         super.onResume();

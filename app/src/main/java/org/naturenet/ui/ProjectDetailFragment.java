@@ -68,6 +68,7 @@ public class ProjectDetailFragment extends Fragment {
     private List<Uri> recentImageGallery;
     private ArrayList<Uri> selectedImages;
     private CameraPhoto cameraPhoto;
+    private boolean imagesSelected = false;
 
     public static ProjectDetailFragment newInstance(Project p) {
         Bundle args = new Bundle();
@@ -324,6 +325,7 @@ public class ProjectDetailFragment extends Fragment {
                     selectedImages.add(Uri.fromFile(new File(cameraPhoto.getPhotoPath())));
                     cameraPhoto.addToGallery();
                     setGallery();
+                    imagesSelected = true;
                     goToAddObservationActivity(mProject);
                 }
                 break;
@@ -343,7 +345,9 @@ public class ProjectDetailFragment extends Fragment {
                     }
 
                     //Here we should have our selected images
+                    imagesSelected = true;
                     goToAddObservationActivity(mProject);
+
                 }
                 break;
             case IMAGE_PICKER_RESULTS:
@@ -406,8 +410,11 @@ public class ProjectDetailFragment extends Fragment {
     public void onResume() {
         if(isStoragePermitted())
             setGallery();
-        selectedImages.clear();
+        if(!imagesSelected)
+            selectedImages.clear();
+
         select.setVisibility(View.GONE);
+        imagesSelected = false;
         super.onResume();
 
     }

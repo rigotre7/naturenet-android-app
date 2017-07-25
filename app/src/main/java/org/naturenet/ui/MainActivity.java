@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Observation previewSelectedObservation;
     List<String> ids, names;
     DatabaseReference mFirebase;
-    Users signed_user;
+    static Users signed_user;
     Site user_home_site;
     DrawerLayout drawer;
     Toolbar toolbar;
@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ImageView add_observation_cancel, gallery_item, add_observation_button;
     List<Uri> recentImageGallery;
     ArrayList<Uri> selectedImages;
-    double latValue, longValue;
+    static double latValue, longValue;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -332,6 +332,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View v) {
                 setGallery();
                 select.setVisibility(View.GONE);
+                selectedImages.clear();
 
                 //Check to see if the user is on API 18 or above.
                 if(usingApiEighteenAndAbove()){

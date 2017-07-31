@@ -21,6 +21,8 @@ import org.naturenet.ui.IdeaDetailsActivity;
 import org.naturenet.ui.MainActivity;
 import org.naturenet.ui.ObservationActivity;
 
+import java.util.Date;
+
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -49,7 +51,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 NotificationManager notificationManager =
                         (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-                notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+                notificationManager.notify((int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE), notificationBuilder.build());
                 //if the comment was for an idea
             }else if(remoteMessage.getData().get("context").equals("ideas")){
 

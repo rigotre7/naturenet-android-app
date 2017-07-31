@@ -1,7 +1,5 @@
 package org.naturenet;
 
-import android.util.Log;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
@@ -13,7 +11,6 @@ import org.naturenet.data.model.Users;
 
 public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
-    private static final String TOKEN = "token";
     private static final String TOKEN_NODE = "notification_token";
 
     /**
@@ -24,11 +21,14 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
     @Override
     public void onTokenRefresh() {
         super.onTokenRefresh();
+
+        //get the token string and current user
         String tokenId = FirebaseInstanceId.getInstance().getToken();
-        Log.d(TOKEN, TOKEN + " is " + tokenId);
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
+        //if current user isn't null
         if(firebaseUser != null){
+            //push the token to the user's node
             FirebaseDatabase.getInstance().getReference()
                     .child(Users.NODE_NAME)
                     .child(firebaseUser.getUid())

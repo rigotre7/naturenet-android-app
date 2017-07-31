@@ -20,12 +20,13 @@ public class DeleteTokenService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
 
+        //Here we delete the FirebaseInstanceId which revokes all tokens.
+        //Then, call getToken which essentially calls onTokenRefresh() in MyFirebaseInstanceIDService.
         try {
 
             FirebaseInstanceId.getInstance().deleteInstanceId();
 
             FirebaseInstanceId.getInstance().getToken();
-
 
         } catch (IOException e) {
             e.printStackTrace();

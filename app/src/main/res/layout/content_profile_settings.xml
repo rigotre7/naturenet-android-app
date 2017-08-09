@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FrameLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_weight="1.0"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"
+        android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_weight="0.66"
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"
+        android:orientation="vertical">
+
+    <ImageView
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"
+        app:srcCompat="@drawable/default_avatar"
+        android:layout_marginTop="5.0dip"
+        android:id="@+id/profile_settings_user_pic"
+        android:layout_gravity="center_horizontal"/>
+
+</LinearLayout>
+
+
+    <LinearLayout
+        android:layout_weight="0.33"
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10.0dip"
+            android:layout_marginTop="25.0dip"
+            android:text="@string/username" />
+
+    <EditText
+        android:layout_height="wrap_content"
+        android:layout_width="589.0dip"
+        android:layout_marginTop="5.0dip"
+        android:id="@+id/profile_settings_username"
+        android:layout_marginLeft="10.0dip"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:layout_marginRight="20.0dip"/>
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="10.0dip"
+        android:id="@+id/textView4"
+        android:text="@string/bio"
+        android:layout_marginLeft="10.0dip"/>
+
+    <EditText
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_marginTop="5.0dip"
+        android:id="@+id/profile_settings_bio"
+        android:layout_marginLeft="10.0dip"
+        android:inputType="textAutoComplete"
+        android:ems="10" android:maxLength="100"
+        android:scrollHorizontally="false"/>
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="9.0dip"
+        android:id="@+id/textView5"
+        android:text="@string/affiliation"
+        android:layout_marginLeft="10.0dip"/>
+
+    <Spinner
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_marginTop="11.0dip"
+        android:id="@+id/profile_settings_affiliation_spinner"/>
+
+        <TextView
+            android:id="@+id/profile_settings_apply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginBottom="20.0dip"
+            android:text="@string/apply"
+            android:textColor="@color/colorTheme"
+            android:textStyle="bold" />
+
+</LinearLayout>
+
+</LinearLayout>
+
+
+    -<LinearLayout
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:orientation="vertical"
+    android:gravity="end|bottom|center">
+
+    <include
+        layout="@layout/dialog_add_observation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
+
+</FrameLayout>

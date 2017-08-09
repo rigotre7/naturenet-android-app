@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
+import org.naturenet.util.NatureNetUtils;
 
 import java.util.ArrayList;
 
@@ -50,7 +51,7 @@ public class AddObservationImageAdapter extends BaseAdapter {
 
         ImageView iv = (ImageView) view.findViewById(R.id.image_for_flipper);
 
-        Picasso.with(mContext).load(images.get(i)).into(iv);
+        NatureNetUtils.showImage(mContext, iv, images.get(i), false);
 
         return view;
 

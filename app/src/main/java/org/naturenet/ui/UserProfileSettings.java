@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -25,6 +26,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,7 +61,7 @@ public class UserProfileSettings extends AppCompatActivity {
     private static final int IMAGE_PICKER_RESULTS = 6;
     private static final int REQUEST_CODE_CAMERA = 3;
     private static final int REQUEST_CODE_GALLERY = 4;
-    private Spinner affiliationSpinner;
+    private EditText affiliationSpinner;
     private TextView applyChanges;
     private EditText bio;
     private Button cameraButton;
@@ -81,6 +83,7 @@ public class UserProfileSettings extends AppCompatActivity {
     private ArrayList<String> siteNames;
     private Toolbar toolbar;
     private EditText username;
+    private String affiliation;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -110,7 +113,7 @@ public class UserProfileSettings extends AppCompatActivity {
         profilePic = ((ImageView)findViewById(R.id.profile_settings_user_pic));
         bio = ((EditText)findViewById(R.id.profile_settings_bio));
         username = ((EditText)findViewById(R.id.profile_settings_username));
-        affiliationSpinner = ((Spinner)findViewById(R.id.profile_settings_affiliation_spinner));
+        affiliationSpinner = ((EditText) findViewById(R.id.profile_settings_affiliation_spinner));
         pictureLayout = ((LinearLayout)findViewById(R.id.ll_dialog_add_observation));
         cancelPicture = (ImageView) findViewById(R.id.dialog_add_observation_iv_cancel);
         selectPicture = ((TextView)findViewById(R.id.dialog_add_observation_tv_select));
@@ -145,6 +148,29 @@ public class UserProfileSettings extends AppCompatActivity {
                     pictureLayout.setVisibility(View.VISIBLE);
                     setGallery();
                 }
+            }
+        });
+
+        affiliationSpinner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View view = View.inflate(UserProfileSettings.this, R.layout.affiliation_list, null);
+                ListView lv_affiliation = (ListView) view.findViewById(R.id.join_lv_affiliation);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(v.getContext(), android.R.layout.simple_spinner_dropdown_item, names);
+                lv_affiliation.setAdapter(adapter);
+                AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext()).setView(view);
+                final AlertDialog affiliationList = builder.create();
+
+                lv_affiliation.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view1, int position, long id) {
+                        affiliationSpinner.setText(names[position]);
+                        affiliation = ids[position];
+                        affiliationList.dismiss();
+                    }
+                });
+
+                affiliationList.show();
             }
         });
 
@@ -229,9 +255,9 @@ public class UserProfileSettings extends AppCompatActivity {
                         uploadIntent.putExtra(EXTRA_PROFILE_PIC, selectedImage);
                         uploadIntent.putExtra("id", signed_user.id);
                         startService(uploadIntent);
-                        setUpdatedValues(bio.getText().toString(), username.getText().toString(), siteIds.get(affiliationSpinner.getSelectedItemPosition()));
+                        setUpdatedValues(bio.getText().toString(), username.getText().toString(), affiliation);
                     }else
-                        setUpdatedValues(bio.getText().toString(), username.getText().toString(), siteIds.get(affiliationSpinner.getSelectedItemPosition()));
+                        setUpdatedValues(bio.getText().toString(), username.getText().toString(), affiliation);
                 }else
                     Toast.makeText(UserProfileSettings.this, "Username cannot be blank.", Toast.LENGTH_SHORT).show();
             }
@@ -284,9 +310,8 @@ public class UserProfileSettings extends AppCompatActivity {
         }
         siteIds = new ArrayList<>(Arrays.asList(ids));
         siteNames = new ArrayList<>(Arrays.asList(names));
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(UserProfileSettings.this, android.R.layout.simple_spinner_dropdown_item, siteNames);
-        affiliationSpinner.setAdapter(adapter);
-        affiliationSpinner.setSelection(siteIds.indexOf(signed_user.affiliation));
+        affiliationSpinner.setText(siteNames.get(siteIds.indexOf(signed_user.affiliation)));
+        affiliation = signed_user.affiliation;
     }
 
     public List<Uri> getRecentImagesUris() {

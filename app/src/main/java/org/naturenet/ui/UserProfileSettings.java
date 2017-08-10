@@ -54,6 +54,7 @@ import timber.log.Timber;
 public class UserProfileSettings extends AppCompatActivity {
     public static final String EXTRA_SITE_IDS = "ids";
     public static final String EXTRA_SITE_NAMES = "names";
+    public static final String EXTRA_PROFILE_PIC = "profile_pic";
     private static final int GALLERY_IMAGES = 100;
     private static final int IMAGE_PICKER_RESULTS = 6;
     private static final int REQUEST_CODE_CAMERA = 3;
@@ -121,18 +122,21 @@ public class UserProfileSettings extends AppCompatActivity {
 
         dbRef.child(Users.NODE_NAME).child(signed_user.id).addListenerForSingleValueEvent(new ValueEventListener()
         {
-            public void onCancelled(DatabaseError paramAnonymousDatabaseError) {}
-
             public void onDataChange(DataSnapshot dataSnapshot)
             {
                 signed_user = dataSnapshot.getValue(Users.class);
                 setCurrentValues();
             }
+
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
         });
 
         profilePic.setOnClickListener(new View.OnClickListener()
         {
-            public void onClick(View paramAnonymousView)
+            public void onClick(View view)
             {
                 if (ContextCompat.checkSelfPermission(UserProfileSettings.this, "android.permission.WRITE_EXTERNAL_STORAGE") != 0) {
                     ActivityCompat.requestPermissions(UserProfileSettings.this, new String[] { "android.permission.WRITE_EXTERNAL_STORAGE" }, 4);
@@ -146,7 +150,7 @@ public class UserProfileSettings extends AppCompatActivity {
 
         cancelPicture.setOnClickListener(new View.OnClickListener()
         {
-            public void onClick(View paramAnonymousView)
+            public void onClick(View view)
             {
                 pictureLayout.setVisibility(View.GONE);
                 selectedImage = null;
@@ -156,9 +160,9 @@ public class UserProfileSettings extends AppCompatActivity {
 
         selectPicture.setOnClickListener(new View.OnClickListener()
         {
-            public void onClick(View paramAnonymousView)
+            public void onClick(View view)
             {
-                NatureNetUtils.showImage(getApplicationContext(), profilePic, selectedImage, true);
+                NatureNetUtils.showImage(getApplicationContext(), profilePic, selectedImage, true, false);
                 pictureLayout.setVisibility(View.GONE);
             }
         });
@@ -202,6 +206,7 @@ public class UserProfileSettings extends AppCompatActivity {
                         startActivityForResult(Intent.createChooser(galleryIntent,"Select Picture"), GALLERY_IMAGES);
                     }else{
                         Intent imagePickerIntent = new Intent(getApplicationContext(), ImagePicker.class);
+                        imagePickerIntent.putExtra(EXTRA_PROFILE_PIC, true);
                         startActivityForResult(imagePickerIntent, IMAGE_PICKER_RESULTS);
                     }
 
@@ -220,7 +225,7 @@ public class UserProfileSettings extends AppCompatActivity {
                     //if they actually selected a different image
                     if (selectedImage != null) {
                         Intent uploadIntent = new Intent(UserProfileSettings.this, UploadService.class);
-                        uploadIntent.putExtra("profile_pic", selectedImage);
+                        uploadIntent.putExtra(EXTRA_PROFILE_PIC, selectedImage);
                         uploadIntent.putExtra("id", signed_user.id);
                         startService(uploadIntent);
                         setUpdatedValues(bio.getText().toString(), username.getText().toString(), siteIds.get(affiliationSpinner.getSelectedItemPosition()));
@@ -242,7 +247,7 @@ public class UserProfileSettings extends AppCompatActivity {
                 if(resultCode == RESULT_OK){
                     if(data!=null){
                         selectedImage = data.getData();
-                        NatureNetUtils.showImage(this, profilePic, selectedImage, true);
+                        NatureNetUtils.showImage(this, profilePic, selectedImage, true, false);
                         pictureLayout.setVisibility(View.GONE);
                     }
                 }
@@ -250,10 +255,17 @@ public class UserProfileSettings extends AppCompatActivity {
             case REQUEST_CODE_CAMERA:
                 if(resultCode == RESULT_OK){
                     selectedImage = Uri.fromFile(new File(cameraPhoto.getPhotoPath()));
-                    NatureNetUtils.showImage(this, profilePic, selectedImage, true);
+                    NatureNetUtils.showImage(this, profilePic, selectedImage, true, true);
                     pictureLayout.setVisibility(View.GONE);
                 }
                 break;
+            case IMAGE_PICKER_RESULTS:
+                if(resultCode == RESULT_OK){
+                    ArrayList<Uri> images = data.getParcelableArrayListExtra("images");
+                    selectedImage = images.get(0);
+                    NatureNetUtils.showImage(this, profilePic, selectedImage, true, false);
+                    pictureLayout.setVisibility(View.GONE);
+                }
         }
 
     }
@@ -355,6 +367,7 @@ public class UserProfileSettings extends AppCompatActivity {
                     } else if (selectedImage == recentImageGallery.get(position)) {
                         selectedImage = null;
                         iv.setBackgroundResource(0);
+                        selectPicture.setVisibility(View.GONE);
                     } else {
                         //get index of item that was previously selected
                         int i = recentImageGallery.indexOf(selectedImage);

@@ -889,7 +889,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         affiliation.setVisibility(View.VISIBLE);
         sign_in.setVisibility(View.GONE);
         join.setVisibility(View.GONE);
-        //drawer.openDrawer(GravityCompat.START);
     }
 
     public boolean usingApiEighteenAndAbove(){

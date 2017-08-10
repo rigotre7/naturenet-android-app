@@ -72,7 +72,6 @@ public class NatureNetUtils {
 
                 //Check to see if it's a profile image we're displaying. If so, we can use the cropped circle transformation
                 if(isProfileImage) {
-                    //Check to see if it's an image coming from the camera. If so, no rotation needed.
                     if(!isFromCamera)
                         p.load(selectedImage).noFade().transform(mAvatarTransform).rotate(getOrientation(rotation)).into(image);
                     else

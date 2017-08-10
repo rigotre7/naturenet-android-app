@@ -222,6 +222,7 @@ public class UserProfileSettings extends AppCompatActivity {
             {
                 //make sure username text isn't blank
                 if (username.getText().toString().length() != 0) {
+                    applyChanges.setVisibility(View.GONE);
                     //if they actually selected a different image
                     if (selectedImage != null) {
                         Intent uploadIntent = new Intent(UserProfileSettings.this, UploadService.class);

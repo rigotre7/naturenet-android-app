@@ -294,7 +294,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View v) {
                 Picasso.with(MainActivity.this).cancelTag(ImageGalleryAdapter.class.getSimpleName());
                 setGallery();
-                goToAddObservationActivity();
+                goToAddObservationActivity(false);
             }
         });
 
@@ -677,9 +677,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivityForResult(login, REQUEST_CODE_LOGIN);
     }
 
-    public void goToAddObservationActivity() {
+    public void goToAddObservationActivity(boolean fromCamera) {
         Intent addObservation = new Intent(this, AddObservationActivity.class);
         addObservation.putParcelableArrayListExtra(AddObservationActivity.EXTRA_IMAGE_PATH, selectedImages);
+        addObservation.putExtra("fromCamera", fromCamera);
         addObservation.putExtra(AddObservationActivity.EXTRA_LATITUDE, latValue);
         addObservation.putExtra(AddObservationActivity.EXTRA_LONGITUDE, longValue);
         addObservation.putExtra(AddObservationActivity.EXTRA_USER, signed_user);
@@ -791,7 +792,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     selectedImages.add(Uri.fromFile(new File(cameraPhoto.getPhotoPath())));
                     cameraPhoto.addToGallery();
                     setGallery();
-                    goToAddObservationActivity();
+                    goToAddObservationActivity(true);
                 }
                 break;
             }
@@ -801,7 +802,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Timber.d("Gallery Path: %s", galleryPhoto.getPath());
                     observationPath = Uri.fromFile(new File(galleryPhoto.getPath()));
                     setGallery();
-                    goToAddObservationActivity();
+                    goToAddObservationActivity(false);
                 }
                 break;
             }
@@ -823,7 +824,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
 
                     //Here we should have our selected images
-                    goToAddObservationActivity();
+                    goToAddObservationActivity(false);
                 }
                 break;
             }
@@ -831,7 +832,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case IMAGE_PICKER_RESULTS: {
                 if(resultCode == MainActivity.RESULT_OK){
                     selectedImages = data.getParcelableArrayListExtra("images");
-                    goToAddObservationActivity();
+                    goToAddObservationActivity(false);
                 }
             }
         }

@@ -51,7 +51,11 @@ public class AddObservationImageAdapter extends BaseAdapter {
 
         ImageView iv = (ImageView) view.findViewById(R.id.image_for_flipper);
 
-        NatureNetUtils.showImage(mContext, iv, images.get(i), false);
+        //if there's only one image, we know it came from the camera
+        if(getCount() == 1)
+            NatureNetUtils.showImage(mContext, iv, images.get(i), false, true);
+        else
+            NatureNetUtils.showImage(mContext, iv, images.get(i), false, false);
 
         return view;
 

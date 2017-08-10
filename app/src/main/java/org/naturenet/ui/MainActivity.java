@@ -220,7 +220,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         nav_iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                goToProfileSettingsActivity();
+                if(signed_user != null)
+                    goToProfileSettingsActivity();
             }
         });
 

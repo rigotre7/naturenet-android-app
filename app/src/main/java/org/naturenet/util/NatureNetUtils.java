@@ -55,8 +55,9 @@ public class NatureNetUtils {
      * @param image - The ImageView where the image will be displayed.
      * @param selectedImage - The URI of the image to be displayed.
      * @param isProfileImage - Whether or not the image is a profile pic. If it is, it will have the cropped circle transformation. Otherwise, it will be displayed as is.
+     * @param isFromCamera - Whether or not the image is coming from the camera intent.
      */
-    public static void showImage(Context context, ImageView image, Uri selectedImage, boolean isProfileImage){
+    public static void showImage(Context context, ImageView image, Uri selectedImage, boolean isProfileImage, boolean isFromCamera){
 
         Picasso p = Picasso.with(context);
         p.setIndicatorsEnabled(false);
@@ -70,10 +71,19 @@ public class NatureNetUtils {
                 int rotation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
 
                 //Check to see if it's a profile image we're displaying. If so, we can use the cropped circle transformation
-                if(isProfileImage)
-                    p.load(selectedImage).noFade().transform(mAvatarTransform).rotate(getOrientation(rotation)).into(image);
-                else
-                    p.load(selectedImage).noFade().rotate(getOrientation(rotation)).into(image);
+                if(isProfileImage) {
+                    //Check to see if it's an image coming from the camera. If so, no rotation needed.
+                    if(!isFromCamera)
+                        p.load(selectedImage).noFade().transform(mAvatarTransform).rotate(getOrientation(rotation)).into(image);
+                    else
+                        p.load(selectedImage).noFade().transform(mAvatarTransform).into(image);
+                }
+                else {
+                    if(!isFromCamera)
+                        p.load(selectedImage).noFade().rotate(getOrientation(rotation)).into(image);
+                    else
+                        p.load(selectedImage).noFade().into(image);
+                }
 
                 stream.close();
             }
@@ -159,7 +169,7 @@ public class NatureNetUtils {
                 rotate = 180;
                 break;
             case ExifInterface.ORIENTATION_ROTATE_90:
-                rotate = 0;
+                rotate = 90;
                 break;
             default:
                 rotate =0;

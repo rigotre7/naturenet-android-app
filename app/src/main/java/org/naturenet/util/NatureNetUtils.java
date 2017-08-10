@@ -159,7 +159,7 @@ public class NatureNetUtils {
                 rotate = 180;
                 break;
             case ExifInterface.ORIENTATION_ROTATE_90:
-                rotate = 90;
+                rotate = 0;
                 break;
             default:
                 rotate =0;

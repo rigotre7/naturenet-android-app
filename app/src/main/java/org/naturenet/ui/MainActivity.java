@@ -71,6 +71,7 @@ import org.naturenet.util.NatureNetUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.List;
 import java.util.Stack;
 
@@ -218,6 +219,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //click listener for when user selects profile image
         nav_iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(signed_user != null)
+                    goToProfileSettingsActivity();
+            }
+        });
+
+        display_name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(signed_user != null)
+                    goToProfileSettingsActivity();
+            }
+        });
+
+        affiliation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(signed_user != null)
@@ -522,7 +539,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     *   Override back button action.
      */
     @Override
-    public void onBackPressed() {
+    public void onBackPressed() throws EmptyStackException{
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if(getFragmentManager().getBackStackEntryCount() == 0) {
@@ -530,15 +547,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if(getFragmentManager().getBackStackEntryCount() > 0){
             //we must redraw the menu
             this.invalidateOptionsMenu();
-            //store id of menu item that we will be un-highlighting
-            pastSelection = selectionStack.pop();
-            //if we still have items in our stack
-            if(selectionStack.size()>0){
-                //store the current selection
-                currentSelection = selectionStack.peek();
-            }else
-                currentSelection = 0;   //otherwise, set the current selection as 0 so we know we've reached the end of our stack
-            super.onBackPressed();
+            try{
+                //store id of menu item that we will be un-highlighting
+                pastSelection = selectionStack.pop();
+                //if we still have items in our stack
+                if(selectionStack.size()>0){
+                    //store the current selection
+                    currentSelection = selectionStack.peek();
+                }else
+                    currentSelection = 0;   //otherwise, set the current selection as 0 so we know we've reached the end of our stack
+                super.onBackPressed();
+            }catch (EmptyStackException e){
+                finish();
+            }
         }else
             super.onBackPressed();
     }

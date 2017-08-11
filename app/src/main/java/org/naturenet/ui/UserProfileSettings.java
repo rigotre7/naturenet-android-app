@@ -306,7 +306,7 @@ public class UserProfileSettings extends AppCompatActivity {
         bio.setText(signed_user.bio);
         username.setText(signed_user.displayName);
         if ((signed_user.avatar != null) && (signed_user.avatar.length() > 0)) {
-            picasso.load(signed_user.avatar).transform(new CroppedCircleTransformation()).noFade().into(this.profilePic);
+            picasso.load(signed_user.avatar).transform(new CroppedCircleTransformation()).noFade().placeholder(R.drawable.default_avatar).into(this.profilePic);
         }
         siteIds = new ArrayList<>(Arrays.asList(ids));
         siteNames = new ArrayList<>(Arrays.asList(names));

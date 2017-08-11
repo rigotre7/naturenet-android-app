@@ -1,6 +1,7 @@
 package org.naturenet.ui;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -27,7 +28,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -84,6 +84,7 @@ public class UserProfileSettings extends AppCompatActivity {
     private Toolbar toolbar;
     private EditText username;
     private String affiliation;
+    private ProgressDialog dialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -249,6 +250,8 @@ public class UserProfileSettings extends AppCompatActivity {
                 //make sure username text isn't blank
                 if (username.getText().toString().length() != 0) {
                     applyChanges.setVisibility(View.GONE);
+                    dialog = ProgressDialog.show(UserProfileSettings.this, "", "Updating", true, false);
+                    dialog.show();
                     //if they actually selected a different image
                     if (selectedImage != null) {
                         Intent uploadIntent = new Intent(UserProfileSettings.this, UploadService.class);
@@ -443,6 +446,7 @@ public class UserProfileSettings extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 Toast.makeText(UserProfileSettings.this, "Profile updated.", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
                 finish();
             }
         });

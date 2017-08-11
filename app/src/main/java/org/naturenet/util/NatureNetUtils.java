@@ -73,15 +73,15 @@ public class NatureNetUtils {
                 //Check to see if it's a profile image we're displaying. If so, we can use the cropped circle transformation
                 if(isProfileImage) {
                     if(!isFromCamera)
-                        p.load(selectedImage).noFade().transform(mAvatarTransform).rotate(getOrientation(rotation)).placeholder(R.drawable.default_avatar).into(image);
+                        p.load(selectedImage).noFade().transform(mAvatarTransform).rotate(getOrientation(rotation)).into(image);
                     else
-                        p.load(selectedImage).noFade().transform(mAvatarTransform).placeholder(R.drawable.default_avatar).into(image);
+                        p.load(selectedImage).noFade().transform(mAvatarTransform).into(image);
                 }
                 else {
                     if(!isFromCamera)
-                        p.load(selectedImage).noFade().rotate(getOrientation(rotation)).placeholder(R.drawable.default_avatar).into(image);
+                        p.load(selectedImage).noFade().rotate(getOrientation(rotation)).into(image);
                     else
-                        p.load(selectedImage).noFade().placeholder(R.drawable.default_avatar).into(image);
+                        p.load(selectedImage).noFade().into(image);
                 }
 
                 stream.close();

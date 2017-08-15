@@ -1,8 +1,11 @@
 package org.naturenet.ui;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -15,6 +18,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.common.base.Optional;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -47,7 +52,7 @@ public class IdeaDetailsFragment extends Fragment {
     private DatabaseReference dbRef;
     private IdeaDetailsActivity ideaAct;
     private ImageView userPic, likeButton, dislikeButton, status;
-    private TextView userName, userAffiliation, submittedDate, ideaContent, likesNum, dislikeNum, sendButton;
+    private TextView userName, userAffiliation, submittedDate, ideaContent, likesNum, dislikeNum, sendButton, editButton, deleteButton;
     private ListView commentList;
     private EditText commentText;
     private Collection list;
@@ -88,6 +93,8 @@ public class IdeaDetailsFragment extends Fragment {
         sendButton = (TextView) ideaAct.findViewById(R.id.design_idea_comment_send);
         commentText = (EditText) ideaAct.findViewById(R.id.design_idea_comment);
         status = (ImageView) ideaAct.findViewById(R.id.idea_status_iv);
+        editButton = (TextView) ideaAct.findViewById(R.id.editIdeaButton);
+        deleteButton = (TextView) ideaAct.findViewById(R.id.deleteIdeaButton);
         idea = ideaAct.idea;
 
         ideaContent.setText(ideaAct.idea.content);
@@ -116,6 +123,12 @@ public class IdeaDetailsFragment extends Fragment {
             }
         }
 
+        //if the signed in user is the user who submitted the idea, display the edit and delete buttons
+        if(!idea.submitter.equals(ideaAct.signed_user.id)){
+            editButton.setVisibility(View.GONE);
+            deleteButton.setVisibility(View.GONE);
+        }
+
         if(ideaAct.signed_user!=null){
             //check to see if the current user has liked the design idea
             if(idea.likes!=null && idea.likes.containsKey(ideaAct.signed_user.id) && idea.likes.get(ideaAct.signed_user.id)){
@@ -124,6 +137,76 @@ public class IdeaDetailsFragment extends Fragment {
                 dislikeButton.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.dislike));
             }
         }
+
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder editPopup = new AlertDialog.Builder(getActivity());
+                editPopup.setTitle("Edit Idea");
+
+                final EditText text = new EditText(getActivity());
+                text.setText(idea.content);
+                editPopup.setView(text);
+
+                editPopup.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    dbRef.child(Idea.NODE_NAME).child(idea.id).child("content").setValue(text.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                ideaContent.setText(text.getText().toString());
+                            }else
+                                Toast.makeText(ideaAct, "Couldn't edit idea", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    }
+                });
+
+                editPopup.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+
+                editPopup.show();
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder deletePopup = new AlertDialog.Builder(getActivity());
+                deletePopup.setTitle("Delete");
+                deletePopup.setMessage("Are you sure you want to delete your Design Idea?");
+
+                deletePopup.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dbRef.child(Idea.NODE_NAME).child(idea.id).child("status").setValue("deleted").addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Toast.makeText(ideaAct, "Design Idea deleted", Toast.LENGTH_SHORT).show();
+                                    ideaAct.finish();
+                                }else
+                                    Toast.makeText(ideaAct, "Could not delete idea", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+
+                deletePopup.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+
+                deletePopup.show();
+            }
+        });
 
         likeButton.setOnClickListener(new View.OnClickListener() {
             @Override

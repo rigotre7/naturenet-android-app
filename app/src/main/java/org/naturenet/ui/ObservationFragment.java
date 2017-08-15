@@ -405,6 +405,8 @@ public class ObservationFragment extends Fragment {
                 editPopup.setTitle("Edit Caption");
 
                 final EditText text = new EditText(getActivity());
+                text.setSingleLine();
+                text.setText(observation.data.text);
                 editPopup.setView(text);
 
                 editPopup.setPositiveButton("Ok", new DialogInterface.OnClickListener() {

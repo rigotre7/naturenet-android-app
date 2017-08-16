@@ -27,7 +27,7 @@ public class ProjectActivity extends AppCompatActivity {
         }
 
         getFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, ProjectDetailFragment.newInstance(project), ProjectDetailFragment.FRAGMENT_TAG)
+                .add(R.id.fragment_container, ProjectDetailFragment.newInstance(project, project.submitter), ProjectDetailFragment.FRAGMENT_TAG)
                 .commit();
     }
 

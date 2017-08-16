@@ -85,6 +85,19 @@
             style="@style/project_tv_recent_contributions"/>
 
         <TextView
+            android:id="@+id/editProjectButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/project_tv_recent_contributions"
+            android:layout_toEndOf="@+id/project_tv_recent_contributions"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:gravity="end"
+            android:textStyle="bold"
+            android:textColor="@color/colorTheme"
+            android:text="Edit" />
+
+        <TextView
             android:id="@+id/project_tv_no_recent_contributions"
             android:layout_centerInParent="true"
             android:layout_below="@id/project_tv_recent_contributions"

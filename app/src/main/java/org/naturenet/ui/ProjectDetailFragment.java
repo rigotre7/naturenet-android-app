@@ -1,7 +1,9 @@
 package org.naturenet.ui;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -22,14 +24,18 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.kosalgeek.android.photoutil.CameraPhoto;
@@ -58,7 +64,7 @@ public class ProjectDetailFragment extends Fragment {
     static final private int IMAGE_PICKER_RESULTS = 6;
     static final private int GALLERY_IMAGES = 100;
 
-    private TextView mName, mStatus, mDescription, mEmpty, select;
+    private TextView mName, mStatus, mDescription, mEmpty, select, editButton;
     private ImageView mIcon, mStatusIcon;
     private GridView mGvObservations, gridview;
     private Project mProject;
@@ -69,10 +75,12 @@ public class ProjectDetailFragment extends Fragment {
     private ArrayList<Uri> selectedImages;
     private CameraPhoto cameraPhoto;
     private boolean imagesSelected = false;
+    private DatabaseReference dbRef;
 
-    public static ProjectDetailFragment newInstance(Project p) {
+    public static ProjectDetailFragment newInstance(Project p, String id) {
         Bundle args = new Bundle();
         args.putParcelable(ARG_PROJECT, p);
+        args.putString("id", id);
         ProjectDetailFragment frag = new ProjectDetailFragment();
         frag.setArguments(args);
         frag.setRetainInstance(true);
@@ -100,8 +108,10 @@ public class ProjectDetailFragment extends Fragment {
         gallery = (Button) getActivity().getWindow().findViewById(R.id.dialog_add_observation_b_gallery);
         select = (TextView) getActivity().getWindow().findViewById(R.id.dialog_add_observation_tv_select);
         gridview = (GridView) getActivity().getWindow().findViewById(R.id.dialog_add_observation_gv);
+        editButton = (TextView) view.findViewById(R.id.editProjectButton);
         selectedImages = new ArrayList<>();
         cameraPhoto = new CameraPhoto(getActivity());
+        dbRef = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -114,6 +124,55 @@ public class ProjectDetailFragment extends Fragment {
             return;
         }
         mProject = getArguments().getParcelable(ARG_PROJECT);
+        String id = getArguments().getString("id");
+
+        if(mProject.submitter!=null){
+            if(!mProject.submitter.equals(MainActivity.signed_user.id)){
+                editButton.setVisibility(View.GONE);
+            }
+        }
+
+        if(id!=null){
+            if(!id.equals(MainActivity.signed_user.id)){
+                editButton.setVisibility(View.GONE);
+            }
+        }
+
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder editPopup = new AlertDialog.Builder(getActivity());
+                editPopup.setTitle("Edit Project");
+
+                final EditText text = new EditText(getActivity());
+                text.setText(mProject.description);
+                editPopup.setView(text);
+
+                editPopup.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                       dbRef.child(Project.NODE_NAME).child(mProject.id).child("description").setValue(text.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                           @Override
+                           public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    mDescription.setText(text.getText().toString());
+                                }else
+                                    Toast.makeText(getActivity(), "Could not edit Project", Toast.LENGTH_SHORT).show();
+                           }
+                       });
+                    }
+                });
+
+                editPopup.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+
+                editPopup.show();
+            }
+        });
 
         mName.setText(mProject.name);
         dialog_add_obs.setVisibility(View.GONE);

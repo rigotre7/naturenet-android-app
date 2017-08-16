@@ -62,6 +62,7 @@ public class ProjectsFragment extends Fragment {
     private HashMap<String, List<Project>> resultsMap;
     private boolean activeSearch, isExpanded, isDataLoaded;
     private TextWatcher textWatcher;
+    private ValueEventListener projectListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -175,11 +176,7 @@ public class ProjectsFragment extends Fragment {
         });
 
         createSearchListener();
-        getProjects();
-    }
-
-    private void getProjects(){
-        dbRef.child(Project.NODE_NAME).addValueEventListener(new ValueEventListener() {
+        projectListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //clear the projectslist prior to checking for projects
@@ -232,7 +229,8 @@ public class ProjectsFragment extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        };
+        dbRef.child(Project.NODE_NAME).addValueEventListener(projectListener);
     }
 
     private void setProjectSearchResults(List<Project> aces, List<Project> aws, List<Project> elsewhere, List<Project> rcnc){
@@ -440,6 +438,12 @@ public class ProjectsFragment extends Fragment {
             }
         };
 
+    }
+
+    @Override
+    public void onDestroyView() {
+        dbRef.child(Project.NODE_NAME).removeEventListener(projectListener);
+        super.onDestroyView();
     }
 
     @Override

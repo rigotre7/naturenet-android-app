@@ -3,22 +3,25 @@ package org.naturenet;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.contrib.DrawerActions.open;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+
 
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 import static android.support.test.espresso.matcher.ViewMatchers.Visibility.VISIBLE;
 
 import android.support.test.espresso.matcher.BoundedMatcher;
-import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 
@@ -28,15 +31,13 @@ import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.naturenet.data.model.Idea;
-import org.naturenet.data.model.Observation;
 import org.naturenet.ui.MainActivity;
 
 @RunWith(AndroidJUnit4.class)
 public class DesignIdeasTests {
 
     final static String DESIGN_IDEAS = "Design Ideas";
-    final static String NEW_IDEA = "New Idea";
+    final static String NEW_IDEA = "Gpj36tb7";
 
 
     @Rule
@@ -48,7 +49,7 @@ public class DesignIdeasTests {
         //open nav drawer
         onView(withId(R.id.drawer_layout)).perform(open());
 
-        wait(2000);
+        Thread.sleep(2000);
 
         //select design ideas
         onView(allOf(withText(DESIGN_IDEAS), withEffectiveVisibility(VISIBLE))).perform(click());
@@ -62,30 +63,15 @@ public class DesignIdeasTests {
         //click send button
         onView(withId(R.id.design_idea_send_button)).perform(click());
 
-        wait(2000);
+        Thread.sleep(2000);
 
-        onData(allOf(is(instanceOf(Idea.class)), withContent(NEW_IDEA))).atPosition(0);
+        //click on the first design idea which should be the one we just created
+        onData(anything()).inAdapterView(withId(R.id.design_ideas_lv)).atPosition(0).perform(click());
 
+        //check to see that the idea content matches what we just submitted
+        onView(withId(R.id.design_ideas_content)).check(matches(withText(NEW_IDEA)));
     }
 
-
-
-
-
-
-    public static Matcher withContent(final String content){
-        return new BoundedMatcher<Object, Idea>(Idea.class) {
-            @Override
-            protected boolean matchesSafely(Idea idea) {
-                return content.equals(idea.content);
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("with content: " + content);
-            }
-        };
-    }
 }
 
 

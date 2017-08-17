@@ -28,6 +28,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.naturenet.data.model.Observation;
+import org.naturenet.data.model.Project;
 import org.naturenet.ui.MainActivity;
 
 
@@ -36,9 +37,6 @@ import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 
-/**
- * Created by rigot on 2/14/2017.
- */
 
 @RunWith(AndroidJUnit4.class)
 public class DrawerNavigationTest {
@@ -47,7 +45,6 @@ public class DrawerNavigationTest {
     static String PROJECTS = "Projects";
     static String DESIGN_IDEAS = "Design Ideas";
     static String EXPLORE = "Explore";
-    static String GALLERY = "Gallery";
     static String TRACKS = "Tracks";
     static String NATURENET = "NatureNet";
     static String MUSHROOMS = "Mushrooms";
@@ -98,16 +95,6 @@ public class DrawerNavigationTest {
         //make sure we're on the correct screen
         onView(withId(R.id.app_bar_main_tv)).check(matches(withText(NATURENET)));
 
-        //open the nav drawer
-        onView(withId(R.id.drawer_layout)).perform(open());
-
-        //click on Gallery link
-        onView(allOf(withText(R.string.nav_gallery), withEffectiveVisibility(VISIBLE))).perform(click());
-
-        //make sure we are on the Gallery screen
-        onView(allOf(isAssignableFrom(TextView.class), withParent(isAssignableFrom(Toolbar.class)))).check(matches(withText(GALLERY)));
-
-
     }
 
     @Test
@@ -153,34 +140,11 @@ public class DrawerNavigationTest {
         onView(withContentDescription("Navigate up")).perform(click());
     }
 
-    @Test
-    public void view_gallery_test(){
-
-        //open drawer
-        onView(withId(R.id.drawer_layout)).perform(open());
-
-        //open gallery link
-        onView(allOf(withText(R.string.nav_gallery), withEffectiveVisibility(VISIBLE))).perform(click());
-
-        onData(anything()).inAdapterView(withId(R.id.observation_gallery)).atPosition(0).perform(click());
-
-        onView(withContentDescription("Navigate up")).perform(click());
-
-        onData(anything()).inAdapterView(withId(R.id.observation_gallery)).atPosition(6).perform(click());
-
-        onView(withContentDescription("Navigate up")).perform(click());
-
-        onData(anything()).inAdapterView(withId(R.id.observation_gallery)).atPosition(10).perform(click());
-
-
-    }
-
-
 
     /*
     CUSTOM MATCHERS
      */
-    public static Matcher withName (final String name) {
+    public static BoundedMatcher<Object, Observation> withName (final String name) {
         return new BoundedMatcher<Object, Observation>(Observation.class) {
             @Override
             protected boolean matchesSafely(Observation obs) {
@@ -194,7 +158,7 @@ public class DrawerNavigationTest {
         };
     }
 
-    public static Matcher withSiteId (final String name){
+    public static BoundedMatcher<Object, Observation> withSiteId (final String name){
         return new BoundedMatcher<Object, Observation>(Observation.class){
             @Override
             protected boolean matchesSafely(Observation item) {

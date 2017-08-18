@@ -3,6 +3,7 @@ package org.naturenet.ui;
 import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -62,6 +63,7 @@ import com.squareup.picasso.Picasso;
 
 import org.naturenet.NatureNetApplication;
 import org.naturenet.R;
+import org.naturenet.data.model.Idea;
 import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Project;
 import org.naturenet.data.model.Site;
@@ -152,9 +154,51 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         add_observation_button = (ImageView) findViewById(R.id.addObsButton);
         selectionStack = new Stack<>();
         selectedImages = new ArrayList<>();
+        mFirebase = FirebaseDatabase.getInstance().getReference();
 
         if(getSupportActionBar() != null)
             getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        //Handle the intent from Firebase Notifications.
+        if(getIntent().getExtras() != null){
+            Bundle dataBundle = getIntent().getExtras();
+            //get the parent and context
+            String parent = (String) dataBundle.get("parent");
+            String context = (String) dataBundle.get("context");
+
+            if(parent != null && context != null){
+                if(context.equals("observation")){
+                    Intent observationIntent = new Intent(MainActivity.this, ObservationActivity.class);
+                    observationIntent.putExtra("id", parent);
+                    startActivity(observationIntent);
+                }else{
+                    final Intent ideaIntent = new Intent(MainActivity.this, IdeaDetailsActivity.class);
+                    final ProgressDialog dialog;
+                    dialog = ProgressDialog.show(MainActivity.this, "Loading", "", true, false);
+                    dialog.show();
+
+                    mFirebase.child(Idea.NODE_NAME).child(parent).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Idea idea = dataSnapshot.getValue(Idea.class);
+                            ideaIntent.putExtra("idea", idea);
+                            dialog.dismiss();
+                            startActivity(ideaIntent);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Toast.makeText(MainActivity.this, "Could not load Design Idea", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                }
+            }
+
+            Log.d("gpj3", "Parent: " + parent);
+            Log.d("gpj3", "Context:" + context);
+
+        }
 
 
         licenses.setOnClickListener(new View.OnClickListener() {
@@ -209,7 +253,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        mFirebase = FirebaseDatabase.getInstance().getReference();
         showNoUser();
 
         getFragmentManager()
@@ -399,6 +442,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             });
         }
     }
+
+//    @Override
+//    protected void onNewIntent(Intent intent) {
+//        if(getIntent().getExtras()!=null){
+//            Toast.makeText(this, "got the intent", Toast.LENGTH_SHORT).show();
+//            for (String key : getIntent().getExtras().keySet()) {
+//                Object value = getIntent().getExtras().get(key);
+//                Log.d("gpj3", "Key: " + key + " Value: " + value);
+//            }
+//        }else {
+//            Log.d("gpj3", "null");
+//            Toast.makeText(this, "nullllll", Toast.LENGTH_SHORT).show();
+//        }
+//        super.onNewIntent(intent);
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

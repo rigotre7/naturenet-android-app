@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if(parent != null && context != null){
                 if(context.equals("observation")){
                     Intent observationIntent = new Intent(MainActivity.this, ObservationActivity.class);
-                    observationIntent.putExtra("id", parent);
+                    observationIntent.putExtra("observation", parent);
                     startActivity(observationIntent);
                 }else{
                     final Intent ideaIntent = new Intent(MainActivity.this, IdeaDetailsActivity.class);
@@ -194,9 +194,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 }
             }
-
-            Log.d("gpj3", "Parent: " + parent);
-            Log.d("gpj3", "Context:" + context);
 
         }
 

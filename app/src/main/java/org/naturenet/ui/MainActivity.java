@@ -57,6 +57,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.kosalgeek.android.photoutil.CameraPhoto;
 import com.kosalgeek.android.photoutil.GalleryPhoto;
 import com.squareup.picasso.Picasso;
@@ -167,31 +168,57 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             String context = (String) dataBundle.get("context");
 
             if(parent != null && context != null){
-                if(context.equals("observation")){
-                    Intent observationIntent = new Intent(MainActivity.this, ObservationActivity.class);
-                    observationIntent.putExtra("observation", parent);
-                    startActivity(observationIntent);
-                }else{
-                    final Intent ideaIntent = new Intent(MainActivity.this, IdeaDetailsActivity.class);
-                    final ProgressDialog dialog;
-                    dialog = ProgressDialog.show(MainActivity.this, "Loading", "", true, false);
-                    dialog.show();
+                switch (context) {
+                    case "observation":
+                        Intent observationIntent = new Intent(MainActivity.this, ObservationActivity.class);
+                        observationIntent.putExtra("observation", parent);
+                        startActivity(observationIntent);
+                        break;
+                    case "idea": {
+                        final Intent ideaIntent = new Intent(MainActivity.this, IdeaDetailsActivity.class);
+                        final ProgressDialog dialog;
+                        dialog = ProgressDialog.show(MainActivity.this, "Loading", "", true, false);
+                        dialog.show();
 
-                    mFirebase.child(Idea.NODE_NAME).child(parent).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            Idea idea = dataSnapshot.getValue(Idea.class);
-                            ideaIntent.putExtra("idea", idea);
-                            dialog.dismiss();
-                            startActivity(ideaIntent);
-                        }
+                        mFirebase.child(Idea.NODE_NAME).child(parent).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Idea idea = dataSnapshot.getValue(Idea.class);
+                                ideaIntent.putExtra("idea", idea);
+                                dialog.dismiss();
+                                startActivity(ideaIntent);
+                            }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            Toast.makeText(MainActivity.this, "Could not load Design Idea", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Toast.makeText(MainActivity.this, "Could not load Design Idea", Toast.LENGTH_SHORT).show();
+                            }
+                        });
 
+                        break;
+                    }
+                    case "activities": {
+                        final Intent projectIntent = new Intent(MainActivity.this, ProjectActivity.class);
+                        final ProgressDialog dialog;
+                        dialog = ProgressDialog.show(MainActivity.this, "Loading", "", true, false);
+                        dialog.show();
+
+                        mFirebase.child(Project.NODE_NAME).child(parent).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Project project = dataSnapshot.getValue(Project.class);
+                                projectIntent.putExtra("project", project);
+                                dialog.dismiss();
+                                startActivity(projectIntent);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Toast.makeText(MainActivity.this, "Could not load New Project", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        break;
+                    }
                 }
             }
 
@@ -648,6 +675,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 currentSelection=0;
                 FirebaseAuth.getInstance().signOut();
                 break;
+            case R.id.nav_settings:
+                //Go to settings screen
+                selectionStack.add(R.id.nav_settings);
+                goToSettingsFragment();
+                drawer.closeDrawer(GravityCompat.START);
+                break;
+
         }
         return true;
     }
@@ -664,6 +698,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .beginTransaction()
                 .replace(R.id.fragment_container, ExploreFragment.newInstance(user_home_site))
                 .addToBackStack(ExploreFragment.FRAGMENT_TAG)
+                .commit();
+    }
+
+    public void goToSettingsFragment(){
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, SettingsFragment.newInstance(signed_user.notificationToken))
+                .addToBackStack(SettingsFragment.FRAGMENT_TAG)
                 .commit();
     }
 

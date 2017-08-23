@@ -57,6 +57,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.kosalgeek.android.photoutil.CameraPhoto;
 import com.kosalgeek.android.photoutil.GalleryPhoto;
@@ -286,6 +287,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .add(R.id.fragment_container, new LaunchFragment())
                 .commit();
 
+        mUserAuthSubscription = ((NatureNetApplication)getApplication()).getCurrentUserObservable().subscribe(new Consumer<Optional<Users>>() {
+            @Override
+            public void accept(Optional<Users> user) throws Exception {
+                if (user.isPresent()) {
+
+                    onUserSignIn(user.get());
+
+                    if (getFragmentManager().getBackStackEntryCount() == 0) {
+                        getFragmentManager()
+                                .beginTransaction()
+                                .add(R.id.fragment_container, ExploreFragment.newInstance(user_home_site))
+                                .commitAllowingStateLoss();
+                    }
+                } else {
+                    if (signed_user != null) {
+                        onUserSignOut();
+                    }
+                    showNoUser();
+                }
+            }
+        });
+
         //click listener for when user selects profile image
         nav_iv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -469,21 +492,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-//    @Override
-//    protected void onNewIntent(Intent intent) {
-//        if(getIntent().getExtras()!=null){
-//            Toast.makeText(this, "got the intent", Toast.LENGTH_SHORT).show();
-//            for (String key : getIntent().getExtras().keySet()) {
-//                Object value = getIntent().getExtras().get(key);
-//                Log.d("gpj3", "Key: " + key + " Value: " + value);
-//            }
-//        }else {
-//            Log.d("gpj3", "null");
-//            Toast.makeText(this, "nullllll", Toast.LENGTH_SHORT).show();
-//        }
-//        super.onNewIntent(intent);
-//    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -549,28 +557,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Picasso.with(MainActivity.this).resumeTag(NatureNetUtils.PICASSO_TAGS.PICASSO_TAG_GALLERY);
         selectedImages.clear();
         select.setVisibility(View.GONE);
-
-        mUserAuthSubscription = ((NatureNetApplication)getApplication()).getCurrentUserObservable().subscribe(new Consumer<Optional<Users>>() {
-            @Override
-            public void accept(Optional<Users> user) throws Exception {
-                if (user.isPresent()) {
-
-                    onUserSignIn(user.get());
-
-                    if (getFragmentManager().getBackStackEntryCount() == 0) {
-                        getFragmentManager()
-                                .beginTransaction()
-                                .add(R.id.fragment_container, ExploreFragment.newInstance(user_home_site))
-                                .commitAllowingStateLoss();
-                    }
-                } else {
-                    if (signed_user != null) {
-                        onUserSignOut();
-                    }
-                    showNoUser();
-                }
-            }
-        });
 
         if (mGoogleApiClient.isConnected()) {
             requestLocationUpdates();
@@ -675,6 +661,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_logout:
                 //set current selection as 0 so we know there isn't anything selected from the menu
                 currentSelection=0;
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            FirebaseInstanceId.getInstance().deleteInstanceId();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
                 FirebaseAuth.getInstance().signOut();
                 break;
             case R.id.nav_settings:

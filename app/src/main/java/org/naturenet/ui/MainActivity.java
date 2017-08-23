@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Button sign_in, join;
     TextView display_name, affiliation, licenses;
     ImageView nav_iv;
-    MenuItem logout;
+    MenuItem logout, settings;
     private Disposable mUserAuthSubscription;
     int pastSelection = 0;
     int currentSelection =0;
@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     static final private int REQUEST_CODE_GALLERY = 4;
     static final private int REQUEST_CODE_CHECK_LOCATION_SETTINGS = 5;
     static final private int IMAGE_PICKER_RESULTS = 6;
+    static final private int SETTINGS = 10;
     static final private int GALLERY_IMAGES = 100;
     CameraPhoto cameraPhoto;
     GalleryPhoto galleryPhoto;
@@ -140,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         logout = navigationView.getMenu().findItem(R.id.nav_logout);
+        settings = navigationView.getMenu().findItem(R.id.nav_settings);
         header = navigationView.getHeaderView(0);
         sign_in = (Button) header.findViewById(R.id.nav_b_sign_in);
         join = (Button) header.findViewById(R.id.nav_b_join);
@@ -169,12 +171,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             if(parent != null && context != null){
                 switch (context) {
-                    case "observation":
+                    case "observations":
                         Intent observationIntent = new Intent(MainActivity.this, ObservationActivity.class);
                         observationIntent.putExtra("observation", parent);
                         startActivity(observationIntent);
                         break;
-                    case "idea": {
+                    case "ideas": {
                         final Intent ideaIntent = new Intent(MainActivity.this, IdeaDetailsActivity.class);
                         final ProgressDialog dialog;
                         dialog = ProgressDialog.show(MainActivity.this, "Loading", "", true, false);
@@ -677,9 +679,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_settings:
                 //Go to settings screen
-                selectionStack.add(R.id.nav_settings);
-                goToSettingsFragment();
-                drawer.closeDrawer(GravityCompat.START);
+                goToSettingsActivity();
                 break;
 
         }
@@ -698,14 +698,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .beginTransaction()
                 .replace(R.id.fragment_container, ExploreFragment.newInstance(user_home_site))
                 .addToBackStack(ExploreFragment.FRAGMENT_TAG)
-                .commit();
-    }
-
-    public void goToSettingsFragment(){
-        getFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, SettingsFragment.newInstance(signed_user.notificationToken))
-                .addToBackStack(SettingsFragment.FRAGMENT_TAG)
                 .commit();
     }
 
@@ -731,6 +723,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .replace(R.id.fragment_container, new CommunitiesFragment())
                 .addToBackStack(CommunitiesFragment.FRAGMENT_TAG)
                 .commit();
+    }
+
+    public void goToSettingsActivity(){
+        Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+        settingsIntent.putExtra("token", signed_user.notificationToken);
+        startActivityForResult(settingsIntent, SETTINGS);
+        overridePendingTransition(R.anim.slide_up, R.anim.stay);
     }
 
     public void goToProfileSettingsActivity(){
@@ -868,6 +867,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     } else if (JoinActivity.EXTRA_LOGIN.equals(data.getExtras().getString(JoinActivity.EXTRA_JOIN))) {
                         signed_user = data.getParcelableExtra(JoinActivity.EXTRA_NEW_USER);
                         logout.setVisible(true);
+                        settings.setVisible(true);
                         this.supportInvalidateOptionsMenu();
 
                         if (signed_user.avatar != null) {
@@ -953,6 +953,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     selectedImages = data.getParcelableArrayListExtra("images");
                     goToAddObservationActivity(false);
                 }
+                break;
+            }
+            //Here we just handle the result of the Settings activity which isn't anything but we want to unhighlight it in the menu bar
+            case SETTINGS: {
+                navigationView.getMenu().findItem(R.id.nav_settings).setChecked(false);
+                break;
             }
         }
     }
@@ -991,6 +997,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void showNoUser() {
         NatureNetUtils.showUserAvatar(this, nav_iv, R.drawable.default_avatar);
         logout.setVisible(false);
+        settings.setVisible(false);
         display_name.setText(null);
         affiliation.setText(null);
         display_name.setVisibility(View.GONE);
@@ -1002,6 +1009,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void showUserInfo(final Users user) {
         NatureNetUtils.showUserAvatar(this, nav_iv, user.avatar);
         logout.setVisible(true);
+        settings.setVisible(true);
         display_name.setText(user.displayName);
         affiliation.setText(user_home_site.name);
         display_name.setVisibility(View.VISIBLE);

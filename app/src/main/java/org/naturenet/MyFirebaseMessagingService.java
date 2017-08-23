@@ -32,7 +32,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         //make sure there's a logged in user
         if(FirebaseAuth.getInstance().getCurrentUser() != null){
             //if the comment was for an Observation
-            if(remoteMessage.getData().get("context").equals("observation")){
+            if(remoteMessage.getData().get("context").equals("observations")){
                 Intent intent = new Intent(this, ObservationActivity.class);
                 intent.putExtra("observation", remoteMessage.getData().get("parent"));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -53,7 +53,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
                 notificationManager.notify((int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE), notificationBuilder.build());
                 //if the comment was for an idea
-            }else if(remoteMessage.getData().get("context").equals("idea")){
+            }else if(remoteMessage.getData().get("context").equals("ideas")){
 
                 //retrieve the idea object
                 FirebaseDatabase.getInstance().getReference().child(Idea.NODE_NAME).child(remoteMessage.getData().get("parent")).addListenerForSingleValueEvent(new ValueEventListener() {

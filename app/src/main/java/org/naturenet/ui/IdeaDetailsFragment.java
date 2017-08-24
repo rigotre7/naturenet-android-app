@@ -1,14 +1,23 @@
 package org.naturenet.ui;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +47,8 @@ import org.naturenet.util.NatureNetUtils;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -97,7 +108,22 @@ public class IdeaDetailsFragment extends Fragment {
         deleteButton = (TextView) ideaAct.findViewById(R.id.deleteIdeaButton);
         idea = ideaAct.idea;
 
-        ideaContent.setText(ideaAct.idea.content);
+        //Create SpannableString from the Idea's content.
+        SpannableString hashText = new SpannableString(idea.content);
+
+        //Create a Matcher to match any tags within the Idea's content.
+        Matcher matcher = Pattern.compile("#([A-Za-z0-9_-]+)").matcher(hashText);
+
+        //Iterate and find each matching tag.
+        while(matcher.find()){
+            //For each tag, set a custom ClickableSpan and change the tag color
+            hashText.setSpan(new ClickableSpanDetailsFragment(hashText.subSequence(matcher.start(), matcher.end()).toString(), ideaAct), matcher.start(), matcher.end(), 0);
+            hashText.setSpan(new ForegroundColorSpan(Color.parseColor("#F5C431")), matcher.start(), matcher.end(), 0);
+        }
+
+        //Finally, set the text and make the tags clickable.
+        ideaContent.setText(hashText);
+        ideaContent.setMovementMethod(LinkMovementMethod.getInstance());
 
         getSubmitterInfo(ideaAct.idea.submitter);
         getComments(ideaAct.idea.id);
@@ -124,7 +150,7 @@ public class IdeaDetailsFragment extends Fragment {
         }
 
         //if the signed in user is the user who submitted the idea, display the edit and delete buttons
-        if(!idea.submitter.equals(ideaAct.signed_user.id)){
+        if(ideaAct.signed_user == null || !idea.submitter.equals(ideaAct.signed_user.id)){
             editButton.setVisibility(View.GONE);
             deleteButton.setVisibility(View.GONE);
         }
@@ -409,4 +435,28 @@ public class IdeaDetailsFragment extends Fragment {
     }
 
 
+}
+
+/**
+ * This class extends ClickableSpan. It's purpose is to handle the clicks of the tags in this Fragment.
+ * When a tag is clicked, we set the result of the Intent and pass back the tag that was clicked so it can be searched for in the IdeasFragment and show
+ * any other Ideas with the same tag.
+ */
+class ClickableSpanDetailsFragment extends ClickableSpan {
+
+    private String text;
+    private Activity mContext;
+
+    public ClickableSpanDetailsFragment(String t, Activity c){
+        this.text = t;
+        this.mContext = c;
+    }
+
+    @Override
+    public void onClick(View view) {
+        Intent resultIntent = new Intent(mContext, IdeasFragment.class);
+        resultIntent.putExtra("tag", text);
+        mContext.setResult(Activity.RESULT_OK, resultIntent);
+        mContext.finish();
+    }
 }

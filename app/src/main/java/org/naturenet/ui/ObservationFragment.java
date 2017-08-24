@@ -103,7 +103,7 @@ public class ObservationFragment extends Fragment {
                 observation_text.setText(R.string.no_description);
             }
 
-            if(!observation.userId.equals(o.signed_user.id)){
+            if(o.signed_user == null || !observation.userId.equals(o.signed_user.id)){
                 editButton.setVisibility(View.GONE);
                 deleteButton.setVisibility(View.GONE);
             }

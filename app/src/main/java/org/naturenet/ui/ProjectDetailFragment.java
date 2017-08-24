@@ -77,10 +77,9 @@ public class ProjectDetailFragment extends Fragment {
     private boolean imagesSelected = false;
     private DatabaseReference dbRef;
 
-    public static ProjectDetailFragment newInstance(Project p, String id) {
+    public static ProjectDetailFragment newInstance(Project p) {
         Bundle args = new Bundle();
         args.putParcelable(ARG_PROJECT, p);
-        args.putString("id", id);
         ProjectDetailFragment frag = new ProjectDetailFragment();
         frag.setArguments(args);
         frag.setRetainInstance(true);
@@ -124,19 +123,12 @@ public class ProjectDetailFragment extends Fragment {
             return;
         }
         mProject = getArguments().getParcelable(ARG_PROJECT);
-        String id = getArguments().getString("id");
 
-        if(mProject.submitter!=null){
-            if(!mProject.submitter.equals(MainActivity.signed_user.id)){
-                editButton.setVisibility(View.GONE);
-            }
+        //If nobody is logged in (signed_user == null) OR the Project submitter != logged in user, hide Edit Button
+        if(MainActivity.signed_user == null || !mProject.submitter.equals(MainActivity.signed_user.id)){
+            editButton.setVisibility(View.GONE);
         }
 
-        if(id!=null){
-            if(!id.equals(MainActivity.signed_user.id)){
-                editButton.setVisibility(View.GONE);
-            }
-        }
 
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override

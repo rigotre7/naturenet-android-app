@@ -110,13 +110,13 @@
                 android:layout_marginBottom="5dp"
                 android:orientation="vertical">
 
-                <TextView
+                <org.naturenet.ui.LinkifiedTextView
                     android:id="@+id/design_idea_text_row"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="66dp"
                     android:layout_marginLeft="5dp"
                     android:ellipsize="end"
-                    android:maxEms="15"
+                    android:maxEms="25"
                     android:maxLines="3"/>
 
                 <LinearLayout

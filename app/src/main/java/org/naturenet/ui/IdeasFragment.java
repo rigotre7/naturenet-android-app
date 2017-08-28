@@ -274,7 +274,8 @@ public class IdeasFragment extends Fragment {
                         idea = updatedAdapter.getItem(i);   //get clicked idea
                         Intent ideaDetailIntent = new Intent(main, IdeaDetailsActivity.class);
                         ideaDetailIntent.putExtra(IDEA_EXTRA, idea);
-                        startActivity(ideaDetailIntent);
+                        //Start activity for result in case the user selects a hashtag in the details view
+                        startActivityForResult(ideaDetailIntent, HASH_TAG);
                     }
                 }
             });
@@ -299,7 +300,8 @@ public class IdeasFragment extends Fragment {
                 idea = mAdapterSearch.getItem(i);
                 Intent ideaDetailIntent = new Intent(main, IdeaDetailsActivity.class);
                 ideaDetailIntent.putExtra(IDEA_EXTRA, idea);
-                startActivity(ideaDetailIntent);
+                //Start activity for result in case the user selects a hashtag in the details view
+                startActivityForResult(ideaDetailIntent, HASH_TAG);
             }
         });
     }

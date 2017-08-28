@@ -1,4 +1,4 @@
-package org.naturenet.ui;
+package org.naturenet.ui.ideas;
 
 
 import android.app.Activity;
@@ -40,6 +40,8 @@ import org.naturenet.data.model.Comment;
 import org.naturenet.data.model.Idea;
 import org.naturenet.data.model.Site;
 import org.naturenet.data.model.Users;
+import org.naturenet.ui.CommentsAdapter;
+import org.naturenet.ui.LoginActivity;
 import org.naturenet.util.NatureNetUtils;
 
 import java.util.Collection;

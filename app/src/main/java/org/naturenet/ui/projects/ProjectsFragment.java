@@ -1,4 +1,4 @@
-package org.naturenet.ui;
+package org.naturenet.ui.projects;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -29,6 +29,8 @@ import com.squareup.picasso.Picasso;
 
 import org.naturenet.R;
 import org.naturenet.data.model.Project;
+import org.naturenet.ui.MainActivity;
+import org.naturenet.ui.communities.CommunitiesFragment;
 import org.naturenet.util.NatureNetUtils;
 
 import java.util.ArrayList;

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.naturenet.ui.AddDesignIdeaActivity">
+    tools:context="org.naturenet.ui.ideas.AddDesignIdeaActivity">
 
     <include
         layout="@layout/app_bar_add_design_idea"

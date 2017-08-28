@@ -1,4 +1,4 @@
-package org.naturenet.ui;
+package org.naturenet.ui.projects;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -44,6 +44,12 @@ import com.squareup.picasso.Picasso;
 import org.naturenet.R;
 import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Project;
+import org.naturenet.ui.observations.AddObservationActivity;
+import org.naturenet.ui.ImageGalleryAdapter;
+import org.naturenet.ui.ImagePicker;
+import org.naturenet.ui.MainActivity;
+import org.naturenet.ui.observations.ObservationActivity;
+import org.naturenet.ui.observations.ObservationAdapter;
 import org.naturenet.util.NatureNetUtils;
 
 import java.io.File;

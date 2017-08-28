@@ -49,6 +49,8 @@ import java.util.List;
 import org.naturenet.R;
 import org.naturenet.UploadService;
 import org.naturenet.data.model.Users;
+import org.naturenet.ui.communities.CommunitiesFragment;
+import org.naturenet.ui.communities.UsersDetailActivity;
 import org.naturenet.util.CroppedCircleTransformation;
 import org.naturenet.util.NatureNetUtils;
 import timber.log.Timber;

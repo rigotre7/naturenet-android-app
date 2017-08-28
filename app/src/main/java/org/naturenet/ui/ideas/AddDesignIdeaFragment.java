@@ -1,4 +1,4 @@
-package org.naturenet.ui;
+package org.naturenet.ui.ideas;
 
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import org.naturenet.R;
 import org.naturenet.data.model.Idea;
+import org.naturenet.ui.LoginActivity;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

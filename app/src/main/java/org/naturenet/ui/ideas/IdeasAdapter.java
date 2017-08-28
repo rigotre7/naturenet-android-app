@@ -1,4 +1,4 @@
-package org.naturenet.ui;
+package org.naturenet.ui.ideas;
 
 import android.app.Activity;
 import android.content.Context;
@@ -31,6 +31,7 @@ import org.naturenet.R;
 import org.naturenet.data.model.Idea;
 import org.naturenet.data.model.Site;
 import org.naturenet.data.model.Users;
+import org.naturenet.ui.LinkifiedTextView;
 import org.naturenet.util.NatureNetUtils;
 
 import java.util.Collection;

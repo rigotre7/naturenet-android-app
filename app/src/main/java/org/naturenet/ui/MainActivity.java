@@ -58,7 +58,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.kosalgeek.android.photoutil.CameraPhoto;
 import com.kosalgeek.android.photoutil.GalleryPhoto;
 import com.squareup.picasso.Picasso;
@@ -70,6 +69,14 @@ import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Project;
 import org.naturenet.data.model.Site;
 import org.naturenet.data.model.Users;
+import org.naturenet.ui.communities.CommunitiesFragment;
+import org.naturenet.ui.ideas.AddDesignIdeaActivity;
+import org.naturenet.ui.ideas.IdeaDetailsActivity;
+import org.naturenet.ui.ideas.IdeasFragment;
+import org.naturenet.ui.observations.AddObservationActivity;
+import org.naturenet.ui.observations.ObservationActivity;
+import org.naturenet.ui.projects.ProjectActivity;
+import org.naturenet.ui.projects.ProjectsFragment;
 import org.naturenet.util.NatureNetUtils;
 
 import java.io.File;
@@ -95,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Observation previewSelectedObservation;
     List<String> ids, names;
     DatabaseReference mFirebase;
-    static Users signed_user;
+    public static Users signed_user;
     Site user_home_site;
     DrawerLayout drawer;
     Toolbar toolbar;
@@ -109,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     int pastSelection = 0;
     int currentSelection =0;
     Stack<Integer> selectionStack;
-    ArrayList<Users> userList;
+    public ArrayList<Users> userList;
 
     /* Common submission items */
     static final private int REQUEST_CODE_CAMERA = 3;
@@ -130,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ImageView add_observation_cancel, gallery_item, add_observation_button;
     List<Uri> recentImageGallery;
     ArrayList<Uri> selectedImages;
-    static double latValue, longValue;
+    public static double latValue, longValue;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

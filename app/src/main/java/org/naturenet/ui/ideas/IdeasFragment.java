@@ -1,4 +1,4 @@
-package org.naturenet.ui;
+package org.naturenet.ui.ideas;
 
 import android.app.Activity;
 import android.content.Context;
@@ -29,6 +29,8 @@ import com.google.firebase.database.ValueEventListener;
 import org.naturenet.R;
 import org.naturenet.data.model.Idea;
 import org.naturenet.data.model.Users;
+import org.naturenet.ui.FetchData;
+import org.naturenet.ui.MainActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;

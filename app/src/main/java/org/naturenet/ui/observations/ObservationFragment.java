@@ -1,4 +1,4 @@
-package org.naturenet.ui;
+package org.naturenet.ui.observations;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -13,7 +13,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -48,9 +47,9 @@ import org.naturenet.data.model.Observation;
 import org.naturenet.data.model.Project;
 import org.naturenet.data.model.Site;
 import org.naturenet.data.model.Users;
+import org.naturenet.ui.CommentsAdapter;
+import org.naturenet.ui.LoginActivity;
 import org.naturenet.util.NatureNetUtils;
-
-import java.io.File;
 
 import timber.log.Timber;
 

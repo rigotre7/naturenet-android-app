@@ -1,4 +1,4 @@
-package org.naturenet.ui;
+package org.naturenet.ui.communities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,6 +22,8 @@ import com.squareup.picasso.Picasso;
 import org.naturenet.R;
 import org.naturenet.data.model.Idea;
 import org.naturenet.data.model.Observation;
+import org.naturenet.ui.observations.ObservationActivity;
+import org.naturenet.ui.observations.ObservationAdapter;
 
 
 public class UsersDetailFragment extends Fragment {

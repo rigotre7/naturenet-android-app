@@ -143,6 +143,7 @@
                         android:layout_width="19dp"
                         android:layout_height="match_parent"
                         app:srcCompat="@drawable/dislike"
+                        android:visibility="gone"
                         android:layout_marginLeft="10dp"/>
 
                     <TextView
@@ -150,6 +151,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="10dp"
+                        android:visibility="gone"
                         android:layout_weight="1"
                         android:textColor="@color/red"
                         android:gravity="center" />

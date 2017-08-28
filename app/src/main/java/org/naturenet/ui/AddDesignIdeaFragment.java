@@ -243,7 +243,7 @@ public class AddDesignIdeaFragment extends Fragment {
         LinearLayout newLL = new LinearLayout(mContext);
         newLL.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
-        newLL.setGravity(Gravity.LEFT);
+        newLL.setGravity(Gravity.START);
         newLL.setOrientation(LinearLayout.HORIZONTAL);
 
         int widthSoFar = 0;
@@ -271,7 +271,7 @@ public class AddDesignIdeaFragment extends Fragment {
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT));
                 newLL.setOrientation(LinearLayout.HORIZONTAL);
-                newLL.setGravity(Gravity.LEFT);
+                newLL.setGravity(Gravity.START);
                 params = new LinearLayout.LayoutParams(LL
                         .getMeasuredWidth(), LL.getMeasuredHeight());
                 newLL.addView(LL, params);

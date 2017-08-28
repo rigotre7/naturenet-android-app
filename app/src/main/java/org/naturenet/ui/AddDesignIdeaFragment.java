@@ -1,5 +1,6 @@
 package org.naturenet.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -7,17 +8,19 @@ import android.app.Fragment;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ForegroundColorSpan;
-import android.text.util.Linkify;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,11 +41,13 @@ public class AddDesignIdeaFragment extends Fragment {
     public static final String ADD_DESIGN_IDEA_FRAGMENT = "add_design_idea_fragment";
 
     EditText ideaTextEntry;
-    TextView sendButton, participatoryLink;
+    TextView sendButton, participatoryLink, exploreTag, projectsTag, ideasTag, communitiesTag, contributionsTag, interactionTag, mapTag, visualTag, iconTag, menuTag, appTag, webTag;
     AddDesignIdeaActivity addIdeaAct;
     DatabaseReference dbRef;
     Spinner ideaTypeSpinner;
     String ideaText;
+    View[] views;
+    LinearLayout tagLayout;
 
     public AddDesignIdeaFragment() {
         // Required empty public constructor
@@ -60,6 +65,22 @@ public class AddDesignIdeaFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         addIdeaAct = (AddDesignIdeaActivity) getActivity();
+
+        tagLayout = (LinearLayout) addIdeaAct.findViewById(R.id.tagLayout);
+        exploreTag = (TextView) addIdeaAct.findViewById(R.id.exploreTag);
+        projectsTag = (TextView) addIdeaAct.findViewById(R.id.projectsTag);
+        ideasTag = (TextView) addIdeaAct.findViewById(R.id.designTag);
+        communitiesTag = (TextView) addIdeaAct.findViewById(R.id.communitiesTag);
+        contributionsTag = (TextView) addIdeaAct.findViewById(R.id.contributionsTag);
+        interactionTag = (TextView) addIdeaAct.findViewById(R.id.interactionTag);
+        mapTag = (TextView) addIdeaAct.findViewById(R.id.mapTag);
+        visualTag = (TextView) addIdeaAct.findViewById(R.id.visualTag);
+        iconTag = (TextView) addIdeaAct.findViewById(R.id.iconTag);
+        menuTag = (TextView) addIdeaAct.findViewById(R.id.menuTag);
+        appTag = (TextView) addIdeaAct.findViewById(R.id.appTag);
+        webTag = (TextView) addIdeaAct.findViewById(R.id.webTag);
+        views = new View[]{exploreTag, projectsTag, ideasTag, communitiesTag, contributionsTag, interactionTag, mapTag, visualTag, iconTag, menuTag, appTag, webTag};
+
         ideaTextEntry = (EditText) addIdeaAct.findViewById(R.id.design_idea_text);
         sendButton = (TextView) addIdeaAct.findViewById(R.id.design_idea_send_button);
         ideaTypeSpinner = (Spinner) addIdeaAct.findViewById(R.id.ideaTypeSpinner);
@@ -70,13 +91,25 @@ public class AddDesignIdeaFragment extends Fragment {
         participatoryLink = (TextView) addIdeaAct.findViewById(R.id.participatory_design_link);
         participatoryLink.setMovementMethod(LinkMovementMethod.getInstance());
 
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView tag = (TextView) view;
+                SpannableString text = new SpannableString(tag.getText() + " ");
+                text.setSpan(new ForegroundColorSpan(Color.parseColor("#F5C431")), 0, text.length(), 0);
+                ideaTextEntry.getText().insert(ideaTextEntry.getSelectionStart(), text);
+            }
+        };
+
+        populateText(tagLayout, views, addIdeaAct, onClickListener);
+
         TextWatcher textWatcher = new TextWatcher() {
 
             SpannableString hashText;
 
             String prevText = "";
 
-            boolean tagChange, isSpace, backspace = false;
+            boolean tagChange, isSpace = false;
 
             int indexOfNewChar;
 
@@ -87,13 +120,6 @@ public class AddDesignIdeaFragment extends Fragment {
 
             @Override
             public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
-
-                Log.d("indexoutof", "after: " + after);
-                Log.d("indexoutof", "start: " + start);
-                Log.d("indexoutof", "count: " + count + "\n");
-
-                if(prevText.length() >= charSequence.length())
-                    backspace = true;
 
                 //Check to make sure the change in text wasn't a space
                 if(count != after) {
@@ -109,12 +135,9 @@ public class AddDesignIdeaFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
 
-//                Log.d("index-onTextChanged", "start: " + start);
-//                Log.d("index-onTextChanged", "before: " + before);
-//                Log.d("index-onTextChanged", "count: " + count);
-//
+
                     //If the change wasn't a space, continue
-                    if (!isSpace && charSequence.length() >= indexOfNewChar) {
+                    if (!isSpace && charSequence.length() > indexOfNewChar) {
                         char newestChar = charSequence.charAt(indexOfNewChar);
                         //Check to see if the most recent addition was a hashtag symbol and that we're not doubling up on hashtag symbols
                         if (newestChar == '#' && !tagChange)
@@ -134,23 +157,24 @@ public class AddDesignIdeaFragment extends Fragment {
 
                     //get the last index
                     int lastIndex = indexOfNewChar;
-                    //Iterate over the text until we find the most recent # symbol
-                    while(lastIndex >= 0){
-                        if(editable.charAt(lastIndex) == '#'){
-                            String t = editable.subSequence(lastIndex, editable.length()).toString();
-                            matcher = hash.matcher(editable.subSequence(lastIndex, editable.length()));
-                            //Check to see if it's a valid hashtag
-                            if(matcher.matches()){
-                                hashText = new SpannableString(editable);
-                                hashText.setSpan(new ForegroundColorSpan(Color.parseColor("#F5C431")), lastIndex, editable.length(), 0);
-                                ideaTextEntry.setText(hashText);
-                                ideaTextEntry.setSelection(editable.length());
-                                break;
+                    if(editable.charAt(lastIndex) != '#'){
+                        //Iterate over the text until we find the most recent # symbol
+                        while(lastIndex >= 0){
+                            if(editable.charAt(lastIndex) == '#'){
+                                matcher = hash.matcher(editable.subSequence(lastIndex, editable.length()));
+                                //Check to see if it's a valid hashtag
+                                if(matcher.matches()){
+                                    hashText = new SpannableString(editable);
+                                    hashText.setSpan(new ForegroundColorSpan(Color.parseColor("#F5C431")), lastIndex, editable.length(), 0);
+                                    ideaTextEntry.setText(hashText);
+                                    ideaTextEntry.setSelection(editable.length());
+                                    break;
+                                }else
+                                    lastIndex--;
+
                             }else
                                 lastIndex--;
-
-                        }else
-                            lastIndex--;
+                        }
                     }
 
                 }
@@ -208,5 +232,54 @@ public class AddDesignIdeaFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void populateText(LinearLayout ll, View[] views , Context mContext, View.OnClickListener listener) {
+        DisplayMetrics display = getResources().getDisplayMetrics();
+        ll.removeAllViews();
+        int maxWidth = display.widthPixels;
+
+        LinearLayout.LayoutParams params;
+        LinearLayout newLL = new LinearLayout(mContext);
+        newLL.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        newLL.setGravity(Gravity.LEFT);
+        newLL.setOrientation(LinearLayout.HORIZONTAL);
+
+        int widthSoFar = 0;
+
+        for (int i = 0 ; i < views.length ; i++ ){
+            LinearLayout LL = new LinearLayout(mContext);
+            LL.setOrientation(LinearLayout.HORIZONTAL);
+            LL.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.BOTTOM);
+            LL.setLayoutParams(new ListView.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+            views[i].setOnClickListener(listener);
+            views[i].measure(0,0);
+            params = new LinearLayout.LayoutParams(views[i].getMeasuredWidth() + 10,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+
+            LL.addView(views[i], params);
+            LL.measure(0, 0);
+            widthSoFar += views[i].getMeasuredWidth();
+            if (widthSoFar >= maxWidth) {
+                ll.addView(newLL);
+
+                newLL = new LinearLayout(mContext);
+                newLL.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT));
+                newLL.setOrientation(LinearLayout.HORIZONTAL);
+                newLL.setGravity(Gravity.LEFT);
+                params = new LinearLayout.LayoutParams(LL
+                        .getMeasuredWidth(), LL.getMeasuredHeight());
+                newLL.addView(LL, params);
+                widthSoFar = LL.getMeasuredWidth();
+            } else {
+                newLL.addView(LL);
+            }
+        }
+        ll.addView(newLL);
     }
 }

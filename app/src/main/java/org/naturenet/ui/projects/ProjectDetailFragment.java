@@ -143,7 +143,7 @@ public class ProjectDetailFragment extends Fragment {
                 editPopup.setTitle("Edit Project");
 
                 final EditText text = new EditText(getActivity());
-                text.setText(mProject.description);
+                text.setText(mDescription.getText());
                 editPopup.setView(text);
 
                 editPopup.setPositiveButton("Ok", new DialogInterface.OnClickListener() {

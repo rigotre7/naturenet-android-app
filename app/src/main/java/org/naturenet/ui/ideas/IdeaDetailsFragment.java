@@ -170,7 +170,7 @@ public class IdeaDetailsFragment extends Fragment {
                 editPopup.setTitle("Edit Idea");
 
                 final EditText text = new EditText(getActivity());
-                text.setText(idea.content);
+                text.setText(ideaContent.getText().toString());
                 editPopup.setView(text);
 
                 editPopup.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -180,7 +180,16 @@ public class IdeaDetailsFragment extends Fragment {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
-                                ideaContent.setText(text.getText().toString());
+                                SpannableString string = new SpannableString(text.getText());
+                                Matcher m = Pattern.compile("#([A-Za-z0-9_-]+)").matcher(string);
+
+                                while(m.find()){
+                                    //For each tag, set a custom ClickableSpan and change the tag color
+                                    string.setSpan(new ClickableSpanDetailsFragment(string.subSequence(m.start(), m.end()).toString(), ideaAct), m.start(), m.end(), 0);
+                                    string.setSpan(new ForegroundColorSpan(Color.parseColor("#F5C431")), m.start(), m.end(), 0);
+                                }
+
+                                ideaContent.setText(string);
                             }else
                                 Toast.makeText(ideaAct, "Couldn't edit idea", Toast.LENGTH_SHORT).show();
                         }

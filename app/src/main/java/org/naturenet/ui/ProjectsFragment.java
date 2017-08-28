@@ -16,6 +16,7 @@ import android.widget.AbsListView;
 
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,6 +64,7 @@ public class ProjectsFragment extends Fragment {
     private boolean activeSearch, isExpanded, isDataLoaded;
     private TextWatcher textWatcher;
     private ValueEventListener projectListener;
+    private ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -74,6 +76,8 @@ public class ProjectsFragment extends Fragment {
         searchBox = (EditText) root.findViewById(R.id.searchProjectText);
         mProjectsListView = (ExpandableListView) root.findViewById(R.id.projects_list);
         addProjectButton = (FloatingActionButton) root.findViewById(R.id.fabAddProject);
+        progressBar = (ProgressBar) root.findViewById(R.id.progressBarProjects);
+        progressBar.setIndeterminate(true);
 
         return root;
     }
@@ -222,12 +226,14 @@ public class ProjectsFragment extends Fragment {
                 totalElse = elseList.size();
                 totalRcnc = rcncList.size();
 
+                progressBar.setVisibility(View.GONE);
                 setProjects(acesList, awsList, elseList, rcncList);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(main, "Could not load Projects.", Toast.LENGTH_SHORT).show();
             }
         };
         dbRef.child(Project.NODE_NAME).addValueEventListener(projectListener);

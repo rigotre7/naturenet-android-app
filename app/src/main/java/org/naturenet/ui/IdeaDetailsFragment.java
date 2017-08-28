@@ -3,7 +3,6 @@ package org.naturenet.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -13,11 +12,9 @@ import android.support.annotation.Nullable;
 import android.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -422,7 +419,7 @@ public class IdeaDetailsFragment extends Fragment {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                Toast.makeText(ideaAct, "Could not retrieve likes.", Toast.LENGTH_SHORT).show();
             }
 
 

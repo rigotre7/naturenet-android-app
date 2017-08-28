@@ -33,6 +33,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/designIdeaDescription"
+        android:layout_alignStart="@+id/designIdeaDescription"
         android:text="Popular Tags:"
         android:layout_marginTop="10dp"
         android:id="@+id/popularTags"
@@ -44,9 +46,9 @@
         android:orientation="vertical"
         android:layout_below="@+id/popularTags"
         android:layout_marginTop="5dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/tagLayout">
+        android:id="@+id/tagLayout"
+        android:layout_alignLeft="@+id/popularTags"
+        android:layout_alignStart="@+id/popularTags">
 
         <TextView
             android:layout_width="wrap_content"

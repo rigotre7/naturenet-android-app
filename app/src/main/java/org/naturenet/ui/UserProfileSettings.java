@@ -320,6 +320,12 @@ public class UserProfileSettings extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        overridePendingTransition(R.anim.stay, R.anim.slide_down);
+    }
 
     /**
      * This method sets the current values of the signed in user.

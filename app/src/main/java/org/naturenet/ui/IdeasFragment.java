@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,6 +57,7 @@ public class IdeasFragment extends Fragment {
     private View showMoreButton;
     private int numToShow;
     private boolean moreIdeasToShow;
+    private ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,6 +67,8 @@ public class IdeasFragment extends Fragment {
         toolbar_title = (TextView) main.findViewById(R.id.app_bar_main_tv);
         toolbar_title.setText(R.string.design_ideas_title_design_ideas);
         searchBar = (EditText) root.findViewById(R.id.ideasSearchBar);
+        progressBar = (ProgressBar) root.findViewById(R.id.progressBar);
+        progressBar.setIndeterminate(true);
 
         ideas_list = (ListView) root.findViewById(R.id.design_ideas_lv);
         addIdeaButton = (FloatingActionButton) root.findViewById(R.id.fabAddIdea);
@@ -111,12 +115,14 @@ public class IdeasFragment extends Fragment {
 
                 //reverse ideas list to have the most recent first
                 Collections.reverse(ideas);
+                progressBar.setVisibility(View.GONE);
                 setIdeas();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(main, "Could not load Ideas.", Toast.LENGTH_SHORT).show();
             }
         });
 

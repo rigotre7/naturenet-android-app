@@ -130,12 +130,10 @@ public class AddDesignIdeaFragment extends Fragment {
                 else    //if the change was actually a space, set boolean flag
                     isSpace = true;
 
-
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-
 
                     //If the change wasn't a space, continue
                     if (!isSpace && charSequence.length() > indexOfNewChar) {
@@ -145,8 +143,6 @@ public class AddDesignIdeaFragment extends Fragment {
                             tagChange = true;
                     } else   //if the change was actually a space, set the boolean flag
                         tagChange = false;
-
-
 
             }
 
@@ -167,8 +163,10 @@ public class AddDesignIdeaFragment extends Fragment {
                                 if(matcher.matches()){
                                     hashText = new SpannableString(editable);
                                     hashText.setSpan(new ForegroundColorSpan(Color.parseColor("#F5C431")), lastIndex, editable.length(), 0);
+                                    ideaTextEntry.removeTextChangedListener(this);
                                     ideaTextEntry.setText(hashText);
                                     ideaTextEntry.setSelection(editable.length());
+                                    ideaTextEntry.addTextChangedListener(this);
                                     break;
                                 }else
                                     lastIndex--;
@@ -181,7 +179,6 @@ public class AddDesignIdeaFragment extends Fragment {
                 }
 
                 prevText = editable.toString();
-
 
             }
         };

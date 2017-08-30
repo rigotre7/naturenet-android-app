@@ -49,6 +49,7 @@ public class AddDesignIdeaFragment extends Fragment {
     String ideaText;
     View[] views;
     LinearLayout tagLayout;
+    int c = Color.parseColor("#F5C431");
 
     public AddDesignIdeaFragment() {
         // Required empty public constructor
@@ -106,80 +107,62 @@ public class AddDesignIdeaFragment extends Fragment {
 
         TextWatcher textWatcher = new TextWatcher() {
 
-            SpannableString hashText;
-
-            String prevText = "";
-
-            boolean tagChange, isSpace = false;
-
-            int indexOfNewChar;
-
-            //Create matcher to match hashtags
-            Matcher matcher;
-
-            Pattern hash = Pattern.compile("#([A-Za-z0-9_-]+)");
+            int beginningIndex, endingIndex;
+            String prevText, newText;
 
             @Override
             public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
-
-                //Check to make sure the change in text wasn't a space
-                if(count != after) {
-                    indexOfNewChar = start + count;
-                    isSpace = false;
-                }
-                else    //if the change was actually a space, set boolean flag
-                    isSpace = true;
-
+                //Get the previous text before the newly entered text is displayed
+                prevText = charSequence.toString();
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-
-                    //If the change wasn't a space, continue
-                    if (!isSpace && charSequence.length() > indexOfNewChar) {
-                        char newestChar = charSequence.charAt(indexOfNewChar);
-                        //Check to see if the most recent addition was a hashtag symbol and that we're not doubling up on hashtag symbols
-                        if (newestChar == '#' && !tagChange)
-                            tagChange = true;
-                    } else   //if the change was actually a space, set the boolean flag
-                        tagChange = false;
 
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
 
-                //check to see if we're currently on a tag
-                if(tagChange){
-
-                    //get the last index
-                    int lastIndex = indexOfNewChar;
-                    if(editable.charAt(lastIndex) != '#'){
-                        //Iterate over the text until we find the most recent # symbol
-                        while(lastIndex >= 0){
-                            if(editable.charAt(lastIndex) == '#'){
-                                matcher = hash.matcher(editable.subSequence(lastIndex, editable.length()));
-                                //Check to see if it's a valid hashtag
-                                if(matcher.matches()){
-                                    hashText = new SpannableString(editable);
-                                    hashText.setSpan(new ForegroundColorSpan(Color.parseColor("#F5C431")), lastIndex, editable.length(), 0);
-                                    ideaTextEntry.removeTextChangedListener(this);
-                                    ideaTextEntry.setText(hashText);
-                                    ideaTextEntry.setSelection(editable.length());
-                                    ideaTextEntry.addTextChangedListener(this);
-                                    break;
-                                }else
-                                    lastIndex--;
-
-                            }else
-                                lastIndex--;
-                        }
-                    }
-
+                //Get the newly entered text
+                newText = editable.toString();
+                String newChar = "";
+                //Make sure the new text isn't blank, and the new text length is greater than the previous text (means it wasn't a backspace
+                if (newText.length() != 0 && newText.length() > prevText.length()){
+                    //get the newly entered character
+                    newChar = newText.substring(ideaTextEntry.getSelectionStart()-1, ideaTextEntry.getSelectionEnd());
                 }
 
-                prevText = editable.toString();
+                try{
+                    //If a new word has been entered
+                    if(newChar.equals(" ")){
+                        //Get the text before the space was added
+                        String textBefore = newText.substring(0, ideaTextEntry.getSelectionStart()-1);
 
+                        //Get the index of the space before the last word that was added
+                        beginningIndex = textBefore.lastIndexOf(" ")+1;
+
+                        //Get the new word by getting the substring from the index of the space before the last word and the end of the string
+                        String newWord = textBefore.substring(beginningIndex, textBefore.length());
+
+                        endingIndex = beginningIndex + newWord.length();
+                        //If the new word is a hashtag
+                        if(newWord.matches("#([A-Za-z0-9_-]+)")){
+                            ideaTextEntry.removeTextChangedListener(this);
+                            editable.setSpan(new ForegroundColorSpan(c), beginningIndex, endingIndex, 0);
+                            ideaTextEntry.setText(editable);
+                            ideaTextEntry.addTextChangedListener(this);
+                            ideaTextEntry.setSelection(endingIndex+1);
+                        }
+
+                    }
+                }catch (IndexOutOfBoundsException exc){
+                    //In case of an IndexOutOfBoundsException, simply add the intended text without trying to format it
+                    ideaTextEntry.removeTextChangedListener(this);
+                    ideaTextEntry.setText(editable);
+                    ideaTextEntry.addTextChangedListener(this);
+                    ideaTextEntry.setSelection(editable.length());
+                }
             }
         };
 

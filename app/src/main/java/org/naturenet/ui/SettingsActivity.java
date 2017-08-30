@@ -10,7 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -38,6 +40,7 @@ public class SettingsActivity extends AppCompatActivity implements Settings{
     String notification_token;
     CompoundButton.OnCheckedChangeListener checkedChangeListenerProject, checkedChangeListenerIdea;
     Toolbar toolbar;
+    RelativeLayout settingsLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +60,7 @@ public class SettingsActivity extends AppCompatActivity implements Settings{
         newProjectSwitch = (Switch) findViewById(R.id.new_project_switch);
         newIdeaSwitch = (Switch) findViewById(R.id.new_idea_switch);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        settingsLayout = (RelativeLayout) findViewById(R.id.settingsLayout);
 
         checkedChangeListenerProject = new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -113,12 +117,12 @@ public class SettingsActivity extends AppCompatActivity implements Settings{
 
     @Override
     public void disableWindow() {
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        settingsLayout.setVisibility(View.GONE);
     }
 
     @Override
     public void enableWindow() {
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        settingsLayout.setVisibility(View.VISIBLE);
     }
 
     @Override

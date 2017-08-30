@@ -33,10 +33,6 @@ import org.naturenet.R;
 import org.naturenet.data.model.Idea;
 import org.naturenet.ui.LoginActivity;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-
 public class AddDesignIdeaFragment extends Fragment {
 
     public static final String ADD_DESIGN_IDEA_FRAGMENT = "add_design_idea_fragment";

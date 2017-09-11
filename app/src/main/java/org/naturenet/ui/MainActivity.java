@@ -671,6 +671,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         tabLayout.setVisibility(View.VISIBLE);
                         //get the index of the fragment we're going to by pressing back
                         int indexOfFragment = getFragmentManager().getBackStackEntryCount()-2;
+
+                        if(indexOfFragment<0)
+                            indexOfFragment = 0;
+
                         String tag = getFragmentManager().getBackStackEntryAt(indexOfFragment).getName();
 
                         //Check to see if it was the map view that was being displayed
@@ -689,6 +693,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         //get the index of the fragment we're going to by pressing back
                         int indexOfFragment = getFragmentManager().getBackStackEntryCount()-2;
+
+                        if(indexOfFragment<0)
+                            indexOfFragment = 0;
+
                         String tag = getFragmentManager().getBackStackEntryAt(indexOfFragment).getName();
 
                         //Check to see if it was the map view that was being displayed
@@ -757,7 +765,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_settings:
                 //Go to settings screen
                 goToSettingsActivity();
-                tabLayout.setVisibility(View.GONE);
                 break;
 
         }

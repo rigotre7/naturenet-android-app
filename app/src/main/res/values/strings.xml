@@ -210,6 +210,7 @@
     <string name="myAccount">My Account</string>
     <string name="new_project_notification_description">Send me notifications about new Projects that have been submitted.</string>
     <string name="new_idea_notification_description">Send me notifications about new Design Ideas that have been submitted.</string>
+    <string name="could_not_load_settings">Could Not Load Settings</string>
     <!-- General -->
 
 </resources>
